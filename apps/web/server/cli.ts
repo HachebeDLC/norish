@@ -12,6 +12,7 @@ import { v4 as uuidv4 } from "uuid";
 import { mapHelloFreshToNorish } from "@norish/api/services/hellofresh/mapper";
 import fs from "fs";
 import { auth } from "@norish/auth";
+import { verification } from "@norish/db/schema/auth";
 
 async function runHelloFreshSync(country?: string, locale?: string) {
   const countryCode = country || "ES";
@@ -71,8 +72,6 @@ async function runHelloFreshFileImport(filePath: string) {
   }
 }
 
-import { accounts, users, verification } from "@norish/db/schema/auth";
-...
 async function runResetPassword(email?: string, newPassword?: string) {
   if (!email || !newPassword) {
     log.error("[CLI-Reset] Usage: reset-password <email> <new-password>");
@@ -82,11 +81,9 @@ async function runResetPassword(email?: string, newPassword?: string) {
   log.info({ email }, "[CLI-Reset] Attempting to force reset password...");
 
   try {
-    // 1. Find user to ensure they exist
     const user = await getAdapterUserByEmail(email);
     if (!user) throw new Error("User not found with that email.");
 
-    // 2. Create a manual verification token
     const token = uuidv4();
     const expiresAt = new Date(Date.now() + 1000 * 60 * 10); // 10 minutes
 
@@ -97,8 +94,6 @@ async function runResetPassword(email?: string, newPassword?: string) {
       expiresAt: expiresAt,
     });
 
-    // 3. Use the token to reset the password via Better Auth API
-    // This method only requires the token and newPassword, bypassing "currentPassword" checks
     await auth.api.resetPassword({
       body: {
         newPassword,
