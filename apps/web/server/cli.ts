@@ -67,18 +67,48 @@ async function runHelloFreshFileImport(filePath: string) {
   }
 }
 
+import { auth } from "@norish/auth";
+...
+async function runResetPassword(email?: string, newPassword?: string) {
+  if (!email || !newPassword) {
+    log.error("[CLI-Reset] Usage: reset-password <email> <new-password>");
+    process.exit(1);
+  }
+
+  log.info({ email }, "[CLI-Reset] Attempting to reset password...");
+
+  try {
+    // Better Auth's internal API allows setting password directly
+    // This bypasses email verification/token flows for administrative reset
+    const result = await (auth.api as any).setPassword({
+      body: {
+        email,
+        newPassword,
+      }
+    });
+
+    log.info("[CLI-Reset] Password successfully updated for user.");
+  } catch (error: any) {
+    log.error({ err: error.message }, "[CLI-Reset] Failed to reset password. Ensure the email is correct.");
+    process.exit(1);
+  } finally {
+    setTimeout(() => process.exit(0), 1000);
+  }
+}
+
 async function main() {
   initializeServerConfig(); // Required for DB connection
   const args = process.argv.slice(2);
   const command = args[0];
 
-  log.info({ command, args }, "[CLI] Executing maintenance command");
+  log.info({ command, args: command === "reset-password" ? [args[1], "****"] : args }, "[CLI] Executing maintenance command");
 
   if (command === "hf-sync") return await runHelloFreshSync(args[1], args[2]);
   if (command === "hf-clean") return await runHelloFreshCleanup();
   if (command === "hf-import-file") return await runHelloFreshFileImport(args[1]);
+  if (command === "reset-password") return await runResetPassword(args[1], args[2]);
 
-  log.error("Unknown command. Available: hf-sync, hf-clean, hf-import-file");
+  log.error("Unknown command. Available: hf-sync, hf-clean, hf-import-file, reset-password");
   process.exit(1);
 }
 
