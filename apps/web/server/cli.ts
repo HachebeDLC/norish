@@ -8,6 +8,7 @@ import { createRecipeWithRefs } from "@norish/db/repositories/recipes";
 import { v4 as uuidv4 } from "uuid";
 import { mapHelloFreshToNorish } from "@norish/api/services/hellofresh/mapper";
 import fs from "fs";
+import { auth } from "@norish/auth";
 
 async function runHelloFreshSync(country?: string, locale?: string) {
   const countryCode = country || "ES";
@@ -67,8 +68,6 @@ async function runHelloFreshFileImport(filePath: string) {
   }
 }
 
-import { auth } from "@norish/auth";
-...
 async function runResetPassword(email?: string, newPassword?: string) {
   if (!email || !newPassword) {
     log.error("[CLI-Reset] Usage: reset-password <email> <new-password>");
@@ -79,8 +78,7 @@ async function runResetPassword(email?: string, newPassword?: string) {
 
   try {
     // Better Auth's internal API allows setting password directly
-    // This bypasses email verification/token flows for administrative reset
-    const result = await (auth.api as any).setPassword({
+    await (auth.api as any).setPassword({
       body: {
         email,
         newPassword,
