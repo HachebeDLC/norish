@@ -32,6 +32,24 @@ services:
       chrome-headless:
         condition: service_started
 
+  norish-worker:
+    image: norish:local
+    container_name: norish-worker-test
+    restart: unless-stopped
+    command: ["node", "dist-server/worker.mjs"]
+    volumes:
+      - norish_uploads:/app/uploads
+    environment:
+      DATABASE_URL: postgres://postgres:norish@db:5432/norish
+      REDIS_URL: redis://redis:6379
+      MASTER_KEY: X4fjLgB8egCPwlOQW8iC3JGXAtUIMUOGmk/y29n+YSw=
+      LOG_LEVEL: debug
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
   # PostgreSQL Database
   db:
     image: postgres:17-alpine
