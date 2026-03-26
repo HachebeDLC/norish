@@ -37,11 +37,13 @@ async function runHelloFreshSync(country?: string, locale?: string) {
 
 async function main() {
   const args = process.argv.slice(2);
-  const command = args[0];
+  
+  log.info({ args }, "[CLI] Received arguments");
 
-  // Command Dispatcher
-  if (command === "hf-sync") {
-    await runHelloFreshSync(args[1], args[2]);
+  // Robust Command Dispatcher
+  if (args.includes("hf-sync")) {
+    const cmdIndex = args.indexOf("hf-sync");
+    await runHelloFreshSync(args[cmdIndex + 1], args[cmdIndex + 2]);
     return;
   }
 
