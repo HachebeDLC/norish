@@ -340,12 +340,13 @@ const toggle = authedProcedure.input(GroceryToggleSchema).mutation(({ ctx, input
       if (isDone) {
         for (const grocery of groceries) {
           if (grocery.name) {
-            completeInBring(grocery.name).catch((err) => {
+            completeInBring(ctx.user.id, grocery.name).catch((err) => {
               log.error({ err, itemName: grocery.name }, "Failed to complete item in Bring! during toggle");
             });
           }
         }
       }
+
       })
 
     .catch((err) => {

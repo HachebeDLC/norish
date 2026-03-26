@@ -20,7 +20,6 @@ export const ServerConfigKeys = {
   PROMPTS: "prompts",
   LOCALE_CONFIG: "locale_config",
   TIMER_KEYWORDS: "timer_keywords",
-  BRING_CONFIG: "bring_config",
 } as const;
 
 export type ServerConfigKey = (typeof ServerConfigKeys)[keyof typeof ServerConfigKeys];
@@ -335,19 +334,6 @@ export const VideoConfigSchema = z.object({
 export type VideoConfig = z.infer<typeof VideoConfigSchema>;
 
 // ============================================================================
-// Bring Configuration Schema
-// ============================================================================
-
-export const BringConfigSchema = z.object({
-  enabled: z.boolean().default(false),
-  email: z.string().email().optional(),
-  password: z.string().optional(),
-  listUuid: z.string().uuid().optional(), // The specific list to sync with
-});
-
-export type BringConfig = z.infer<typeof BringConfigSchema>;
-
-// ============================================================================
 // Scheduler Configuration Schema
 // ============================================================================
 
@@ -453,8 +439,6 @@ export function getSchemaForConfigKey(key: ServerConfigKey): z.ZodType {
       return I18nLocaleConfigSchema;
     case ServerConfigKeys.TIMER_KEYWORDS:
       return TimerKeywordsSchema;
-    case ServerConfigKeys.BRING_CONFIG:
-      return BringConfigSchema;
     default:
       return z.any();
   }
@@ -482,7 +466,6 @@ export const SENSITIVE_CONFIG_KEYS: ServerConfigKey[] = [
   ServerConfigKeys.AUTH_PROVIDER_GOOGLE,
   ServerConfigKeys.AI_CONFIG,
   ServerConfigKeys.VIDEO_CONFIG,
-  ServerConfigKeys.BRING_CONFIG,
 ];
 
 /**

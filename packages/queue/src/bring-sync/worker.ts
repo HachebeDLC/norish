@@ -38,7 +38,7 @@ async function processBringSyncJob(job: Job<BringSyncJobData>): Promise<void> {
       unit: i.unit || undefined
     }));
 
-    await syncToBring(syncItems);
+    await syncToBring(userId, syncItems);
 
     log.info({ userId, count: syncItems.length }, "Bring! sync job completed successfully");
   } catch (error: any) {
