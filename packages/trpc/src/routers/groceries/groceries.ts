@@ -29,6 +29,7 @@ import {
   normalizeIngredientName,
   upsertIngredientStorePreference,
 } from "@norish/db/repositories/stores";
+import { completeInBring } from "@norish/api/services/bring/sync";
 import { addBringSyncJob } from "@norish/queue";
 import { getQueues } from "@norish/queue/registry";
 import { trpcLogger as log } from "@norish/shared-server/logger";
@@ -334,7 +335,19 @@ const toggle = authedProcedure.input(GroceryToggleSchema).mutation(({ ctx, input
       groceryEmitter.emitToHousehold(ctx.householdKey, "updated", {
         changedGroceries: updated,
       });
-    })
+
+      // Sync completion with Bring! if item is marked as done
+      if (isDone) {
+        for (const grocery of groceries) {
+          if (grocery.name) {
+            completeInBring(grocery.name).catch((err) => {
+              log.error({ err, itemName: grocery.name }, "Failed to complete item in Bring! during toggle");
+            });
+          }
+        }
+      }
+      })
+
     .catch((err) => {
       log.error({ err, userId: ctx.user.id, groceryIds }, "Failed to toggle groceries");
       groceryEmitter.emitToHousehold(ctx.householdKey, "failed", {
