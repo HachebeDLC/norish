@@ -9,13 +9,13 @@ import {
   CardHeader,
   Input,
   Link,
+  addToast,
 } from "@heroui/react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 
 import { showSafeErrorToast } from "@/lib/ui/safe-error-toast";
 import { useTRPC } from "@/app/providers/trpc-provider";
-import { toast } from "sonner";
 
 export default function BringIntegrationCard() {
   const t = useTranslations("settings.user.bring");
@@ -74,7 +74,10 @@ export default function BringIntegrationCard() {
       }
 
       await queryClient.invalidateQueries(listQueryOptions);
-      toast.success("Bring! configuration saved");
+      addToast({
+        title: "Bring! configuration saved",
+        color: "success",
+      });
     } catch (error) {
       showSafeErrorToast({
         title: "Failed to save Bring! config",
