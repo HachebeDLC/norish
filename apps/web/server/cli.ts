@@ -5,7 +5,9 @@ import { sql } from "drizzle-orm";
 import { recipes } from "@norish/db/schema";
 import { db } from "@norish/db/drizzle";
 import { createRecipeWithRefs } from "@norish/db/repositories/recipes";
-import { getAdapterUserByEmail } from "@norish/db/repositories/users";
+import { getAdapterUserByEmail, setUserAsOwnerAndAdmin } from "@norish/db/repositories/users";
+import { setConfig } from "@norish/db/repositories/server-config";
+import { ServerConfigKeys } from "@norish/config/zod/server-config";
 import { v4 as uuidv4 } from "uuid";
 import { mapHelloFreshToNorish } from "@norish/api/services/hellofresh/mapper";
 import fs from "fs";
@@ -119,6 +121,39 @@ async function runDatabaseTruncate() {
   }
 }
 
+async function runEnableRegistration() {
+  log.info("[CLI-Config] Attempting to enable user registration...");
+  try {
+    await setConfig(ServerConfigKeys.REGISTRATION_ENABLED, true, null, false);
+    log.info("[CLI-Config] Registration enabled successfully. You can now use /signup.");
+  } catch (error: any) {
+    log.error({ err: error.message }, "[CLI-Config] Failed to enable registration.");
+    process.exit(1);
+  } finally {
+    setTimeout(() => process.exit(0), 1000);
+  }
+}
+
+async function runMakeAdmin(email?: string) {
+  if (!email) {
+    log.error("[CLI-Admin] Usage: make-admin <email>");
+    process.exit(1);
+  }
+  log.info({ email }, "[CLI-Admin] Attempting to elevate user to Admin/Owner...");
+  try {
+    const user = await getAdapterUserByEmail(email);
+    if (!user) throw new Error("User not found with that email.");
+
+    await setUserAsOwnerAndAdmin(user.id);
+    log.info(`[CLI-Admin] User ${email} is now a Server Owner and Admin.`);
+  } catch (error: any) {
+    log.error({ err: error.message }, "[CLI-Admin] Failed to elevate user.");
+    process.exit(1);
+  } finally {
+    setTimeout(() => process.exit(0), 1000);
+  }
+}
+
 async function main() {
   initializeServerConfig();
   const args = process.argv.slice(2);
@@ -131,8 +166,10 @@ async function main() {
   if (command === "hf-import-file") return await runHelloFreshFileImport(args[1]);
   if (command === "reset-password") return await runResetPassword(args[1], args[2]);
   if (command === "db-truncate") return await runDatabaseTruncate();
+  if (command === "enable-registration") return await runEnableRegistration();
+  if (command === "make-admin") return await runMakeAdmin(args[1]);
 
-  log.error("Unknown command. Available: hf-sync, hf-clean, hf-import-file, reset-password, db-truncate");
+  log.error("Unknown command. Available: hf-sync, hf-clean, hf-import-file, reset-password, db-truncate, enable-registration, make-admin");
   process.exit(1);
 }
 
