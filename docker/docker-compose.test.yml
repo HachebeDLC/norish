@@ -50,6 +50,21 @@ services:
       redis:
         condition: service_healthy
 
+  # Scheduler for HelloFresh sync
+  ofelia:
+    image: mcuadros/ofelia:latest
+    container_name: norish-ofelia-test
+    depends_on:
+      - norish
+    command: daemon
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    labels:
+      ofelia.job-exec.hellofresh-sync.schedule: "@weekly"
+      # This MUST match the service name or container_name
+      ofelia.job-exec.hellofresh-sync.container: "norish-app-test"
+      ofelia.job-exec.hellofresh-sync.command: "node /app/dist-server/cli.mjs hf-sync ES es-ES"
+
   # PostgreSQL Database
   db:
     image: postgres:17-alpine
