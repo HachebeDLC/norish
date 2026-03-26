@@ -12,9 +12,10 @@ export async function addHelloFreshSyncJob(
   queue: Queue<HelloFreshSyncJobData>,
   data: HelloFreshSyncJobData
 ) {
-  // Unique job ID per household and locale (or global if no household)
+  // Unique job ID per household, locale and timestamp to allow re-runs
   const householdSegment = data.householdKey || "global";
-  const jobId = `hf-sync-${householdSegment}-${data.countryCode}-${data.locale}`;
+  const timestamp = Date.now();
+  const jobId = `hf-sync-${householdSegment}-${data.countryCode}-${data.locale}-${timestamp}`;
 
   if (await isJobInQueue(queue, jobId)) {
     log.warn({ jobId }, "Duplicate HelloFresh sync job rejected");
