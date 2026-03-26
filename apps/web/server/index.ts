@@ -10,6 +10,9 @@ import { initializeVideoProcessing } from "@norish/api/startup/video-processing"
 import { initializeServerConfig, SERVER_CONFIG } from "@norish/config/env-config-server";
 import { addHelloFreshSyncJob, getQueues, initializeQueues, closeAllQueues } from "@norish/queue";
 import { startWorkers } from "@norish/queue/start-workers";
+import { sql } from "@norish/db";
+import { recipes } from "@norish/db/schema";
+import { db } from "@norish/db/drizzle";
 
 async function runHelloFreshSync(country?: string, locale?: string) {
   const countryCode = country || "ES";
@@ -35,10 +38,6 @@ async function runHelloFreshSync(country?: string, locale?: string) {
   }
 }
 
-import { eq, sql } from "@norish/db";
-import { recipes } from "@norish/db/schema";
-import { db } from "@norish/db/drizzle";
-...
 async function runHelloFreshCleanup() {
   log.info("[HF-Clean] Starting cleanup of HelloFresh recipes...");
 
@@ -61,11 +60,11 @@ async function main() {
   const isSyncMode = args.includes("hf-sync") || process.env.HF_SYNC_TRIGGER === "true";
   const isCleanMode = args.includes("hf-clean");
 
+  // CLI DISPATCHER - MUST BE BEFORE ANY SERVER LOGIC
   if (isSyncMode) {
-    // ... logic existing ...
-    const country = args[args.indexOf("hf-sync") + 1] || process.env.HF_COUNTRY || "ES";
-    const locale = args[args.indexOf("hf-sync") + 2] || process.env.HF_LOCALE || "es-ES";
-    
+    const idx = args.indexOf("hf-sync");
+    const country = idx !== -1 ? args[idx + 1] : process.env.HF_COUNTRY;
+    const locale = idx !== -1 ? args[idx + 2] : process.env.HF_LOCALE;
     await runHelloFreshSync(country, locale);
     return;
   }
@@ -75,6 +74,7 @@ async function main() {
     return;
   }
 
+  // NORMAL SERVER STARTUP
   const config = initializeServerConfig();
 
   log.info("-".repeat(50));
