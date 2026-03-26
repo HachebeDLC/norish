@@ -10,7 +10,7 @@ import { initializeVideoProcessing } from "@norish/api/startup/video-processing"
 import { initializeServerConfig, SERVER_CONFIG } from "@norish/config/env-config-server";
 import { addHelloFreshSyncJob, getQueues, initializeQueues, closeAllQueues } from "@norish/queue";
 import { startWorkers } from "@norish/queue/start-workers";
-import { sql } from "@norish/db";
+import { sql } from "drizzle-orm";
 import { recipes } from "@norish/db/schema";
 import { db } from "@norish/db/drizzle";
 async function runHelloFreshSync(country?: string, locale?: string) {
