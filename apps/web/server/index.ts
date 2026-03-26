@@ -37,17 +37,17 @@ async function runHelloFreshSync(country?: string, locale?: string) {
 
 async function main() {
   const args = process.argv.slice(2);
-  
-  log.info({ args }, "[CLI] Received arguments");
+  const isSyncMode = args.includes("hf-sync") || process.env.HF_SYNC_TRIGGER === "true";
 
-  // Robust Command Dispatcher
-  if (args.includes("hf-sync")) {
-    const cmdIndex = args.indexOf("hf-sync");
-    await runHelloFreshSync(args[cmdIndex + 1], args[cmdIndex + 2]);
+  if (isSyncMode) {
+    // Determine params from args or env
+    const country = args[args.indexOf("hf-sync") + 1] || process.env.HF_COUNTRY || "ES";
+    const locale = args[args.indexOf("hf-sync") + 2] || process.env.HF_LOCALE || "es-ES";
+    
+    await runHelloFreshSync(country, locale);
     return;
   }
 
-  // Normal server startup
   const config = initializeServerConfig();
 
   log.info("-".repeat(50));
