@@ -18,10 +18,10 @@ const log = createLogger("worker:hellofresh-sync");
 const hfClient = new HelloFreshClient();
 
 async function processSyncJob(job: Job<HelloFreshSyncJobData>): Promise<void> {
-  const { countryCode, locale, userId, householdKey } = job.data;
+  const { countryCode, locale, userId } = job.data;
 
   log.info(
-    { jobId: job.id, countryCode, locale, userId },
+    { jobId: job.id, countryCode, locale, userId: userId || "global" },
     "Starting HelloFresh sync job"
   );
 
@@ -54,9 +54,8 @@ async function processSyncJob(job: Job<HelloFreshSyncJobData>): Promise<void> {
         const norishRecipe = mapHelloFreshToNorish(hfRecipe);
         const recipeId = uuidv4();
         
-        // We use the HF ID as a way to avoid duplicates if possible, 
-        // though createRecipeWithRefs uses URL + userId as unique key.
-        await createRecipeWithRefs(recipeId, userId, norishRecipe);
+        // If userId is null, recipe is global/orphaned
+        await createRecipeWithRefs(recipeId, userId || null, norishRecipe);
         
         totalImported++;
         // Small delay to avoid hammering the DB/API

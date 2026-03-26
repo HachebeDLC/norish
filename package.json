@@ -37,7 +37,8 @@
     "format": "turbo run format -- --write",
     "format:check": "turbo run format",
     "deps:cycles": "node tooling/monorepo/scripts/check-circular-deps.mjs",
-    "i18n:check": "pnpm --filter @norish/i18n run check:locale-keys"
+    "i18n:check": "pnpm --filter @norish/i18n run check:locale-keys",
+    "hellofresh-sync": "pnpm --filter @norish/queue run hellofresh-sync"
   },
   "dependencies": {
     "@norish/api": "workspace:*",

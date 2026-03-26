@@ -107,9 +107,9 @@ export type AddAllergyDetectionJobResult =
 export interface HelloFreshSyncJobData {
   countryCode: string;
   locale: string;
-  userId: string;
-  householdKey: string;
-  householdUserIds: string[] | null;
+  userId?: string;
+  householdKey?: string;
+  householdUserIds?: string[] | null;
 }
 
 export interface BringSyncJobData {
