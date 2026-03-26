@@ -27,21 +27,17 @@ function cleanNumber(value: any): number | null {
 
 /**
  * Maps HelloFresh recipe item to Norish FullRecipeInsertDTO.
- * Aiming for maximum data parity with the original Laravel project.
+ * Now with full support for quantities, units, and optimized images.
  */
 export function mapHelloFreshToNorish(hf: HelloFreshRecipeItem): FullRecipeInsertDTO {
-  // Parity logic for description: use headline if description is thin
   const description = hf.descriptionMarkdown || hf.headline || "";
   
-  // Parity logic for difficulty: HF (1-3) 
-  // Norish doesn't have a numeric difficulty in the base schema but we can add it as a tag
   const tags = hf.tags?.map((t: any) => ({ name: t.name })) || [];
   
   if (hf.difficulty === 1) tags.push({ name: "Difficulty: Easy" });
   else if (hf.difficulty === 2) tags.push({ name: "Difficulty: Medium" });
   else if (hf.difficulty === 3) tags.push({ name: "Difficulty: Hard" });
 
-  // Parity logic for Cuisines & Utensils (Adding them as tags for searchability in Norish)
   if (hf.cuisines) {
     hf.cuisines.forEach((c: any) => tags.push({ name: `Cuisine: ${c.name}` }));
   }
@@ -49,21 +45,33 @@ export function mapHelloFreshToNorish(hf: HelloFreshRecipeItem): FullRecipeInser
     hf.utensils.forEach((u: any) => tags.push({ name: `Utensil: ${u.name}` }));
   }
 
-  // Parity logic for Allergens
-  if (hf.allergens) {
-    hf.allergens.forEach((a: any) => tags.push({ name: `Allergen: ${a.name}` }));
+  // Optimize Image URL (using fill to make sure they look good in Norish cards)
+  const mainImage = hf.imagePath 
+    ? `https://img.hellofresh.com/c_fill,f_auto,fl_lossy,q_auto,w_1200/hellofresh_s3${hf.imagePath}` 
+    : undefined;
+
+  // Extract quantities from yields (defaulting to the first yield, usually 2 people)
+  const defaultYield = hf.yields?.[0];
+  const ingredientQuantities = new Map<string, { amount: number | null, unit: string }>();
+  
+  if (defaultYield?.ingredients) {
+    for (const yi of defaultYield.ingredients) {
+      ingredientQuantities.set(yi.id, {
+        amount: cleanNumber(yi.amount),
+        unit: yi.unit || ""
+      });
+    }
   }
 
   return {
     name: hf.name,
     description: description,
     url: hf.canonical || hf.cardLink || `https://www.hellofresh.es/recipes/${hf.id}`,
-    image: hf.imagePath ? `https://img.hellofresh.com/f_auto,fl_lossy,q_auto/hellofresh_s3${hf.imagePath}` : undefined,
-    servings: cleanNumber(hf.yields?.[0]?.yields) || 2,
+    image: mainImage,
+    servings: cleanNumber(defaultYield?.yields) || 2,
     prepMinutes: parseIsoDuration(hf.prepTime),
     totalMinutes: parseIsoDuration(hf.totalTime),
     
-    // Nutrition parity
     calories: cleanNumber(hf.nutrition?.find((n: any) => n.type === "Energy")?.amount),
     fat: cleanNumber(hf.nutrition?.find((n: any) => n.type === "Fat")?.amount),
     carbs: cleanNumber(hf.nutrition?.find((n: any) => n.type === "Carbohydrate")?.amount),
@@ -71,23 +79,24 @@ export function mapHelloFreshToNorish(hf: HelloFreshRecipeItem): FullRecipeInser
     
     tags: tags,
     
-    // Ingredient parity (including image hints if we want to store them in Norish later)
-    recipeIngredients: hf.ingredients?.map((i: any, index: number) => ({
-      ingredientName: i.name,
-      ingredientId: null,
-      amount: cleanNumber(i.amount),
-      unit: i.unit,
-      order: index,
-      systemUsed: "metric"
-    })) || [],
+    recipeIngredients: hf.ingredients?.map((i: any, index: number) => {
+      const q = ingredientQuantities.get(i.id);
+      return {
+        ingredientName: i.name,
+        ingredientId: null,
+        amount: q?.amount ?? null,
+        unit: q?.unit || "",
+        order: index,
+        systemUsed: "metric"
+      };
+    }) || [],
     
-    // Step parity (including markdown support and step images)
     steps: hf.steps?.map((s: any) => ({
       order: s.index,
       step: s.instructionsMarkdown || s.instructions || "",
       systemUsed: "metric",
       images: s.images?.map((img: any) => ({
-        path: img.path ? `https://img.hellofresh.com/f_auto,fl_lossy,q_auto/hellofresh_s3${img.path}` : ""
+        path: img.path ? `https://img.hellofresh.com/f_auto,fl_lossy,q_auto,w_800/hellofresh_s3${img.path}` : ""
       })) || []
     })) || [],
     
