@@ -13,8 +13,8 @@ export async function addBringSyncJob(
   data: BringSyncJobData
 ) {
   // Unique job ID per user and sync type
-  const itemsKey = data.itemIds ? `items:${data.itemIds.sort().join(",")}` : "all";
-  const jobId = `bring-sync:${data.userId}:${itemsKey}`;
+  const itemsKey = data.itemIds ? `items-${data.itemIds.sort().join("-")}` : "all";
+  const jobId = `bring-sync-${data.userId}-${itemsKey}`;
 
   if (await isJobInQueue(queue, jobId)) {
     log.warn({ jobId }, "Duplicate Bring! sync job rejected");
