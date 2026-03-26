@@ -35,16 +35,43 @@ async function runHelloFreshSync(country?: string, locale?: string) {
   }
 }
 
+import { eq, sql } from "@norish/db";
+import { recipes } from "@norish/db/schema";
+import { db } from "@norish/db/drizzle";
+...
+async function runHelloFreshCleanup() {
+  log.info("[HF-Clean] Starting cleanup of HelloFresh recipes...");
+
+  try {
+    const result = await db
+      .delete(recipes)
+      .where(sql`${recipes.url} LIKE '%hellofresh.%'`);
+    
+    log.info({ count: result.rowCount }, "[HF-Clean] Successfully removed HelloFresh recipes.");
+  } catch (error) {
+    log.error({ err: error }, "[HF-Clean] Failed to cleanup recipes");
+    process.exit(1);
+  } finally {
+    setTimeout(() => process.exit(0), 1000);
+  }
+}
+
 async function main() {
   const args = process.argv.slice(2);
   const isSyncMode = args.includes("hf-sync") || process.env.HF_SYNC_TRIGGER === "true";
+  const isCleanMode = args.includes("hf-clean");
 
   if (isSyncMode) {
-    // Determine params from args or env
+    // ... logic existing ...
     const country = args[args.indexOf("hf-sync") + 1] || process.env.HF_COUNTRY || "ES";
     const locale = args[args.indexOf("hf-sync") + 2] || process.env.HF_LOCALE || "es-ES";
     
     await runHelloFreshSync(country, locale);
+    return;
+  }
+
+  if (isCleanMode) {
+    await runHelloFreshCleanup();
     return;
   }
 
