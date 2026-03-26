@@ -11,11 +11,11 @@ import { initializeServerConfig, SERVER_CONFIG } from "@norish/config/env-config
 import { addHelloFreshSyncJob, getQueues, initializeQueues, closeAllQueues } from "@norish/queue";
 import { startWorkers } from "@norish/queue/start-workers";
 
-async function runHelloFreshSync() {
-  const countryCode = process.env.HF_COUNTRY || "ES";
-  const locale = process.env.HF_LOCALE || "es-ES";
+async function runHelloFreshSync(country?: string, locale?: string) {
+  const countryCode = country || "ES";
+  const hfLocale = locale || "es-ES";
 
-  log.info(`[HF-Sync] Mode detected. Starting sync for ${countryCode} (${locale})...`);
+  log.info(`[HF-Sync] Starting synchronization for ${countryCode} (${hfLocale})...`);
 
   initializeQueues();
   const queues = getQueues();
@@ -23,27 +23,30 @@ async function runHelloFreshSync() {
   try {
     const result = await addHelloFreshSyncJob(queues.hellofreshSync, {
       countryCode,
-      locale,
+      locale: hfLocale,
     });
-    log.info(`[HF-Sync] Job status: ${result.status}. Job ID: ${result.job?.id || 'N/A'}`);
+    log.info(`[HF-Sync] Job status: ${result.status}. Job ID: ${result.job?.id || "N/A"}`);
   } catch (error) {
     log.error({ err: error }, "[HF-Sync] Failed to enqueue job");
     process.exit(1);
   } finally {
     await closeAllQueues();
-    // Allow time for Redis connection to close
     setTimeout(() => process.exit(0), 1000);
   }
 }
 
 async function main() {
-  const config = initializeServerConfig();
+  const args = process.argv.slice(2);
+  const command = args[0];
 
-  // Mode check: if hf-sync, don't start the server
-  if (process.env.NORISH_MODE === "hf-sync") {
-    await runHelloFreshSync();
+  // Command Dispatcher
+  if (command === "hf-sync") {
+    await runHelloFreshSync(args[1], args[2]);
     return;
   }
+
+  // Normal server startup
+  const config = initializeServerConfig();
 
   log.info("-".repeat(50));
   log.info("Server configuration loaded:");
