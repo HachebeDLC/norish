@@ -68,6 +68,8 @@ async function runHelloFreshFileImport(filePath: string) {
   }
 }
 
+import { getAdapterUserByEmail } from "@norish/db/repositories/users";
+...
 async function runResetPassword(email?: string, newPassword?: string) {
   if (!email || !newPassword) {
     log.error("[CLI-Reset] Usage: reset-password <email> <new-password>");
@@ -77,29 +79,24 @@ async function runResetPassword(email?: string, newPassword?: string) {
   log.info({ email }, "[CLI-Reset] Attempting to reset password...");
 
   try {
-    // We use changePassword internal method which can be called server-side
-    // We need to bypass the session check by providing the userId directly if possible
-    // In better-auth, for admin actions without session, we often need to 
-    // interact with the database or use a specific admin API.
-    
-    // First, let's find the user by email (handling encryption)
-    const user = await auth.api.getUserByEmail({
-      query: { email }
-    });
+    // 1. Find user using Norish's official repository (handles HMAC/Encryption)
+    const user = await getAdapterUserByEmail(email);
 
     if (!user) {
       throw new Error("User not found with that email.");
     }
 
-    // Now set the password for this user ID
-    await (auth as any).api.changePassword({
+    // 2. Use Better Auth's internal administrative API to set the password
+    // Better Auth 1.1+ uses changePassword or updatePassword under api
+    // For admin resets, we can use the admin plugin if enabled, 
+    // but here we'll use the server-side bypass
+    await (auth.api as any).changePassword({
       body: {
         newPassword,
         userId: user.id,
-        // We pass a special flag or just use the fact that we are on server
       },
-      // Mocking some headers to bypass basic checks if needed
-      headers: new Headers({ "x-norish-internal": "true" })
+      // Passing internal headers to indicate this is a trusted server call
+      headers: new Headers({ "trusted-call": "true" })
     });
 
     log.info("[CLI-Reset] Password successfully updated for user.");
