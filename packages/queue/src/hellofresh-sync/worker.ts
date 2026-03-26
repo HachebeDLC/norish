@@ -5,6 +5,7 @@ import { createLogger } from "@norish/shared-server/logger";
 import { HelloFreshClient } from "@norish/api/services/hellofresh/client";
 import { mapHelloFreshToNorish } from "@norish/api/services/hellofresh/mapper";
 import { createRecipeWithRefs } from "@norish/db/repositories/recipes";
+import { downloadImage } from "@norish/shared-server/media/storage";
 import { getBullClient } from "@norish/queue/redis/bullmq";
 import {
   baseWorkerOptions,
@@ -47,21 +48,47 @@ async function processSyncJob(job: Job<HelloFreshSyncJobData>): Promise<void> {
       break;
     }
 
-    log.info({ count: items.length }, `Processing ${items.length} recipes...`);
-
     for (const hfSummary of items) {
       try {
         log.debug({ hfId: hfSummary.id }, "Fetching full recipe details...");
         
-        // 1. Fetch detailed recipe data (includes ingredients, steps, nutrition)
+        // 1. Fetch detailed recipe data
         const hfFullRecipe = await hfClient.getRecipe(countryCode, locale, hfSummary.id);
         
         // 2. Map to Norish format
         const norishRecipe = mapHelloFreshToNorish(hfFullRecipe);
         const recipeId = uuidv4();
+
+        // 3. Download Images Locally
+        if (norishRecipe.image) {
+          try {
+            log.debug({ recipeId }, "Downloading main image...");
+            const localPath = await downloadImage(norishRecipe.image, recipeId);
+            norishRecipe.image = localPath;
+          } catch (imgErr) {
+            log.warn({ err: imgErr, url: norishRecipe.image }, "Failed to download main image, keeping remote URL");
+          }
+        }
+
+        // Download step images
+        if (norishRecipe.steps) {
+          for (const step of norishRecipe.steps) {
+            if (step.images) {
+              for (const img of step.images) {
+                if (img.image) {
+                  try {
+                    const localStepImg = await downloadImage(img.image, recipeId);
+                    img.image = localStepImg;
+                  } catch (stepImgErr) {
+                    log.warn({ err: stepImgErr, url: img.image }, "Failed to download step image");
+                  }
+                }
+              }
+            }
+          }
+        }
         
-        // 3. Save to database (orphaned/global if userId is null)
-        // Note: createRecipeWithRefs handles duplicate checks by URL internally
+        // 4. Save to database
         await createRecipeWithRefs(recipeId, userId || null, norishRecipe);
         
         totalImported++;
