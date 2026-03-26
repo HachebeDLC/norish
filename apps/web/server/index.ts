@@ -13,6 +13,10 @@ import { startWorkers } from "@norish/queue/start-workers";
 import { sql } from "drizzle-orm";
 import { recipes } from "@norish/db/schema";
 import { db } from "@norish/db/drizzle";
+import { createRecipeWithRefs } from "@norish/db/repositories/recipes";
+import { v4 as uuidv4 } from "uuid";
+import { mapHelloFreshToNorish } from "@norish/api/services/hellofresh/mapper";
+import fs from "fs";
 async function runHelloFreshSync(country?: string, locale?: string) {
   const countryCode = country || "ES";
   const hfLocale = locale || "es-ES";
@@ -32,8 +36,46 @@ async function runHelloFreshSync(country?: string, locale?: string) {
     await closeAllQueues();
     setTimeout(() => process.exit(0), 1000);
   }
-}
-async function runHelloFreshCleanup() {
+  }
+
+  async function runHelloFreshFileImport(filePath: string) {
+  log.info({ filePath }, "[HF-Import] Starting import from local file...");
+
+  try {
+    if (!fs.existsSync(filePath)) {
+      throw new Error(`File not found: ${filePath}`);
+    }
+
+    const rawData = fs.readFileSync(filePath, "utf-8");
+    const json = JSON.parse(rawData);
+    const items = json.items || [];
+
+    log.info({ count: items.length }, `[HF-Import] Found ${items.length} recipes to process.`);
+
+    let imported = 0;
+    for (const hfRecipe of items) {
+      try {
+        const norishRecipe = mapHelloFreshToNorish(hfRecipe);
+        const recipeId = uuidv4();
+        await createRecipeWithRefs(recipeId, null, norishRecipe);
+        imported++;
+        if (imported % 10 === 0) log.info(`[HF-Import] Progress: ${imported}/${items.length}`);
+      } catch (error) {
+        log.error({ hfId: hfRecipe.id, err: error }, "[HF-Import] Failed to import recipe");
+      }
+    }
+
+    log.info({ imported }, "[HF-Import] File import completed.");
+  } catch (error) {
+    log.error({ err: error }, "[HF-Import] Fatal error during file import");
+    process.exit(1);
+  } finally {
+    setTimeout(() => process.exit(0), 1000);
+  }
+  }
+
+  async function runHelloFreshCleanup() {
+
   log.info("[HF-Clean] Starting cleanup of HelloFresh recipes...");
   try {
     const result = await db
@@ -52,6 +94,8 @@ async function main() {
   const args = process.argv.slice(2);
   const isSyncMode = args.includes("hf-sync") || process.env.HF_SYNC_TRIGGER === "true";
   const isCleanMode = args.includes("hf-clean");
+  const isFileImportMode = args.includes("hf-import-file");
+
   // CLI DISPATCHER - MUST BE BEFORE ANY SERVER LOGIC
   if (isSyncMode) {
     const idx = args.indexOf("hf-sync");
@@ -60,10 +104,23 @@ async function main() {
     await runHelloFreshSync(country, locale);
     return;
   }
+
   if (isCleanMode) {
     await runHelloFreshCleanup();
     return;
   }
+
+  if (isFileImportMode) {
+    const idx = args.indexOf("hf-import-file");
+    const filePath = args[idx + 1];
+    if (!filePath) {
+      log.error("[HF-Import] No file path provided. Usage: hf-import-file <path>");
+      process.exit(1);
+    }
+    await runHelloFreshFileImport(filePath);
+    return;
+  }
+
   // NORMAL SERVER STARTUP
   const config = initializeServerConfig();
   log.info("-".repeat(50));
