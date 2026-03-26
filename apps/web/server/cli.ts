@@ -71,26 +71,44 @@ async function runHelloFreshFileImport(filePath: string) {
   }
 }
 
+import { accounts, users, verification } from "@norish/db/schema/auth";
+...
 async function runResetPassword(email?: string, newPassword?: string) {
   if (!email || !newPassword) {
     log.error("[CLI-Reset] Usage: reset-password <email> <new-password>");
     process.exit(1);
   }
 
-  log.info({ email }, "[CLI-Reset] Attempting to reset password...");
+  log.info({ email }, "[CLI-Reset] Attempting to force reset password...");
 
   try {
+    // 1. Find user to ensure they exist
     const user = await getAdapterUserByEmail(email);
     if (!user) throw new Error("User not found with that email.");
 
-    await (auth.api as any).changePassword({
-      body: { newPassword, userId: user.id },
-      headers: new Headers({ "trusted-call": "true" })
+    // 2. Create a manual verification token
+    const token = uuidv4();
+    const expiresAt = new Date(Date.now() + 1000 * 60 * 10); // 10 minutes
+
+    await db.insert(verification).values({
+      id: uuidv4(),
+      identifier: email,
+      value: token,
+      expiresAt: expiresAt,
     });
 
-    log.info("[CLI-Reset] Password successfully updated for user.");
+    // 3. Use the token to reset the password via Better Auth API
+    // This method only requires the token and newPassword, bypassing "currentPassword" checks
+    await auth.api.resetPassword({
+      body: {
+        newPassword,
+        token: token,
+      }
+    });
+
+    log.info("[CLI-Reset] Password successfully forced-reset for user.");
   } catch (error: any) {
-    log.error({ err: error.message }, "[CLI-Reset] Failed to reset password.");
+    log.error({ err: error.message }, "[CLI-Reset] Failed to force reset password.");
     process.exit(1);
   } finally {
     setTimeout(() => process.exit(0), 1000);
