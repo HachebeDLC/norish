@@ -5,6 +5,7 @@ import { sql } from "drizzle-orm";
 import { recipes } from "@norish/db/schema";
 import { db } from "@norish/db/drizzle";
 import { createRecipeWithRefs } from "@norish/db/repositories/recipes";
+import { getAdapterUserByEmail } from "@norish/db/repositories/users";
 import { v4 as uuidv4 } from "uuid";
 import { mapHelloFreshToNorish } from "@norish/api/services/hellofresh/mapper";
 import fs from "fs";
@@ -68,8 +69,6 @@ async function runHelloFreshFileImport(filePath: string) {
   }
 }
 
-import { getAdapterUserByEmail } from "@norish/db/repositories/users";
-...
 async function runResetPassword(email?: string, newPassword?: string) {
   if (!email || !newPassword) {
     log.error("[CLI-Reset] Usage: reset-password <email> <new-password>");
@@ -87,15 +86,11 @@ async function runResetPassword(email?: string, newPassword?: string) {
     }
 
     // 2. Use Better Auth's internal administrative API to set the password
-    // Better Auth 1.1+ uses changePassword or updatePassword under api
-    // For admin resets, we can use the admin plugin if enabled, 
-    // but here we'll use the server-side bypass
     await (auth.api as any).changePassword({
       body: {
         newPassword,
         userId: user.id,
       },
-      // Passing internal headers to indicate this is a trusted server call
       headers: new Headers({ "trusted-call": "true" })
     });
 
