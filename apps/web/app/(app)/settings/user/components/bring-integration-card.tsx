@@ -1,14 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ArrowPathIcon, CheckCircleIcon, XCircleIcon } from "@heroicons/react/24/outline";
 import {
   Button,
   Card,
   CardBody,
   CardHeader,
   Input,
-  Link,
   addToast,
 } from "@heroui/react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -25,7 +23,7 @@ export default function BringIntegrationCard() {
 
   // Query tokens to check existing config
   const listQueryOptions = trpc.siteAuthTokens.list.queryOptions();
-  const { data: tokens = [], isLoading } = useQuery(listQueryOptions);
+  const { data: tokens = [] } = useQuery(listQueryOptions);
 
   // Mutations
   const createMutation = useMutation(trpc.siteAuthTokens.create.mutationOptions());
@@ -36,7 +34,9 @@ export default function BringIntegrationCard() {
   const [password, setPassword] = useState("");
   const [listUuid, setListUuid] = useState("");
   const [isSaving, setIsSaving] = useState(false);
-  const [isTesting, setIsTesting] = useState(false);
+
+  const LINKED_PLACEHOLDER_EMAIL = "account-linked@bring.com";
+  const LINKED_PLACEHOLDER_UUID = "linked-list-uuid";
 
   // Sync local state when tokens are loaded
   useEffect(() => {
@@ -45,11 +45,8 @@ export default function BringIntegrationCard() {
       const emailToken = bringTokens.find(t => t.name === "email");
       const listUuidToken = bringTokens.find(t => t.name === "list_uuid");
       
-      if (emailToken) setEmail(emailToken.name === "email" ? "******" : ""); // Values are encrypted, can't show them easily if they aren't returned decrypted
-      // Note: siteAuthTokens.list returns safe tokens (no values). 
-      // We'll just show placeholders if they exist.
-      if (emailToken) setEmail("account-linked@bring.com"); 
-      if (listUuidToken) setListUuid("linked-list-uuid");
+      if (emailToken) setEmail(LINKED_PLACEHOLDER_EMAIL); 
+      if (listUuidToken) setListUuid(LINKED_PLACEHOLDER_UUID);
     }
   }, [tokens]);
 
@@ -62,25 +59,25 @@ export default function BringIntegrationCard() {
         await removeMutation.mutateAsync({ id: token.id });
       }
 
-      // 2. Create new ones
-      if (email) {
+      // 2. Create new ones (only if user provided new values or kept placeholders)
+      if (email && email !== LINKED_PLACEHOLDER_EMAIL) {
         await createMutation.mutateAsync({ domain: "getbring.com", name: "email", value: email, type: "header" });
       }
       if (password) {
         await createMutation.mutateAsync({ domain: "getbring.com", name: "password", value: password, type: "header" });
       }
-      if (listUuid) {
+      if (listUuid && listUuid !== LINKED_PLACEHOLDER_UUID) {
         await createMutation.mutateAsync({ domain: "getbring.com", name: "list_uuid", value: listUuid, type: "header" });
       }
 
       await queryClient.invalidateQueries(listQueryOptions);
       addToast({
-        title: "Bring! configuration saved",
+        title: t("saveSuccess"),
         color: "success",
       });
     } catch (error) {
       showSafeErrorToast({
-        title: "Failed to save Bring! config",
+        title: t("saveError"),
         error,
         context: "bring-integration:save",
       });
@@ -94,40 +91,36 @@ export default function BringIntegrationCard() {
       <CardHeader>
         <div className="flex flex-col">
           <h2 className="text-lg font-semibold flex items-center gap-2">
-            Bring! Shopping List
+            {t("title")}
           </h2>
           <p className="text-small text-default-500">
-            Link your Bring! account to sync your Norish groceries automatically.
+            {t("description")}
           </p>
         </div>
       </CardHeader>
       <CardBody className="gap-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Input
-            label="Email"
-            placeholder="your-bring-email@example.com"
-            value={email === "account-linked@bring.com" ? "" : email}
+            label={t("emailLabel")}
+            placeholder={t("emailPlaceholder")}
+            value={email === LINKED_PLACEHOLDER_EMAIL ? "" : email}
             onValueChange={setEmail}
-            description={email === "account-linked@bring.com" ? "Account is currently linked" : ""}
+            description={email === LINKED_PLACEHOLDER_EMAIL ? t("emailLinked") : ""}
           />
           <Input
-            label="Password"
+            label={t("passwordLabel")}
             type="password"
-            placeholder="••••••••"
+            placeholder={t("passwordPlaceholder")}
             value={password}
             onValueChange={setPassword}
           />
           <Input
             className="md:col-span-2"
-            label="List UUID"
-            placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-            value={listUuid === "linked-list-uuid" ? "" : listUuid}
+            label={t("listUuidLabel")}
+            placeholder={t("listUuidPlaceholder")}
+            value={listUuid === LINKED_PLACEHOLDER_UUID ? "" : listUuid}
             onValueChange={setListUuid}
-            description={
-              <span>
-                You can find your List UUID in the Bring! web app URL or mobile app share settings.
-              </span>
-            }
+            description={t("listUuidHint")}
           />
         </div>
 

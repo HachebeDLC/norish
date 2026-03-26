@@ -90,6 +90,20 @@
         "confirmButton": "Eliminar token"
       }
     },
+    "bring": {
+      "title": "Lista de la compra Bring!",
+      "description": "Vincula tu cuenta de Bring! para sincronizar automáticamente tus productos de Norish.",
+      "emailLabel": "Correo electrónico",
+      "emailPlaceholder": "tu-correo-bring@ejemplo.com",
+      "emailLinked": "Cuenta vinculada actualmente",
+      "passwordLabel": "Contraseña",
+      "passwordPlaceholder": "••••••••",
+      "listUuidLabel": "UUID de la lista",
+      "listUuidPlaceholder": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+      "listUuidHint": "Puedes encontrar el UUID de tu lista en la URL de la web de Bring! o en los ajustes de compartir de la app móvil.",
+      "saveSuccess": "Configuración de Bring! guardada",
+      "saveError": "Error al guardar la configuración de Bring!"
+    },
     "dangerZone": {
       "title": "Zona peligrosa",
       "description": "Una vez que elimines tu cuenta, no hay vuelta atrás. Asegúrate antes de continuar.",

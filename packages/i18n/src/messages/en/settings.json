@@ -90,6 +90,20 @@
         "confirmButton": "Delete Token"
       }
     },
+    "bring": {
+      "title": "Bring! Shopping List",
+      "description": "Link your Bring! account to sync your Norish groceries automatically.",
+      "emailLabel": "Email",
+      "emailPlaceholder": "your-bring-email@example.com",
+      "emailLinked": "Account is currently linked",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "••••••••",
+      "listUuidLabel": "List UUID",
+      "listUuidPlaceholder": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+      "listUuidHint": "You can find your List UUID in the Bring! web app URL or mobile app share settings.",
+      "saveSuccess": "Bring! configuration saved",
+      "saveError": "Failed to save Bring! config"
+    },
     "dangerZone": {
       "title": "Danger Zone",
       "description": "Once you delete your account, there is no going back. Please be certain.",
