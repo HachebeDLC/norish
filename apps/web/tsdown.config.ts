@@ -1,7 +1,7 @@
 import { defineConfig } from "tsdown";
 
 export default defineConfig({
-  entry: ["server/index.ts"],
+  entry: ["server/index.ts", "server/cli.ts"],
   format: ["esm"],
   outDir: "../../dist-server",
   tsconfig: "./tsconfig.server.json",

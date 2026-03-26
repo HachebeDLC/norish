@@ -1,0 +1,88 @@
+import { redactUrl, serverLogger as log } from "@norish/shared-server/logger";
+import { initializeServerConfig } from "@norish/config/env-config-server";
+import { addHelloFreshSyncJob, getQueues, initializeQueues, closeAllQueues } from "@norish/queue";
+import { sql } from "drizzle-orm";
+import { recipes } from "@norish/db/schema";
+import { db } from "@norish/db/drizzle";
+import { createRecipeWithRefs } from "@norish/db/repositories/recipes";
+import { v4 as uuidv4 } from "uuid";
+import { mapHelloFreshToNorish } from "@norish/api/services/hellofresh/mapper";
+import fs from "fs";
+
+async function runHelloFreshSync(country?: string, locale?: string) {
+  const countryCode = country || "ES";
+  const hfLocale = locale || "es-ES";
+  log.info(`[CLI-Sync] Starting synchronization for ${countryCode} (${hfLocale})...`);
+  initializeQueues();
+  const queues = getQueues();
+  try {
+    const result = await addHelloFreshSyncJob(queues.hellofreshSync, { countryCode, locale: hfLocale });
+    log.info(`[CLI-Sync] Job status: ${result.status}. Job ID: ${result.job?.id || "N/A"}`);
+  } catch (error) {
+    log.error({ err: error }, "[CLI-Sync] Failed to enqueue job");
+    process.exit(1);
+  } finally {
+    await closeAllQueues();
+    setTimeout(() => process.exit(0), 1000);
+  }
+}
+
+async function runHelloFreshCleanup() {
+  log.info("[CLI-Clean] Starting cleanup of HelloFresh recipes...");
+  try {
+    const result = await db.delete(recipes).where(sql`${recipes.url} LIKE '%hellofresh.%'`);
+    log.info({ count: result.rowCount }, "[CLI-Clean] Successfully removed HelloFresh recipes.");
+  } catch (error) {
+    log.error({ err: error }, "[CLI-Clean] Failed to cleanup recipes");
+    process.exit(1);
+  } finally {
+    setTimeout(() => process.exit(0), 1000);
+  }
+}
+
+async function runHelloFreshFileImport(filePath: string) {
+  log.info({ filePath }, "[CLI-Import] Starting import from local file...");
+  try {
+    if (!fs.existsSync(filePath)) throw new Error(`File not found: ${filePath}`);
+    const json = JSON.parse(fs.readFileSync(filePath, "utf-8"));
+    const items = json.items || [];
+    log.info({ count: items.length }, `[CLI-Import] Processing ${items.length} recipes.`);
+    let imported = 0;
+    for (const hfRecipe of items) {
+      try {
+        const norishRecipe = mapHelloFreshToNorish(hfRecipe);
+        await createRecipeWithRefs(uuidv4(), null, norishRecipe);
+        imported++;
+        if (imported % 10 === 0) log.info(`[CLI-Import] Progress: ${imported}/${items.length}`);
+      } catch (error) {
+        log.error({ hfId: hfRecipe.id, err: error }, "[CLI-Import] Failed to import recipe");
+      }
+    }
+    log.info({ imported }, "[CLI-Import] Completed.");
+  } catch (error) {
+    log.error({ err: error }, "[CLI-Import] Fatal error");
+    process.exit(1);
+  } finally {
+    setTimeout(() => process.exit(0), 1000);
+  }
+}
+
+async function main() {
+  initializeServerConfig(); // Required for DB connection
+  const args = process.argv.slice(2);
+  const command = args[0];
+
+  log.info({ command, args }, "[CLI] Executing maintenance command");
+
+  if (command === "hf-sync") return await runHelloFreshSync(args[1], args[2]);
+  if (command === "hf-clean") return await runHelloFreshCleanup();
+  if (command === "hf-import-file") return await runHelloFreshFileImport(args[1]);
+
+  log.error("Unknown command. Available: hf-sync, hf-clean, hf-import-file");
+  process.exit(1);
+}
+
+main().catch(err => {
+  console.error("[CLI] Fatal error:", err);
+  process.exit(1);
+});
