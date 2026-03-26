@@ -57,7 +57,7 @@ export function mapHelloFreshToNorish(hf: HelloFreshRecipeItem): FullRecipeInser
   return {
     name: hf.name,
     description: description,
-    url: hf.cardLink || `https://www.hellofresh.es/recipes/${hf.id}`,
+    url: hf.canonical || hf.cardLink || `https://www.hellofresh.es/recipes/${hf.id}`,
     image: hf.imagePath ? `https://img.hellofresh.com/f_auto,fl_lossy,q_auto/hellofresh_s3${hf.imagePath}` : undefined,
     servings: cleanNumber(hf.yields?.[0]?.yields) || 2,
     prepMinutes: parseIsoDuration(hf.prepTime),
