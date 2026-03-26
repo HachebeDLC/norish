@@ -1,7 +1,10 @@
 import { defineConfig } from "tsdown";
 
 export default defineConfig({
-  entry: ["server/index.ts", "server/hellofresh-sync.ts"],
+  entry: {
+    index: "server/index.ts",
+    "hellofresh-sync": "bin/hellofresh-sync.ts",
+  },
   format: ["esm"],
   outDir: "../../dist-server",
   tsconfig: "./tsconfig.server.json",
