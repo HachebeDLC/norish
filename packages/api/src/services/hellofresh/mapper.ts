@@ -27,9 +27,13 @@ function cleanNumber(value: any): number | null {
 
 /**
  * Maps HelloFresh recipe item to Norish FullRecipeInsertDTO.
+ * Recognized format from HelloFresh API v2.
  */
 export function mapHelloFreshToNorish(hf: HelloFreshRecipeItem): FullRecipeInsertDTO {
-  const description = hf.descriptionMarkdown || hf.headline || "";
+  // Use canonicalLink for external URL to prevent 404s
+  const recipeUrl = (hf as any).canonicalLink || hf.cardLink || `https://www.hellofresh.es/recipes/${hf.id}`;
+  
+  const description = hf.descriptionMarkdown || hf.description || hf.headline || "";
   
   const tags = hf.tags?.map((t: any) => ({ name: t.name })) || [];
   
@@ -47,12 +51,12 @@ export function mapHelloFreshToNorish(hf: HelloFreshRecipeItem): FullRecipeInser
     hf.allergens.forEach((a: any) => tags.push({ name: `Allergen: ${a.name}` }));
   }
 
-  // Optimize Image URL
+  // Optimize Image URL (High Resolution with Fill)
   const mainImage = hf.imagePath 
     ? `https://img.hellofresh.com/c_fill,f_auto,fl_lossy,q_auto,w_1200/hellofresh_s3${hf.imagePath}` 
-    : undefined;
+    : (hf as any).imageLink;
 
-  // Extract quantities from yields
+  // Extract quantities from yields (default to 2 people or first available)
   const defaultYield = hf.yields?.[0];
   const ingredientQuantities = new Map<string, { amount: number | null, unit: string }>();
   
@@ -68,7 +72,7 @@ export function mapHelloFreshToNorish(hf: HelloFreshRecipeItem): FullRecipeInser
   return {
     name: hf.name,
     description: description,
-    url: hf.canonical || hf.cardLink || `https://www.hellofresh.es/recipes/${hf.id}`,
+    url: recipeUrl,
     image: mainImage,
     servings: cleanNumber(defaultYield?.yields) || 2,
     prepMinutes: parseIsoDuration(hf.prepTime),
@@ -82,6 +86,7 @@ export function mapHelloFreshToNorish(hf: HelloFreshRecipeItem): FullRecipeInser
     tags: tags,
     
     recipeIngredients: hf.ingredients?.map((i: any, index: number) => {
+      // API v2 mapping: ingredients in yields use the 'id' of the ingredient
       const q = ingredientQuantities.get(i.id);
       return {
         ingredientName: i.name,
@@ -98,7 +103,8 @@ export function mapHelloFreshToNorish(hf: HelloFreshRecipeItem): FullRecipeInser
       step: s.instructionsMarkdown || s.instructions || "",
       systemUsed: "metric",
       images: s.images?.map((img: any, imgIdx: number) => ({
-        image: img.path ? `https://img.hellofresh.com/f_auto,fl_lossy,q_auto,w_800/hellofresh_s3${img.path}` : "",
+        // Use link if available, otherwise construct from path
+        image: img.link || (img.path ? `https://img.hellofresh.com/f_auto,fl_lossy,q_auto,w_800/hellofresh_s3${img.path}` : ""),
         order: imgIdx
       })) || []
     })) || [],
