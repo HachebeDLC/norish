@@ -78,19 +78,11 @@ async function runResetPassword(email?: string, newPassword?: string) {
   log.info({ email }, "[CLI-Reset] Attempting to reset password...");
 
   try {
-    // 1. Find user using Norish's official repository (handles HMAC/Encryption)
     const user = await getAdapterUserByEmail(email);
+    if (!user) throw new Error("User not found with that email.");
 
-    if (!user) {
-      throw new Error("User not found with that email.");
-    }
-
-    // 2. Use Better Auth's internal administrative API to set the password
     await (auth.api as any).changePassword({
-      body: {
-        newPassword,
-        userId: user.id,
-      },
+      body: { newPassword, userId: user.id },
       headers: new Headers({ "trusted-call": "true" })
     });
 
@@ -103,8 +95,32 @@ async function runResetPassword(email?: string, newPassword?: string) {
   }
 }
 
+async function runDatabaseTruncate() {
+  log.info("[CLI-Truncate] Starting database truncate (preserving recipes)...");
+
+  const tables = [
+    "session", "account", "apikey", "verification", "planned_item", "grocery",
+    "recurring_grocery", "ingredient_store_preference", "store", "user_caldav_config",
+    "caldav_sync_status", "api_log", "recipe_favorite", "recipe_rating",
+    "user_allergy", "site_auth_token", "household_user", "user", "household",
+  ];
+
+  try {
+    for (const table of tables) {
+      log.debug({ table }, `Truncating ${table}...`);
+      await db.execute(sql.raw(`TRUNCATE TABLE "${table}" RESTART IDENTITY CASCADE`));
+    }
+    log.info("[CLI-Truncate] Database truncated successfully. Recipes preserved.");
+  } catch (error: any) {
+    log.error({ err: error.message }, "[CLI-Truncate] Failed to truncate database.");
+    process.exit(1);
+  } finally {
+    setTimeout(() => process.exit(0), 1000);
+  }
+}
+
 async function main() {
-  initializeServerConfig(); // Required for DB connection
+  initializeServerConfig();
   const args = process.argv.slice(2);
   const command = args[0];
 
@@ -114,8 +130,9 @@ async function main() {
   if (command === "hf-clean") return await runHelloFreshCleanup();
   if (command === "hf-import-file") return await runHelloFreshFileImport(args[1]);
   if (command === "reset-password") return await runResetPassword(args[1], args[2]);
+  if (command === "db-truncate") return await runDatabaseTruncate();
 
-  log.error("Unknown command. Available: hf-sync, hf-clean, hf-import-file, reset-password");
+  log.error("Unknown command. Available: hf-sync, hf-clean, hf-import-file, reset-password, db-truncate");
   process.exit(1);
 }
 
