@@ -37,6 +37,8 @@ export { createAutoCategorizationQueue } from "./auto-categorization/queue";
 export { createAllergyDetectionQueue } from "./allergy-detection/queue";
 export { createCaldavSyncQueue } from "./caldav-sync/queue";
 export { createScheduledTasksQueue } from "./scheduled-tasks/queue";
+export { createHelloFreshSyncQueue } from "./hellofresh-sync/queue";
+export { createBringSyncQueue } from "./bring-sync/queue";
 
 // Producers
 export { addImportJob } from "./recipe-import/producer";
@@ -50,6 +52,8 @@ export {
 } from "./auto-categorization/producer";
 export { addAllergyDetectionJob, isAllergyDetectionJobActive } from "./allergy-detection/producer";
 export { addCaldavSyncJob } from "./caldav-sync/producer";
+export { addHelloFreshSyncJob } from "./hellofresh-sync/producer";
+export { addBringSyncJob } from "./bring-sync/producer";
 export { initializeScheduledJobs } from "./scheduled-tasks/producer";
 
 // Workers
@@ -71,6 +75,8 @@ export {
 } from "./allergy-detection/worker";
 export { startCaldavSyncWorker, stopCaldavSyncWorker } from "./caldav-sync/worker";
 export { startScheduledTasksWorker, stopScheduledTasksWorker } from "./scheduled-tasks/worker";
+export { startHelloFreshSyncWorker, stopHelloFreshSyncWorker } from "./hellofresh-sync/worker";
+export { startBringSyncWorker, stopBringSyncWorker } from "./bring-sync/worker";
 
 // Types from @norish/shared/contracts
 export type {
@@ -90,6 +96,8 @@ export type {
   AddAllergyDetectionJobResult,
   CaldavSyncJobData,
   CaldavSyncOperation,
+  HelloFreshSyncJobData,
+  BringSyncJobData,
 } from "@norish/queue/contracts/job-types";
 
 // Types from scheduled-tasks

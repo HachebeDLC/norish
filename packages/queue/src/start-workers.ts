@@ -11,6 +11,14 @@ import { startAllergyDetectionWorker } from "@norish/queue/allergy-detection/wor
 import { startAutoCategorizationWorker } from "@norish/queue/auto-categorization/worker";
 import { startAutoTaggingWorker } from "@norish/queue/auto-tagging/worker";
 import { startCaldavSyncWorker } from "@norish/queue/caldav-sync/worker";
+import {
+  startHelloFreshSyncWorker,
+  stopHelloFreshSyncWorker,
+} from "@norish/queue/hellofresh-sync/worker";
+import {
+  startBringSyncWorker,
+  stopBringSyncWorker,
+} from "@norish/queue/bring-sync/worker";
 import { startImageImportWorker } from "@norish/queue/image-import/worker";
 import { stopAllLazyWorkers } from "@norish/queue/lazy-worker-manager";
 import { startNutritionEstimationWorker } from "@norish/queue/nutrition-estimation/worker";
@@ -54,6 +62,8 @@ export async function startWorkers(): Promise<void> {
     startAutoCategorizationWorker(),
     startAllergyDetectionWorker(),
     startCaldavSyncWorker(),
+    startHelloFreshSyncWorker(),
+    startBringSyncWorker(),
   ]);
 
   // Scheduled tasks (always-running for cron jobs)
@@ -72,6 +82,8 @@ export async function stopWorkers(): Promise<void> {
   // Stop all lazy workers (recipe-import, image-import, paste-import,
   // nutrition-estimation, auto-tagging, allergy-detection, caldav-sync)
   await stopAllLazyWorkers();
+  await stopHelloFreshSyncWorker();
+  await stopBringSyncWorker();
 
   // Stop the always-running scheduled tasks worker
   await stopScheduledTasksWorker();

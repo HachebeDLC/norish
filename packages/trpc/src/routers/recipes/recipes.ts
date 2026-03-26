@@ -30,6 +30,7 @@ import {
   addAllergyDetectionJob,
   addAutoCategorizationJob,
   addAutoTaggingJob,
+  addHelloFreshSyncJob,
   addImageImportJob,
   addImportJob,
   addNutritionEstimationJob,
@@ -882,6 +883,35 @@ const triggerAllergyDetection = authedProcedure
     return { success: true };
   });
 
+const hellofreshSync = authedProcedure
+  .input(
+    z.object({
+      countryCode: z.string().min(2).max(5).default("ES"),
+      locale: z.string().min(2).max(10).default("es-ES"),
+    })
+  )
+  .mutation(async ({ ctx, input }) => {
+    const { countryCode, locale } = input;
+    const queues = getQueues();
+
+    const result = await addHelloFreshSyncJob(queues.hellofreshSync, {
+      countryCode,
+      locale,
+      userId: ctx.user.id,
+      householdKey: ctx.householdKey,
+      householdUserIds: ctx.householdUserIds,
+    });
+
+    if (result.status === "duplicate") {
+      throw new TRPCError({
+        code: "CONFLICT",
+        message: "HelloFresh sync is already in progress for this country and locale",
+      });
+    }
+
+    return { success: true, jobId: result.job.id };
+  });
+
 export const recipesProcedures = router({
   list,
   get,
@@ -896,6 +926,7 @@ export const recipesProcedures = router({
   triggerAutoTag,
   triggerAutoCategorize,
   triggerAllergyDetection,
+  hellofreshSync,
   reserveId,
   autocomplete,
   updateCategories,

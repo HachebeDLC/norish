@@ -29,6 +29,8 @@ import {
   normalizeIngredientName,
   upsertIngredientStorePreference,
 } from "@norish/db/repositories/stores";
+import { addBringSyncJob } from "@norish/queue";
+import { getQueues } from "@norish/queue/registry";
 import { trpcLogger as log } from "@norish/shared-server/logger";
 import { parseIngredientWithDefaults } from "@norish/shared/lib/helpers";
 
@@ -607,6 +609,32 @@ const deleteDone = authedProcedure
     return { success: true };
   });
 
+const syncToBring = authedProcedure
+  .input(
+    z.object({
+      itemIds: z.array(z.string()).optional(),
+    })
+  )
+  .mutation(async ({ ctx, input }) => {
+    const { itemIds } = input;
+    const queues = getQueues();
+
+    const result = await addBringSyncJob(queues.bringSync, {
+      userId: ctx.user.id,
+      householdKey: ctx.householdKey,
+      itemIds,
+    });
+
+    if (result.status === "duplicate") {
+      throw new TRPCError({
+        code: "CONFLICT",
+        message: "Bring! sync is already in progress",
+      });
+    }
+
+    return { success: true, jobId: result.job.id };
+  });
+
 export const groceriesProcedures = router({
   list,
   create,
@@ -617,4 +645,5 @@ export const groceriesProcedures = router({
   reorderInStore,
   markAllDone,
   deleteDone,
+  syncToBring,
 });

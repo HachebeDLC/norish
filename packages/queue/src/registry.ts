@@ -14,6 +14,8 @@ import type {
   AutoCategorizationJobData,
   AutoTaggingJobData,
   CaldavSyncJobData,
+  HelloFreshSyncJobData,
+  BringSyncJobData,
   ImageImportJobData,
   NutritionEstimationJobData,
   PasteImportJobData,
@@ -26,7 +28,9 @@ import { createLogger } from "@norish/shared-server/logger";
 import { createAllergyDetectionQueue } from "./allergy-detection/queue";
 import { createAutoCategorizationQueue } from "./auto-categorization/queue";
 import { createAutoTaggingQueue } from "./auto-tagging/queue";
+import { createBringSyncQueue } from "./bring-sync/queue";
 import { createCaldavSyncQueue } from "./caldav-sync/queue";
+import { createHelloFreshSyncQueue } from "./hellofresh-sync/queue";
 import { createImageImportQueue } from "./image-import/queue";
 import { createNutritionEstimationQueue } from "./nutrition-estimation/queue";
 import { createPasteImportQueue } from "./paste-import/queue";
@@ -53,6 +57,8 @@ interface QueueRegistry {
   allergyDetection: Queue<AllergyDetectionJobData>;
   caldavSync: Queue<CaldavSyncJobData>;
   scheduledTasks: Queue<ScheduledTaskJobData>;
+  hellofreshSync: Queue<HelloFreshSyncJobData>;
+  bringSync: Queue<BringSyncJobData>;
 }
 
 let registry: QueueRegistry | null = globalForRegistry.queueRegistry ?? null;
@@ -80,6 +86,8 @@ export function initializeQueues(): QueueRegistry {
     allergyDetection: createAllergyDetectionQueue(),
     caldavSync: createCaldavSyncQueue(),
     scheduledTasks: createScheduledTasksQueue(),
+    hellofreshSync: createHelloFreshSyncQueue(),
+    bringSync: createBringSyncQueue(),
   };
 
   globalForRegistry.queueRegistry = registry;
@@ -123,6 +131,8 @@ export async function closeAllQueues(): Promise<void> {
     registry.allergyDetection.close(),
     registry.caldavSync.close(),
     registry.scheduledTasks.close(),
+    registry.hellofreshSync.close(),
+    registry.bringSync.close(),
   ]);
 
   registry = null;

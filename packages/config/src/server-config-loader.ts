@@ -13,6 +13,7 @@
 import type {
   AIConfig,
   AutoTaggingMode,
+  BringConfig,
   ContentIndicatorsConfig,
   I18nLocaleConfig,
   PromptsConfig,
@@ -219,6 +220,14 @@ export async function getAutoTaggingMode(): Promise<AutoTaggingMode> {
   }
 
   return aiConfig.autoTaggingMode ?? "disabled";
+}
+
+/**
+ * Get Bring! configuration
+ * @param includeSecrets - If true, includes decrypted credentials
+ */
+export async function getBringConfig(includeSecrets = false): Promise<BringConfig | null> {
+  return await getConfig<BringConfig>(ServerConfigKeys.BRING_CONFIG, includeSecrets);
 }
 
 // ============================================================================

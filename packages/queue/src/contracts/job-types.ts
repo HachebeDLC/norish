@@ -103,3 +103,18 @@ export type AddAllergyDetectionJobResult =
   | { status: "queued"; job: Job<AllergyDetectionJobData> }
   | { status: "duplicate"; existingJobId: string }
   | { status: "skipped"; reason: "disabled" | "no_allergies" };
+
+export interface HelloFreshSyncJobData {
+  countryCode: string;
+  locale: string;
+  userId: string;
+  householdKey: string;
+  householdUserIds: string[] | null;
+}
+
+export interface BringSyncJobData {
+  userId: string;
+  householdKey: string;
+  // If provided, syncs only these items. If not, syncs all pending.
+  itemIds?: string[]; 
+}
