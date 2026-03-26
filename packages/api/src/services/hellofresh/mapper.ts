@@ -27,7 +27,6 @@ function cleanNumber(value: any): number | null {
 
 /**
  * Maps HelloFresh recipe item to Norish FullRecipeInsertDTO.
- * Now with full support for quantities, units, and optimized images.
  */
 export function mapHelloFreshToNorish(hf: HelloFreshRecipeItem): FullRecipeInsertDTO {
   const description = hf.descriptionMarkdown || hf.headline || "";
@@ -44,13 +43,16 @@ export function mapHelloFreshToNorish(hf: HelloFreshRecipeItem): FullRecipeInser
   if (hf.utensils) {
     hf.utensils.forEach((u: any) => tags.push({ name: `Utensil: ${u.name}` }));
   }
+  if (hf.allergens) {
+    hf.allergens.forEach((a: any) => tags.push({ name: `Allergen: ${a.name}` }));
+  }
 
-  // Optimize Image URL (using fill to make sure they look good in Norish cards)
+  // Optimize Image URL
   const mainImage = hf.imagePath 
     ? `https://img.hellofresh.com/c_fill,f_auto,fl_lossy,q_auto,w_1200/hellofresh_s3${hf.imagePath}` 
     : undefined;
 
-  // Extract quantities from yields (defaulting to the first yield, usually 2 people)
+  // Extract quantities from yields
   const defaultYield = hf.yields?.[0];
   const ingredientQuantities = new Map<string, { amount: number | null, unit: string }>();
   
@@ -95,8 +97,9 @@ export function mapHelloFreshToNorish(hf: HelloFreshRecipeItem): FullRecipeInser
       order: s.index,
       step: s.instructionsMarkdown || s.instructions || "",
       systemUsed: "metric",
-      images: s.images?.map((img: any) => ({
-        path: img.path ? `https://img.hellofresh.com/f_auto,fl_lossy,q_auto,w_800/hellofresh_s3${img.path}` : ""
+      images: s.images?.map((img: any, imgIdx: number) => ({
+        image: img.path ? `https://img.hellofresh.com/f_auto,fl_lossy,q_auto,w_800/hellofresh_s3${img.path}` : "",
+        order: imgIdx
       })) || []
     })) || [],
     
