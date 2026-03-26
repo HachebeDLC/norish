@@ -40,14 +40,6 @@ async function main() {
   log.info("CalDAV sync service initialized");
   log.info("-".repeat(50));
 
-  if (process.env.ENABLE_WORKERS !== "false") {
-    await startWorkers();
-    log.info("-".repeat(50));
-  } else {
-    log.info("Background workers disabled (ENABLE_WORKERS=false)");
-    log.info("-".repeat(50));
-  }
-
   const { server, hostname, port } = await createServer();
 
   registerShutdownHandlers(server);
