@@ -52,6 +52,9 @@ async function processSyncJob(job: Job<HelloFreshSyncJobData>): Promise<void> {
       try {
         log.debug({ hfId: hfSummary.id }, "Fetching full recipe details...");
         
+        // Update progress to keep job alive and inform BullMQ
+        await job.updateProgress(totalImported % 100);
+
         // 1. Fetch detailed recipe data
         const hfFullRecipe = await hfClient.getRecipe(countryCode, locale, hfSummary.id);
         
@@ -121,6 +124,7 @@ export async function startHelloFreshSyncWorker(): Promise<void> {
       ...baseWorkerOptions,
       stalledInterval: STALLED_INTERVAL[QUEUE_NAMES.HELLOFRESH_SYNC],
       concurrency: WORKER_CONCURRENCY[QUEUE_NAMES.HELLOFRESH_SYNC],
+      lockDuration: 300_000, // 5 minutes - prevent stalling during heavy processing/downloads
     }
   );
 }
