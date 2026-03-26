@@ -38,4 +38,8 @@ export default defineConfig([
     ...commonConfig,
     entry: { cli: "server/cli.ts" },
   },
+  {
+    ...commonConfig,
+    entry: { worker: "server/worker.ts" },
+  },
 ]);
