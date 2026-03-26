@@ -8,10 +8,42 @@ import { seedServerConfig } from "@norish/api/startup/seed-config";
 import { registerShutdownHandlers } from "@norish/api/startup/shutdown";
 import { initializeVideoProcessing } from "@norish/api/startup/video-processing";
 import { initializeServerConfig, SERVER_CONFIG } from "@norish/config/env-config-server";
+import { addHelloFreshSyncJob, getQueues, initializeQueues, closeAllQueues } from "@norish/queue";
 import { startWorkers } from "@norish/queue/start-workers";
+
+async function runHelloFreshSync() {
+  const countryCode = process.env.HF_COUNTRY || "ES";
+  const locale = process.env.HF_LOCALE || "es-ES";
+
+  log.info(`[HF-Sync] Mode detected. Starting sync for ${countryCode} (${locale})...`);
+
+  initializeQueues();
+  const queues = getQueues();
+
+  try {
+    const result = await addHelloFreshSyncJob(queues.hellofreshSync, {
+      countryCode,
+      locale,
+    });
+    log.info(`[HF-Sync] Job status: ${result.status}. Job ID: ${result.job?.id || 'N/A'}`);
+  } catch (error) {
+    log.error({ err: error }, "[HF-Sync] Failed to enqueue job");
+    process.exit(1);
+  } finally {
+    await closeAllQueues();
+    // Allow time for Redis connection to close
+    setTimeout(() => process.exit(0), 1000);
+  }
+}
 
 async function main() {
   const config = initializeServerConfig();
+
+  // Mode check: if hf-sync, don't start the server
+  if (process.env.NORISH_MODE === "hf-sync") {
+    await runHelloFreshSync();
+    return;
+  }
 
   log.info("-".repeat(50));
   log.info("Server configuration loaded:");
