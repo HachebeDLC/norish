@@ -49,19 +49,26 @@ async function processSyncJob(job: Job<HelloFreshSyncJobData>): Promise<void> {
 
     log.info({ count: items.length }, `Processing ${items.length} recipes...`);
 
-    for (const hfRecipe of items) {
+    for (const hfSummary of items) {
       try {
-        const norishRecipe = mapHelloFreshToNorish(hfRecipe);
+        log.debug({ hfId: hfSummary.id }, "Fetching full recipe details...");
+        
+        // 1. Fetch detailed recipe data (includes ingredients, steps, nutrition)
+        const hfFullRecipe = await hfClient.getRecipe(countryCode, locale, hfSummary.id);
+        
+        // 2. Map to Norish format
+        const norishRecipe = mapHelloFreshToNorish(hfFullRecipe);
         const recipeId = uuidv4();
         
-        // If userId is null, recipe is global/orphaned
+        // 3. Save to database (orphaned/global if userId is null)
+        // Note: createRecipeWithRefs handles duplicate checks by URL internally
         await createRecipeWithRefs(recipeId, userId || null, norishRecipe);
         
         totalImported++;
-        // Small delay to avoid hammering the DB/API
+        // 500ms delay between recipes to avoid rate limiting and DB stress
         await new Promise(resolve => setTimeout(resolve, 500));
       } catch (error: any) {
-        log.error({ err: error, hfId: hfRecipe.id }, "Error importing HelloFresh recipe");
+        log.error({ err: error, hfId: hfSummary.id }, "Error importing HelloFresh recipe");
       }
     }
 
