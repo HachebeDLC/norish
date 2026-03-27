@@ -1,7 +1,7 @@
 import { redactUrl, serverLogger as log } from "@norish/shared-server/logger";
 import { initializeServerConfig } from "@norish/config/env-config-server";
 import { addHelloFreshSyncJob, getQueues, initializeQueues, closeAllQueues } from "@norish/queue";
-import { sql } from "drizzle-orm";
+import { sql, eq } from "drizzle-orm";
 import { recipes } from "@norish/db/schema";
 import { db } from "@norish/db/drizzle";
 import { createRecipeWithRefs } from "@norish/db/repositories/recipes";
@@ -12,7 +12,7 @@ import { v4 as uuidv4 } from "uuid";
 import { mapHelloFreshToNorish } from "@norish/api/services/hellofresh/mapper";
 import fs from "fs";
 import { auth } from "@norish/auth";
-import { verification } from "@norish/db/schema/auth";
+import { users, verification } from "@norish/db/schema/auth";
 
 async function runHelloFreshSync(country?: string, locale?: string) {
   const countryCode = country || "ES";
@@ -77,30 +77,18 @@ async function runResetPassword(email?: string, newPassword?: string) {
     log.error("[CLI-Reset] Usage: reset-password <email> <new-password>");
     process.exit(1);
   }
-
   log.info({ email }, "[CLI-Reset] Attempting to force reset password...");
-
   try {
     const user = await getAdapterUserByEmail(email);
     if (!user) throw new Error("User not found with that email.");
-
     const token = uuidv4();
-    const expiresAt = new Date(Date.now() + 1000 * 60 * 10); // 10 minutes
-
     await db.insert(verification).values({
       id: uuidv4(),
       identifier: email,
       value: token,
-      expiresAt: expiresAt,
+      expiresAt: new Date(Date.now() + 1000 * 60 * 10),
     });
-
-    await auth.api.resetPassword({
-      body: {
-        newPassword,
-        token: token,
-      }
-    });
-
+    await auth.api.resetPassword({ body: { newPassword, token } });
     log.info("[CLI-Reset] Password successfully forced-reset for user.");
   } catch (error: any) {
     log.error({ err: error.message }, "[CLI-Reset] Failed to force reset password.");
@@ -112,17 +100,14 @@ async function runResetPassword(email?: string, newPassword?: string) {
 
 async function runDatabaseTruncate() {
   log.info("[CLI-Truncate] Starting database truncate (preserving recipes)...");
-
   const tables = [
     "session", "account", "apikey", "verification", "planned_item", "grocery",
     "recurring_grocery", "ingredient_store_preference", "store", "user_caldav_config",
     "caldav_sync_status", "api_log", "recipe_favorite", "recipe_rating",
     "user_allergy", "site_auth_token", "household_user", "user", "household",
   ];
-
   try {
     for (const table of tables) {
-      log.debug({ table }, `Truncating ${table}...`);
       await db.execute(sql.raw(`TRUNCATE TABLE "${table}" RESTART IDENTITY CASCADE`));
     }
     log.info("[CLI-Truncate] Database truncated successfully. Recipes preserved.");
@@ -156,7 +141,6 @@ async function runMakeAdmin(email?: string) {
   try {
     const user = await getAdapterUserByEmail(email);
     if (!user) throw new Error("User not found with that email.");
-
     await setUserAsOwnerAndAdmin(user.id);
     log.info(`[CLI-Admin] User ${email} is now a Server Owner and Admin.`);
   } catch (error: any) {
@@ -167,13 +151,30 @@ async function runMakeAdmin(email?: string) {
   }
 }
 
+async function runDeleteUser(email?: string) {
+  if (!email) {
+    log.error("[CLI-User] Usage: delete-user <email>");
+    process.exit(1);
+  }
+  log.info({ email }, "[CLI-User] Attempting to delete user and all associated data...");
+  try {
+    const user = await getAdapterUserByEmail(email);
+    if (!user) throw new Error("User not found with that email.");
+    await db.delete(users).where(eq(users.id, user.id));
+    log.info(`[CLI-User] User ${email} and all linked data have been deleted.`);
+  } catch (error: any) {
+    log.error({ err: error.message }, "[CLI-User] Failed to delete user.");
+    process.exit(1);
+  } finally {
+    setTimeout(() => process.exit(0), 1000);
+  }
+}
+
 async function main() {
   initializeServerConfig();
   const args = process.argv.slice(2);
   const command = args[0];
-
   log.info({ command, args: command === "reset-password" ? [args[1], "****"] : args }, "[CLI] Executing maintenance command");
-
   if (command === "hf-sync") return await runHelloFreshSync(args[1], args[2]);
   if (command === "hf-clean") return await runHelloFreshCleanup();
   if (command === "hf-import-file") return await runHelloFreshFileImport(args[1]);
@@ -181,8 +182,8 @@ async function main() {
   if (command === "db-truncate") return await runDatabaseTruncate();
   if (command === "enable-registration") return await runEnableRegistration();
   if (command === "make-admin") return await runMakeAdmin(args[1]);
-
-  log.error("Unknown command. Available: hf-sync, hf-clean, hf-import-file, reset-password, db-truncate, enable-registration, make-admin");
+  if (command === "delete-user") return await runDeleteUser(args[1]);
+  log.error("Unknown command. Available: hf-sync, hf-clean, hf-import-file, reset-password, db-truncate, enable-registration, make-admin, delete-user");
   process.exit(1);
 }
 
