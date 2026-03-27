@@ -5,7 +5,6 @@ import { calendarRouter } from "./routers/calendar";
 import { configRouter } from "./routers/config";
 import { favoritesRouter } from "./routers/favorites";
 import { groceriesRouter } from "./routers/groceries";
-import { hellofreshRouter } from "./routers/hellofresh";
 import { householdsAppRouter } from "./routers/households";
 import { permissionsRouter } from "./routers/permissions";
 import { ratingsRouter } from "./routers/ratings";
@@ -19,7 +18,6 @@ export const appRouter = router({
   groceries: groceriesRouter,
   calendar: calendarRouter,
   recipes: recipesRouter,
-  hellofresh: hellofreshRouter,
   permissions: permissionsRouter,
   admin: adminRouter,
   households: householdsAppRouter,

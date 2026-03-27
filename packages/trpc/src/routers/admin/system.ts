@@ -7,6 +7,10 @@ import {
   ServerConfigKeys,
 } from "@norish/config/zod/server-config";
 import { setConfig } from "@norish/db/repositories/server-config";
+import { db, recipes } from "@norish/db";
+import { sql } from "drizzle-orm";
+import { addHelloFreshSyncJob } from "@norish/queue";
+import { getQueues } from "@norish/queue/registry";
 import { getDefaultConfigValue } from "@norish/shared-server/config/defaults";
 import { trpcLogger as log } from "@norish/shared-server/logger";
 
@@ -63,8 +67,41 @@ const restartServer = adminProcedure.mutation(async ({ ctx }) => {
   return { success: true };
 });
 
+const hellofreshSync = adminProcedure
+  .input(
+    z.object({
+      countryCode: z.string().min(2).max(5).default("ES"),
+      locale: z.string().min(2).max(10).default("es-ES"),
+    })
+  )
+  .mutation(async ({ ctx, input }) => {
+    const { countryCode, locale } = input;
+    const queues = getQueues();
+
+    const result = await addHelloFreshSyncJob(queues.hellofreshSync, {
+      countryCode,
+      locale,
+      userId: ctx.user.id,
+      householdKey: "",
+    });
+
+    if (result.status === "duplicate") {
+      throw new Error("HelloFresh sync is already in progress");
+    }
+
+    return { success: true, jobId: result.job.id };
+  });
+
+const hellofreshCleanup = adminProcedure.mutation(async () => {
+  const result = await db.delete(recipes).where(sql`${recipes.url} LIKE '%hellofresh.%'`);
+
+  return { success: true, count: result.rowCount };
+});
+
 export const systemProcedures = router({
   updateSchedulerMonths,
   restoreDefault,
   restartServer,
+  hellofreshSync,
+  hellofreshCleanup,
 });
