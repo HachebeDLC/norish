@@ -477,6 +477,27 @@
         "error": "Failed to start categorization"
       }
     },
+    "hellofreshSync": {
+      "title": "HelloFresh Sync",
+      "description": "Bulk import recipes from HelloFresh catalogs by country.",
+      "countryLabel": "Country Code",
+      "countryPlaceholder": "e.g. ES, DE, US",
+      "localeLabel": "Locale",
+      "localePlaceholder": "e.g. es-ES, de-DE",
+      "syncButton": "Start Full Sync",
+      "cleanupButton": "Remove All HF Recipes",
+      "cleanupConfirm": "Are you sure you want to delete all HelloFresh recipes from the database? This cannot be undone.",
+      "cleanupSuccess": "Successfully removed {count} recipes",
+      "syncStarted": "Sychronization job queued",
+      "status": {
+        "idle": "Ready",
+        "fetching": "Fetching page {page}...",
+        "processing": "Processing: {current} of {total} recipes",
+        "skipped": "Up to date ({total} recipes)",
+        "completed": "Sync finished: {count} recipes imported",
+        "failed": "Sync failed: {reason}"
+      }
+    },
     "aiConfig": {
       "enableAI": "Enable AI Features",
       "enableAIDescription": "Use AI to extract recipes from unstructured content",

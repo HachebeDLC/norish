@@ -912,6 +912,14 @@ const hellofreshSync = authedProcedure
     return { success: true, jobId: result.job.id };
   });
 
+const hellofreshCleanup = adminProcedure.mutation(async () => {
+  const result = await db
+    .delete(recipes)
+    .where(sql`${recipes.url} LIKE '%hellofresh.%'`);
+
+  return { success: true, count: result.rowCount };
+});
+
 export const recipesProcedures = router({
   list,
   get,
@@ -927,6 +935,7 @@ export const recipesProcedures = router({
   triggerAutoCategorize,
   triggerAllergyDetection,
   hellofreshSync,
+  hellofreshCleanup,
   reserveId,
   autocomplete,
   updateCategories,

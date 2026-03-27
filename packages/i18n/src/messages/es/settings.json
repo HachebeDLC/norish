@@ -474,10 +474,32 @@
         "button": "Categorizar todas las recetas",
         "queued": "{count, plural, =0 {No hay recetas para categorizar} one {# receta en cola} other {# recetas en cola}}",
         "success": "Categorización iniciada",
-        "error": "No se pudo iniciar la categorización"
-      }
-    },
-    "aiConfig": {
+        "error": "Error al iniciar la categorización"
+        }
+        },
+        "hellofreshSync": {
+        "title": "Sincronización HelloFresh",
+        "description": "Importación masiva de recetas desde los catálogos de HelloFresh por país.",
+        "countryLabel": "Código de país",
+        "countryPlaceholder": "p. ej., ES, DE, US",
+        "localeLabel": "Idioma (Locale)",
+        "localePlaceholder": "p. ej., es-ES, de-DE",
+        "syncButton": "Iniciar sincronización total",
+        "cleanupButton": "Eliminar todas las recetas de HF",
+        "cleanupConfirm": "¿Estás seguro de que quieres eliminar todas las recetas de HelloFresh de la base de datos? Esta acción no se puede deshacer.",
+        "cleanupSuccess": "Se han eliminado correctamente {count} recetas",
+        "syncStarted": "Trabajo de sincronización encolado",
+        "status": {
+        "idle": "Listo",
+        "fetching": "Descargando página {page}...",
+        "processing": "Procesando: {current} de {total} recetas",
+        "skipped": "Al día ({total} recetas)",
+        "completed": "Sincronización finalizada: {count} recetas importadas",
+        "failed": "Sincronización fallida: {reason}"
+        }
+        },
+        "aiConfig": {
+
       "enableAI": "Activar funciones de IA",
       "enableAIDescription": "Usa IA para extraer recetas de contenido no estructurado",
       "configureWarning": "Configura los ajustes del proveedor de IA abajo para habilitar las funciones de IA.",

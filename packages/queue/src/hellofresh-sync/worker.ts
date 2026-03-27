@@ -9,7 +9,8 @@ import { downloadImage } from "@norish/shared-server/media/storage";
 import { getBullClient } from "@norish/queue/redis/bullmq";
 import { db } from "@norish/db/drizzle";
 import { recipes, steps, recipeIngredients } from "@norish/db/schema";
-import { and, eq, isNull } from "drizzle-orm";
+import { and, eq, isNull, sql } from "drizzle-orm";
+import { recipeEmitter } from "@norish/trpc/routers/recipes/emitter";
 import {
   baseWorkerOptions,
   QUEUE_NAMES,
@@ -23,6 +24,7 @@ const hfClient = new HelloFreshClient();
 
 async function processSyncJob(job: Job<HelloFreshSyncJobData>): Promise<void> {
   const { countryCode, locale, userId } = job.data;
+  const isGlobal = !userId;
 
   log.info(
     { jobId: job.id, countryCode, locale, userId: userId || "global" },
@@ -33,7 +35,60 @@ async function processSyncJob(job: Job<HelloFreshSyncJobData>): Promise<void> {
   const take = 50;
   let totalImported = 0;
 
+  // 1. Initial request to get total count
+  let firstResponse;
+  try {
+    firstResponse = await hfClient.getRecipes(countryCode, locale, 1, 1);
+  } catch (error: any) {
+    log.error({ err: error }, "Failed to get initial HelloFresh count");
+    recipeEmitter.emit("hellofreshSyncCompleted", {
+      totalImported: 0,
+      status: "failed",
+      reason: "Could not connect to HelloFresh API"
+    });
+    throw error;
+  }
+
+  const hfTotal = firstResponse.total || 0;
+  
+  // 2. Get local count of HelloFresh recipes for this context
+  const localResult = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(recipes)
+    .where(
+      and(
+        sql`${recipes.url} LIKE '%hellofresh.%'`,
+        isGlobal ? isNull(recipes.userId) : eq(recipes.userId, userId)
+      )
+    );
+  
+  const localTotal = Number(localResult[0]?.count || 0);
+
+  log.info({ hfTotal, localTotal }, "Count check");
+
+  if (hfTotal > 0 && localTotal >= hfTotal) {
+    log.info("Local count matches or exceeds HelloFresh count. Skipping sync.");
+    recipeEmitter.emit("hellofreshSyncProgress", {
+      total: hfTotal,
+      current: localTotal,
+      page: 0,
+      status: "skipped"
+    });
+    recipeEmitter.emit("hellofreshSyncCompleted", {
+      totalImported: 0,
+      status: "success"
+    });
+    return;
+  }
+
   while (true) {
+    recipeEmitter.emit("hellofreshSyncProgress", {
+      total: hfTotal,
+      current: totalImported,
+      page,
+      status: "fetching"
+    });
+
     log.info({ countryCode, locale, page }, `Fetching page ${page} from HelloFresh...`);
     
     let response;
@@ -41,6 +96,11 @@ async function processSyncJob(job: Job<HelloFreshSyncJobData>): Promise<void> {
       response = await hfClient.getRecipes(countryCode, locale, page, take);
     } catch (error: any) {
       log.error({ err: error, page }, "Error fetching HelloFresh recipes");
+      recipeEmitter.emit("hellofreshSyncCompleted", {
+        totalImported,
+        status: "failed",
+        reason: `Error at page ${page}`
+      });
       throw error;
     }
 
@@ -52,12 +112,19 @@ async function processSyncJob(job: Job<HelloFreshSyncJobData>): Promise<void> {
 
     log.info({ count: items.length }, `Processing ${items.length} recipes...`);
 
+    recipeEmitter.emit("hellofreshSyncProgress", {
+      total: hfTotal,
+      current: totalImported,
+      page,
+      status: "processing"
+    });
+
     for (const hfSummary of items) {
       try {
         log.debug({ hfId: hfSummary.id }, "Fetching full recipe details...");
         
         // Update progress to keep job alive and inform BullMQ
-        await job.updateProgress(totalImported % 100);
+        await job.updateProgress(Math.round((totalImported / hfTotal) * 100));
 
         // 1. Fetch detailed recipe data
         const hfFullRecipe = await hfClient.getRecipe(countryCode, locale, hfSummary.id);
@@ -80,9 +147,7 @@ async function processSyncJob(job: Job<HelloFreshSyncJobData>): Promise<void> {
         const recipeId = existing?.id || uuidv4();
 
         // If recipe exists, we must clear old steps and ingredients to allow clean re-import
-        // (Norish repositories use onConflictDoNothing for these, so we need to clear them first)
         if (existing) {
-          log.debug({ recipeId }, "Clearing existing steps and ingredients for clean sync...");
           await db.delete(steps).where(eq(steps.recipeId, recipeId));
           await db.delete(recipeIngredients).where(eq(recipeIngredients.recipeId, recipeId));
         }
@@ -90,11 +155,10 @@ async function processSyncJob(job: Job<HelloFreshSyncJobData>): Promise<void> {
         // 4. Download Images Locally
         if (norishRecipe.image) {
           try {
-            log.debug({ recipeId }, "Downloading main image...");
             const localPath = await downloadImage(norishRecipe.image, recipeId);
             norishRecipe.image = localPath;
           } catch (imgErr) {
-            log.warn({ err: imgErr, url: norishRecipe.image }, "Failed to download main image, keeping remote URL");
+            log.warn({ err: imgErr, url: norishRecipe.image }, "Failed to download main image");
           }
         }
 
@@ -119,6 +183,14 @@ async function processSyncJob(job: Job<HelloFreshSyncJobData>): Promise<void> {
         await createRecipeWithRefs(recipeId, targetUserId, norishRecipe);
         
         totalImported++;
+
+        recipeEmitter.emit("hellofreshSyncProgress", {
+          total: hfTotal,
+          current: totalImported,
+          page,
+          status: "processing"
+        });
+
         // 500ms delay between recipes
         await new Promise(resolve => setTimeout(resolve, 500));
       } catch (error: any) {
@@ -134,6 +206,11 @@ async function processSyncJob(job: Job<HelloFreshSyncJobData>): Promise<void> {
     page++;
     await new Promise(resolve => setTimeout(resolve, 3000));
   }
+
+  recipeEmitter.emit("hellofreshSyncCompleted", {
+    totalImported,
+    status: "success"
+  });
 
   log.info({ countryCode, locale, totalImported }, "HelloFresh sync job finished");
 }

@@ -4,6 +4,7 @@
 import { AdminSettingsProvider, useAdminSettingsContext } from "../context";
 
 import AIProcessingCard from "./ai-processing-card";
+import HellofreshSyncCard from "./hellofresh-sync-card";
 import { AuthProvidersCard } from "./auth-providers";
 import ContentDetectionCard from "./content-detection-card";
 import GeneralCard from "./general-card";
@@ -26,6 +27,7 @@ function AdminSettingsContent() {
       <AuthProvidersCard />
       <ContentDetectionCard />
       <AIProcessingCard />
+      <HellofreshSyncCard />
       <SystemCard />
     </div>
   );

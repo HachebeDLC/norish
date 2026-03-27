@@ -50,4 +50,17 @@ export type RecipeSubscriptionEvents = {
   // Archive import events (user-scoped, emitted via recipe emitter)
   archiveProgress: ArchiveProgressPayload;
   archiveCompleted: ArchiveCompletedPayload;
+
+  // HelloFresh sync events
+  hellofreshSyncProgress: {
+    total: number;
+    current: number;
+    page: number;
+    status: "fetching" | "processing" | "skipped";
+  };
+  hellofreshSyncCompleted: {
+    totalImported: number;
+    status: "success" | "cancelled" | "failed";
+    reason?: string;
+  };
 };
