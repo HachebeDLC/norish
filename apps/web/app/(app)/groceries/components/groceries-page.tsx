@@ -19,6 +19,7 @@ import {
   DropdownTrigger,
   Switch,
 } from "@heroui/react";
+import { generateBringWebUrl, type BringItem } from "@norish/shared";
 import { useTranslations } from "next-intl";
 
 
@@ -67,6 +68,21 @@ export function GroceriesPage() {
   } = useGroceriesUIContext();
 
   const t = useTranslations("groceries.page");
+
+  const handleSendToBring = () => {
+    // Only send items that are not done
+    const items: BringItem[] = groceries
+      .filter((g) => !g.isDone)
+      .map((g) => ({
+        itemId: g.name,
+        spec: g.amount ? `${g.amount} ${g.unit || ""}`.trim() : (g.unit || ""),
+      }));
+
+    if (items.length === 0) return;
+
+    const url = generateBringWebUrl(items);
+    window.open(url, "_blank", "noopener,noreferrer");
+  };
 
   const handleToggle = (id: string, isDone: boolean) => {
     toggleGroceries([id], isDone);
@@ -143,6 +159,14 @@ export function GroceriesPage() {
               onPress={() => setAddGroceryPanelOpen(true)}
             >
               {t("addItem")}
+            </Button>
+            <Button
+              className="hidden font-medium md:flex bg-[#da1a2c] text-white"
+              radius="full"
+              size="md"
+              onPress={handleSendToBring}
+            >
+              Send to Bring!
             </Button>
             {/* Settings dropdown with view mode and store management */}
             <Dropdown>

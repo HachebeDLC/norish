@@ -26,6 +26,7 @@ import { useRecipeContextRequired } from "./context";
 
 import ActionsMenu from "@/app/(app)/recipes/[id]/components/actions-menu";
 import AddToGroceries from "@/app/(app)/recipes/[id]/components/add-to-groceries-button";
+import BringButton from "@/app/(app)/recipes/[id]/components/bring-button";
 import AmountDisplayToggle from "@/app/(app)/recipes/[id]/components/amount-display-toggle";
 import IngredientsList from "@/app/(app)/recipes/[id]/components/ingredient-list";
 import ServingsControl from "@/app/(app)/recipes/[id]/components/servings-control";
@@ -267,6 +268,9 @@ export default function RecipePageMobile() {
 
             {/* Add to groceries button - below ingredients */}
             <AddToGroceries recipeId={recipe.id} />
+            <div className="mt-2">
+              <BringButton />
+            </div>
           </div>
 
           <Divider />

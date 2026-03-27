@@ -31,6 +31,7 @@ import ServingsControl from "./components/servings-control";
 import { useRecipeContextRequired } from "./context";
 import ActionsMenu from "@/app/(app)/recipes/[id]/components/actions-menu";
 import AddToGroceries from "@/app/(app)/recipes/[id]/components/add-to-groceries-button";
+import BringButton from "@/app/(app)/recipes/[id]/components/bring-button";
 import IngredientsList from "@/app/(app)/recipes/[id]/components/ingredient-list";
 import StepsList from "@/app/(app)/recipes/[id]/components/steps-list";
 import SystemConvertMenu from "@/app/(app)/recipes/[id]/components/system-convert-menu";
@@ -205,6 +206,9 @@ export default function RecipePageDesktop() {
 
               {/* Add to groceries button */}
               <AddToGroceries recipeId={recipe.id} />
+              <div className="mt-2">
+                <BringButton />
+              </div>
             </CardBody>
           </Card>
 
