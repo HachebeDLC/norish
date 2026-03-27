@@ -8,6 +8,7 @@ import { seedServerConfig } from "@norish/api/startup/seed-config";
 import { registerShutdownHandlers } from "@norish/api/startup/shutdown";
 import { initializeVideoProcessing } from "@norish/api/startup/video-processing";
 import { initializeServerConfig, SERVER_CONFIG } from "@norish/config/env-config-server";
+import { initializeQueues } from "@norish/queue";
 import { startWorkers } from "@norish/queue/start-workers";
 
 async function main() {
@@ -38,6 +39,11 @@ async function main() {
 
   initCaldavSync();
   log.info("CalDAV sync service initialized");
+  log.info("-".repeat(50));
+
+  // Initialize queue registry (required to produce jobs or query status)
+  initializeQueues();
+  log.info("Queue registry initialized");
   log.info("-".repeat(50));
 
   const { server, hostname, port } = await createServer();
