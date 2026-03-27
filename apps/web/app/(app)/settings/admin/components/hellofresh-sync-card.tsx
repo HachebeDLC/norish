@@ -40,29 +40,32 @@ export default function HellofreshSyncCard() {
   const cleanupMutation = trpc.recipes.hellofreshCleanup.useMutation();
 
   // Subscription for progress
-  trpc.recipes.onEvent.useSubscription(undefined, {
-    onData(event) {
-      if (event.type === "hellofreshSyncProgress") {
-        setSyncStatus({
-          status: event.data.status,
-          current: event.data.current,
-          total: event.data.total,
-          page: event.data.page,
-        });
-      } else if (event.type === "hellofreshSyncCompleted") {
-        setSyncStatus((prev) => ({
-          ...prev,
-          status: event.data.status === "success" ? "completed" : "failed",
-          current: event.data.totalImported,
-          reason: event.data.reason,
-        }));
+  trpc.recipes.onHellofreshSyncProgress.useSubscription(undefined, {
+    onData(data) {
+      setSyncStatus({
+        status: data.status,
+        current: data.current,
+        total: data.total,
+        page: data.page,
+      });
+    },
+  });
 
-        if (event.data.status === "success") {
-          addToast({
-            title: t("status.completed", { count: event.data.totalImported }),
-            color: "success",
-          });
-        }
+  // Subscription for completion
+  trpc.recipes.onHellofreshSyncCompleted.useSubscription(undefined, {
+    onData(data) {
+      setSyncStatus((prev) => ({
+        ...prev,
+        status: data.status === "success" ? "completed" : "failed",
+        current: data.totalImported,
+        reason: data.reason,
+      }));
+
+      if (data.status === "success") {
+        addToast({
+          title: t("status.completed", { count: data.totalImported }),
+          color: "success",
+        });
       }
     },
   });
