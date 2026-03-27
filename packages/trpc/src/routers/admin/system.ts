@@ -81,8 +81,7 @@ const hellofreshSync = adminProcedure
     const result = await addHelloFreshSyncJob(queues.hellofreshSync, {
       countryCode,
       locale,
-      userId: ctx.user.id,
-      householdKey: "",
+      // No userId means the recipes will be global/orphaned
     });
 
     if (result.status === "duplicate") {
