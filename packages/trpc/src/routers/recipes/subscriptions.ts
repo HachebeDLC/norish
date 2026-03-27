@@ -60,6 +60,18 @@ const onRecipeBatchCreated = createPolicyAwareSubscription(
   "recipe batch created"
 );
 
+const onHellofreshSyncProgress = createPolicyAwareSubscription(
+  recipeEmitter,
+  "hellofreshSyncProgress",
+  "hellofresh sync progress"
+);
+
+const onHellofreshSyncCompleted = createPolicyAwareSubscription(
+  recipeEmitter,
+  "hellofreshSyncCompleted",
+  "hellofresh sync completed"
+);
+
 export const recipesSubscriptions = router({
   onCreated,
   onImportStarted,
@@ -77,4 +89,6 @@ export const recipesSubscriptions = router({
   onAllergyDetectionCompleted,
   onProcessingToast,
   onRecipeBatchCreated,
+  onHellofreshSyncProgress,
+  onHellofreshSyncCompleted,
 });

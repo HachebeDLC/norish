@@ -12,6 +12,7 @@ import {
   addToast,
 } from "@heroui/react";
 import { useTranslations } from "next-intl";
+import { useSubscription } from "@trpc/tanstack-react-query";
 
 import { useTRPC } from "@/app/providers/trpc-provider";
 import { showSafeErrorToast } from "@/lib/ui/safe-error-toast";
@@ -35,40 +36,46 @@ export default function HellofreshSyncCard() {
     page: 0,
   });
 
-  // tRPC Mutations using the OFFICIAL Admin namespace
+  // tRPC Mutations
   const syncMutation = trpc.admin.hellofreshSync.useMutation();
   const cleanupMutation = trpc.admin.hellofreshCleanup.useMutation();
 
-  // Subscription for progress (keeping them in recipes as they are recipe-related events)
-  trpc.recipes.onHellofreshSyncProgress.useSubscription(undefined, {
-    onData(data) {
-      setSyncStatus({
-        status: data.status,
-        current: data.current,
-        total: data.total,
-        page: data.page,
-      });
-    },
-  });
-
-  // Subscription for completion
-  trpc.recipes.onHellofreshSyncCompleted.useSubscription(undefined, {
-    onData(data) {
-      setSyncStatus((prev) => ({
-        ...prev,
-        status: data.status === "success" ? "completed" : "failed",
-        current: data.totalImported,
-        reason: data.reason,
-      }));
-
-      if (data.status === "success") {
-        addToast({
-          title: t("status.completed", { count: data.totalImported }),
-          color: "success",
+  // Progress Subscription using the official Norish pattern
+  useSubscription(
+    trpc.recipes.onHellofreshSyncProgress.subscriptionOptions(undefined),
+    {
+      onData(data) {
+        setSyncStatus({
+          status: data.status,
+          current: data.current,
+          total: data.total,
+          page: data.page,
         });
-      }
-    },
-  });
+      },
+    }
+  );
+
+  // Completion Subscription
+  useSubscription(
+    trpc.recipes.onHellofreshSyncCompleted.subscriptionOptions(undefined),
+    {
+      onData(data) {
+        setSyncStatus((prev) => ({
+          ...prev,
+          status: data.status === "success" ? "completed" : "failed",
+          current: data.totalImported,
+          reason: data.reason,
+        }));
+
+        if (data.status === "success") {
+          addToast({
+            title: t("status.completed", { count: data.totalImported }),
+            color: "success",
+          });
+        }
+      },
+    }
+  );
 
   const handleSync = async () => {
     try {
