@@ -13,6 +13,7 @@ import {
 } from "@heroui/react";
 import { useTranslations } from "next-intl";
 import { useSubscription } from "@trpc/tanstack-react-query";
+import { useMutation } from "@tanstack/react-query";
 
 import { useTRPC } from "@/app/providers/trpc-provider";
 import { showSafeErrorToast } from "@/lib/ui/safe-error-toast";
@@ -36,9 +37,9 @@ export default function HellofreshSyncCard() {
     page: 0,
   });
 
-  // tRPC Mutations
-  const syncMutation = trpc.admin.hellofreshSync.useMutation();
-  const cleanupMutation = trpc.admin.hellofreshCleanup.useMutation();
+  // tRPC Mutations using the correct TanStack + mutationOptions pattern
+  const syncMutation = useMutation(trpc.admin.hellofreshSync.mutationOptions());
+  const cleanupMutation = useMutation(trpc.admin.hellofreshCleanup.mutationOptions());
 
   // Progress Subscription using the official Norish pattern
   useSubscription(
