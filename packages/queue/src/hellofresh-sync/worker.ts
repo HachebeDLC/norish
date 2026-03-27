@@ -41,7 +41,7 @@ async function processSyncJob(job: Job<HelloFreshSyncJobData>): Promise<void> {
     firstResponse = await hfClient.getRecipes(countryCode, locale, 1, 1);
   } catch (error: any) {
     log.error({ err: error }, "Failed to get initial HelloFresh count");
-    recipeEmitter.emit("hellofreshSyncCompleted", {
+    await recipeEmitter.broadcast("hellofreshSyncCompleted", {
       totalImported: 0,
       status: "failed",
       reason: "Could not connect to HelloFresh API"
@@ -68,13 +68,13 @@ async function processSyncJob(job: Job<HelloFreshSyncJobData>): Promise<void> {
 
   if (hfTotal > 0 && localTotal >= hfTotal) {
     log.info("Local count matches or exceeds HelloFresh count. Skipping sync.");
-    recipeEmitter.emit("hellofreshSyncProgress", {
+    await recipeEmitter.broadcast("hellofreshSyncProgress", {
       total: hfTotal,
       current: localTotal,
       page: 0,
       status: "skipped"
     });
-    recipeEmitter.emit("hellofreshSyncCompleted", {
+    await recipeEmitter.broadcast("hellofreshSyncCompleted", {
       totalImported: 0,
       status: "success"
     });
@@ -82,7 +82,7 @@ async function processSyncJob(job: Job<HelloFreshSyncJobData>): Promise<void> {
   }
 
   while (true) {
-    recipeEmitter.emit("hellofreshSyncProgress", {
+    await recipeEmitter.broadcast("hellofreshSyncProgress", {
       total: hfTotal,
       current: totalImported,
       page,
@@ -96,7 +96,7 @@ async function processSyncJob(job: Job<HelloFreshSyncJobData>): Promise<void> {
       response = await hfClient.getRecipes(countryCode, locale, page, take);
     } catch (error: any) {
       log.error({ err: error, page }, "Error fetching HelloFresh recipes");
-      recipeEmitter.emit("hellofreshSyncCompleted", {
+      await recipeEmitter.broadcast("hellofreshSyncCompleted", {
         totalImported,
         status: "failed",
         reason: `Error at page ${page}`
@@ -112,7 +112,7 @@ async function processSyncJob(job: Job<HelloFreshSyncJobData>): Promise<void> {
 
     log.info({ count: items.length }, `Processing ${items.length} recipes...`);
 
-    recipeEmitter.emit("hellofreshSyncProgress", {
+    await recipeEmitter.broadcast("hellofreshSyncProgress", {
       total: hfTotal,
       current: totalImported,
       page,
@@ -184,7 +184,7 @@ async function processSyncJob(job: Job<HelloFreshSyncJobData>): Promise<void> {
         
         totalImported++;
 
-        recipeEmitter.emit("hellofreshSyncProgress", {
+        await recipeEmitter.broadcast("hellofreshSyncProgress", {
           total: hfTotal,
           current: totalImported,
           page,
@@ -207,7 +207,7 @@ async function processSyncJob(job: Job<HelloFreshSyncJobData>): Promise<void> {
     await new Promise(resolve => setTimeout(resolve, 3000));
   }
 
-  recipeEmitter.emit("hellofreshSyncCompleted", {
+  await recipeEmitter.broadcast("hellofreshSyncCompleted", {
     totalImported,
     status: "success"
   });
