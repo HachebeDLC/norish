@@ -2,26 +2,29 @@
 # Usage:
 #   1. Build the image first:  docker build -f docker/Dockerfile -t norish:local .
 #   2. Run everything:         docker compose -f docker/docker-compose.test.yml up
-#   3. Open:                   http://localhost:3000
+#   3. Open:                   http://localhost:8453
 #   4. Stop:                   docker compose -f docker/docker-compose.test.yml down
 
 services:
   norish:
     image: norish:local
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
     container_name: norish-app-test
     restart: unless-stopped
     ports:
-      - "3000:3000"
+      - "8453:8453"
     volumes:
       - norish_uploads:/app/uploads
     environment:
       DATABASE_URL: postgres://postgres:norish@db:5432/norish
       REDIS_URL: redis://redis:6379
-      AUTH_URL: http://localhost:3000
-      # Include host LAN IP for mobile app access
-      TRUSTED_ORIGINS: http://localhost:3000,http://192.168.*.*:3000,exp://,exp://**,exp://192.168.*.*:*/**
+      AUTH_URL: https://norish.artemisa-hb.cloud/
+      PORT: 8453
+      TRUSTED_ORIGINS: https://norish.artemisa-hb.cloud/, http://localhost:8453,http://192.168.*.*:8453,exp://,exp://**,exp://192.168.*.*:*/**
       MASTER_KEY: X4fjLgB8egCPwlOQW8iC3JGXAtUIMUOGmk/y29n+YSw=
-      CHROME_WS_ENDPOINT: ws://chrome-headless:3000
+      CHROME_WS_ENDPOINT: ws://chrome-headless:8453
       PASSWORD_AUTH_ENABLED: "true"
       LOG_LEVEL: debug
     depends_on:
@@ -56,13 +59,12 @@ services:
     container_name: norish-ofelia-test
     depends_on:
       - norish
-    command: daemon
+    command: daemon --docker
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     labels:
       ofelia.job-exec.hellofresh-sync.schedule: "@weekly"
-      # This MUST match the service name or container_name
-      ofelia.job-exec.hellofresh-sync.container: "norish-app-test"
+      ofelia.job-exec.hellofresh-sync.container: "norish-worker-test"
       ofelia.job-exec.hellofresh-sync.command: "node /app/dist-server/cli.mjs hf-sync ES es-ES"
 
   # PostgreSQL Database
@@ -95,7 +97,7 @@ services:
       - "--disable-dev-shm-usage"
       - "--disable-features=dbus"
       - "--remote-debugging-address=0.0.0.0"
-      - "--remote-debugging-port=3000"
+      - "--remote-debugging-port=8453"
       - "--headless"
 
   # Redis for real-time events
