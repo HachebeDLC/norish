@@ -35,12 +35,12 @@ export default function HellofreshSyncCard() {
     page: 0,
   });
 
-  // tRPC Mutations
-  const syncMutation = trpc.recipes.hellofreshSync.useMutation();
-  const cleanupMutation = trpc.recipes.hellofreshCleanup.useMutation();
+  // tRPC Mutations using the NEW dedicated router
+  const syncMutation = trpc.hellofresh.sync.useMutation();
+  const cleanupMutation = trpc.hellofresh.cleanup.useMutation();
 
   // Subscription for progress
-  trpc.recipes.onHellofreshSyncProgress.useSubscription(undefined, {
+  trpc.hellofresh.onSyncProgress.useSubscription(undefined, {
     onData(data) {
       setSyncStatus({
         status: data.status,
@@ -52,7 +52,7 @@ export default function HellofreshSyncCard() {
   });
 
   // Subscription for completion
-  trpc.recipes.onHellofreshSyncCompleted.useSubscription(undefined, {
+  trpc.hellofresh.onSyncCompleted.useSubscription(undefined, {
     onData(data) {
       setSyncStatus((prev) => ({
         ...prev,
