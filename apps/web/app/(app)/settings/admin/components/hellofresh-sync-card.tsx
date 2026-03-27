@@ -11,7 +11,6 @@ import {
   Progress,
   addToast,
 } from "@heroui/react";
-import { useMutation } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 
 import { useTRPC } from "@/app/providers/trpc-provider";
@@ -37,8 +36,8 @@ export default function HellofreshSyncCard() {
   });
 
   // tRPC Mutations
-  const syncMutation = useMutation(trpc.recipes.hellofreshSync.mutationOptions());
-  const cleanupMutation = useMutation(trpc.recipes.hellofreshCleanup.mutationOptions());
+  const syncMutation = trpc.recipes.hellofreshSync.useMutation();
+  const cleanupMutation = trpc.recipes.hellofreshCleanup.useMutation();
 
   // Subscription for progress
   trpc.recipes.onEvent.useSubscription(undefined, {
