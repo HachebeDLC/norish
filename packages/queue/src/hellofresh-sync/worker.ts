@@ -8,7 +8,7 @@ import { createRecipeWithRefs } from "@norish/db/repositories/recipes";
 import { downloadImage } from "@norish/shared-server/media/storage";
 import { getBullClient } from "@norish/queue/redis/bullmq";
 import { db } from "@norish/db/drizzle";
-import { recipes } from "@norish/db/schema";
+import { recipes, steps, recipeIngredients } from "@norish/db/schema";
 import { and, eq, isNull } from "drizzle-orm";
 import {
   baseWorkerOptions,
@@ -65,7 +65,7 @@ async function processSyncJob(job: Job<HelloFreshSyncJobData>): Promise<void> {
         // 2. Map to Norish format
         const norishRecipe = mapHelloFreshToNorish(hfFullRecipe);
         
-        // 3. Robust duplicate check (Correctly handles NULL userId for global recipes)
+        // 3. Robust duplicate check
         const targetUserId = userId || null;
         const whereClause = targetUserId 
           ? and(eq(recipes.url, norishRecipe.url!), eq(recipes.userId, targetUserId))
@@ -78,6 +78,14 @@ async function processSyncJob(job: Job<HelloFreshSyncJobData>): Promise<void> {
 
         // Use existing ID if found to update, otherwise new UUID
         const recipeId = existing?.id || uuidv4();
+
+        // If recipe exists, we must clear old steps and ingredients to allow clean re-import
+        // (Norish repositories use onConflictDoNothing for these, so we need to clear them first)
+        if (existing) {
+          log.debug({ recipeId }, "Clearing existing steps and ingredients for clean sync...");
+          await db.delete(steps).where(eq(steps.recipeId, recipeId));
+          await db.delete(recipeIngredients).where(eq(recipeIngredients.recipeId, recipeId));
+        }
 
         // 4. Download Images Locally
         if (norishRecipe.image) {
@@ -111,7 +119,7 @@ async function processSyncJob(job: Job<HelloFreshSyncJobData>): Promise<void> {
         await createRecipeWithRefs(recipeId, targetUserId, norishRecipe);
         
         totalImported++;
-        // 500ms delay between recipes to avoid rate limiting and DB stress
+        // 500ms delay between recipes
         await new Promise(resolve => setTimeout(resolve, 500));
       } catch (error: any) {
         log.error({ err: error, hfId: hfSummary.id }, "Error importing HelloFresh recipe");
@@ -124,7 +132,6 @@ async function processSyncJob(job: Job<HelloFreshSyncJobData>): Promise<void> {
     }
 
     page++;
-    // Delay between pages
     await new Promise(resolve => setTimeout(resolve, 3000));
   }
 
