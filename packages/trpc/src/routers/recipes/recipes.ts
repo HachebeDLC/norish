@@ -44,7 +44,7 @@ import { FilterMode, RecipeCategory, SortOrder } from "@norish/shared/contracts"
 import { MAX_RECIPE_PASTE_CHARS } from "@norish/shared/contracts/uploads";
 
 import { emitByPolicy } from "../../helpers";
-import { authedProcedure } from "../../middleware";
+import { adminProcedure, authedProcedure } from "../../middleware";
 import { router } from "../../trpc";
 
 import { recipeEmitter } from "./emitter";
