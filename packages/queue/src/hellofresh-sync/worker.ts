@@ -7,6 +7,9 @@ import { mapHelloFreshToNorish } from "@norish/api/services/hellofresh/mapper";
 import { createRecipeWithRefs } from "@norish/db/repositories/recipes";
 import { downloadImage } from "@norish/shared-server/media/storage";
 import { getBullClient } from "@norish/queue/redis/bullmq";
+import { db } from "@norish/db/drizzle";
+import { recipes } from "@norish/db/schema";
+import { and, eq, isNull } from "drizzle-orm";
 import {
   baseWorkerOptions,
   QUEUE_NAMES,
@@ -38,7 +41,6 @@ async function processSyncJob(job: Job<HelloFreshSyncJobData>): Promise<void> {
       response = await hfClient.getRecipes(countryCode, locale, page, take);
     } catch (error: any) {
       log.error({ err: error, page }, "Error fetching HelloFresh recipes");
-      // Wait a bit and retry if it's a transient error, or throw to let BullMQ handle retry
       throw error;
     }
 
@@ -47,6 +49,8 @@ async function processSyncJob(job: Job<HelloFreshSyncJobData>): Promise<void> {
       log.info({ countryCode, locale }, "No more recipes found. Sync completed.");
       break;
     }
+
+    log.info({ count: items.length }, `Processing ${items.length} recipes...`);
 
     for (const hfSummary of items) {
       try {
@@ -60,9 +64,22 @@ async function processSyncJob(job: Job<HelloFreshSyncJobData>): Promise<void> {
         
         // 2. Map to Norish format
         const norishRecipe = mapHelloFreshToNorish(hfFullRecipe);
-        const recipeId = uuidv4();
+        
+        // 3. Robust duplicate check (Correctly handles NULL userId for global recipes)
+        const targetUserId = userId || null;
+        const whereClause = targetUserId 
+          ? and(eq(recipes.url, norishRecipe.url!), eq(recipes.userId, targetUserId))
+          : and(eq(recipes.url, norishRecipe.url!), isNull(recipes.userId));
 
-        // 3. Download Images Locally
+        const existing = await db.query.recipes.findFirst({
+          where: whereClause,
+          columns: { id: true }
+        });
+
+        // Use existing ID if found to update, otherwise new UUID
+        const recipeId = existing?.id || uuidv4();
+
+        // 4. Download Images Locally
         if (norishRecipe.image) {
           try {
             log.debug({ recipeId }, "Downloading main image...");
@@ -73,7 +90,6 @@ async function processSyncJob(job: Job<HelloFreshSyncJobData>): Promise<void> {
           }
         }
 
-        // Download step images
         if (norishRecipe.steps) {
           for (const step of norishRecipe.steps) {
             if (step.images) {
@@ -91,8 +107,8 @@ async function processSyncJob(job: Job<HelloFreshSyncJobData>): Promise<void> {
           }
         }
         
-        // 4. Save to database
-        await createRecipeWithRefs(recipeId, userId || null, norishRecipe);
+        // 5. Save/Update to database
+        await createRecipeWithRefs(recipeId, targetUserId, norishRecipe);
         
         totalImported++;
         // 500ms delay between recipes to avoid rate limiting and DB stress
@@ -124,7 +140,7 @@ export async function startHelloFreshSyncWorker(): Promise<void> {
       ...baseWorkerOptions,
       stalledInterval: STALLED_INTERVAL[QUEUE_NAMES.HELLOFRESH_SYNC],
       concurrency: WORKER_CONCURRENCY[QUEUE_NAMES.HELLOFRESH_SYNC],
-      lockDuration: 300_000, // 5 minutes - prevent stalling during heavy processing/downloads
+      lockDuration: 300_000, // 5 minutes
     }
   );
 }
