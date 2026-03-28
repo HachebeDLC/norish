@@ -1,6 +1,6 @@
 import type { RatingSubscriptionEvents } from "./types";
 
-import { createTypedEmitter, TypedEmitter } from "../../emitter";
+import { createTypedEmitter, TypedEmitter } from "../redis/pubsub";
 
 declare global {
   var __ratingsEmitter__: TypedEmitter<RatingSubscriptionEvents> | undefined;

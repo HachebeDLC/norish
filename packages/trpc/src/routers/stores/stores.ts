@@ -21,9 +21,9 @@ import {
 
 import { authedProcedure } from "../../middleware";
 import { router } from "../../trpc";
-import { groceryEmitter } from "../groceries/emitter";
+import { groceryEmitter } from "@norish/queue";
 
-import { storeEmitter } from "./emitter";
+import { storeEmitter } from "@norish/queue";
 
 const list = authedProcedure.query(async ({ ctx }) => {
   log.debug({ userId: ctx.user.id }, "Listing stores");

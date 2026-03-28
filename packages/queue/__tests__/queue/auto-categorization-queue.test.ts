@@ -91,13 +91,17 @@ vi.mock("@norish/queue/redis/subscription-multiplexer", () => ({
   SubscriptionMultiplexer: vi.fn(),
 }));
 
-vi.mock("@norish/trpc/routers/recipes/emitter", () => ({
-  recipeEmitter: {
-    emitToHousehold: vi.fn(),
-    emitToUser: vi.fn(),
-    broadcast: vi.fn(),
-  },
-}));
+vi.mock("@norish/queue", async (importOriginal) => {
+  const actual = await importOriginal<any>();
+  return {
+    ...actual,
+    recipeEmitter: {
+      emitToHousehold: vi.fn(),
+      emitToUser: vi.fn(),
+      broadcast: vi.fn(),
+    },
+  };
+});
 
 vi.mock("@norish/queue/redis/socket", () => ({
   emitToHousehold: vi.fn(),

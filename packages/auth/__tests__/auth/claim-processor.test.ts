@@ -33,7 +33,7 @@ vi.mock("@norish/trpc/connection-manager", () => ({
   emitConnectionInvalidation: vi.fn(),
 }));
 
-vi.mock("@norish/trpc/routers/households/emitter", () => ({
+vi.mock("@norish/queue", () => ({
   householdEmitter: {
     emit: vi.fn(),
     emitToHousehold: vi.fn(),

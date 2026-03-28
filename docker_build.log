@@ -1,0 +1,561 @@
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 9.70kB done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/node:22-alpine3.21
+#2 DONE 0.9s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 786B done
+#3 DONE 0.0s
+
+#4 [base 1/3] FROM docker.io/library/node:22-alpine3.21@sha256:af8023ec879993821f6d5b21382ed915622a1b0f1cc03dbeb6804afaf01f8885
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 123.09MB 0.8s done
+#5 DONE 0.9s
+
+#6 [base 2/3] RUN apk upgrade --no-cache &&     apk add --no-cache ca-certificates libc6-compat
+#6 CACHED
+
+#7 [deps  9/20] COPY packages/queue/package.json ./packages/queue/package.json
+#7 CACHED
+
+#8 [deps  8/20] COPY packages/i18n/package.json ./packages/i18n/package.json
+#8 CACHED
+
+#9 [deps  5/20] COPY packages/auth/package.json ./packages/auth/package.json
+#9 CACHED
+
+#10 [deps  7/20] COPY packages/db/package.json ./packages/db/package.json
+#10 CACHED
+
+#11 [deps  4/20] COPY packages/api/package.json ./packages/api/package.json
+#11 CACHED
+
+#12 [deps  6/20] COPY packages/config/package.json ./packages/config/package.json
+#12 CACHED
+
+#13 [deps  1/20] RUN apk add --no-cache python3 make g++ pkgconfig libpq-dev vips-dev
+#13 CACHED
+
+#14 [deps 10/20] COPY packages/shared/package.json ./packages/shared/package.json
+#14 CACHED
+
+#15 [deps  2/20] COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json .npmrc ./
+#15 CACHED
+
+#16 [deps  3/20] COPY apps/web/package.json ./apps/web/package.json
+#16 CACHED
+
+#17 [builder-base 1/1] RUN npm install -g pnpm@10.30.1
+#17 CACHED
+
+#18 [base 3/3] WORKDIR /app
+#18 CACHED
+
+#19 [deps 11/20] COPY packages/shared-react/package.json ./packages/shared-react/package.json
+#19 CACHED
+
+#20 [deps 12/20] COPY packages/shared-server/package.json ./packages/shared-server/package.json
+#20 DONE 0.2s
+
+#21 [deps 13/20] COPY packages/trpc/package.json ./packages/trpc/package.json
+#21 DONE 0.1s
+
+#22 [deps 14/20] COPY packages/ui/package.json ./packages/ui/package.json
+#22 DONE 0.1s
+
+#23 [deps 15/20] COPY tooling/eslint/package.json ./tooling/eslint/package.json
+#23 DONE 0.0s
+
+#24 [deps 16/20] COPY tooling/prettier/package.json ./tooling/prettier/package.json
+#24 DONE 0.1s
+
+#25 [deps 17/20] COPY tooling/tailwind/package.json ./tooling/tailwind/package.json
+#25 DONE 0.0s
+
+#26 [deps 18/20] COPY tooling/typescript/package.json ./tooling/typescript/package.json
+#26 DONE 0.0s
+
+#27 [deps 19/20] COPY patches/ ./patches/
+#27 DONE 0.0s
+
+#28 [deps 20/20] RUN --mount=type=cache,target=/root/.local/share/pnpm/store     pnpm install --frozen-lockfile
+#28 0.991 Scope: all 17 workspace projects
+#28 1.129 Lockfile is up to date, resolution step is skipped
+#28 1.660 Packages: +1898
+#28 1.660 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#28 1.720 Progress: resolved 0, reused 1, downloaded 0, added 0
+#28 2.546 
+#28 2.546    ╭──────────────────────────────────────────╮
+#28 2.546    │                                          │
+#28 2.546    │   Update available! 10.30.1 → 10.33.0.   │
+#28 2.546    │   Changelog: https://pnpm.io/v/10.33.0   │
+#28 2.546    │     To update, run: pnpm add -g pnpm     │
+#28 2.546    │                                          │
+#28 2.546    ╰──────────────────────────────────────────╯
+#28 2.546 
+#28 2.729 Progress: resolved 0, reused 753, downloaded 0, added 0
+#28 3.731 Progress: resolved 0, reused 1797, downloaded 0, added 45
+#28 4.731 Progress: resolved 0, reused 1797, downloaded 0, added 72
+#28 5.732 Progress: resolved 0, reused 1797, downloaded 0, added 97
+#28 6.734 Progress: resolved 0, reused 1797, downloaded 0, added 108
+#28 7.734 Progress: resolved 0, reused 1797, downloaded 0, added 112
+#28 8.735 Progress: resolved 0, reused 1797, downloaded 0, added 114
+#28 9.735 Progress: resolved 0, reused 1797, downloaded 0, added 115
+#28 10.74 Progress: resolved 0, reused 1797, downloaded 0, added 126
+#28 11.74 Progress: resolved 0, reused 1797, downloaded 0, added 132
+#28 12.74 Progress: resolved 0, reused 1797, downloaded 0, added 145
+#28 13.74 Progress: resolved 0, reused 1797, downloaded 0, added 165
+#28 14.74 Progress: resolved 0, reused 1797, downloaded 0, added 201
+#28 15.74 Progress: resolved 0, reused 1797, downloaded 0, added 226
+#28 16.74 Progress: resolved 0, reused 1797, downloaded 0, added 246
+#28 17.74 Progress: resolved 0, reused 1797, downloaded 0, added 249
+#28 18.74 Progress: resolved 0, reused 1797, downloaded 0, added 281
+#28 19.74 Progress: resolved 0, reused 1797, downloaded 0, added 283
+#28 22.54 Progress: resolved 0, reused 1797, downloaded 0, added 284
+#28 26.44 Progress: resolved 0, reused 1797, downloaded 0, added 285
+#28 27.44 Progress: resolved 0, reused 1797, downloaded 0, added 292
+#28 28.86 Progress: resolved 0, reused 1797, downloaded 0, added 293
+#28 29.86 Progress: resolved 0, reused 1797, downloaded 0, added 294
+#28 30.86 Progress: resolved 0, reused 1797, downloaded 0, added 298
+#28 31.86 Progress: resolved 0, reused 1797, downloaded 0, added 299
+#28 32.86 Progress: resolved 0, reused 1797, downloaded 0, added 304
+#28 33.86 Progress: resolved 0, reused 1797, downloaded 0, added 315
+#28 34.86 Progress: resolved 0, reused 1797, downloaded 0, added 331
+#28 35.86 Progress: resolved 0, reused 1797, downloaded 0, added 346
+#28 36.86 Progress: resolved 0, reused 1797, downloaded 0, added 376
+#28 37.87 Progress: resolved 0, reused 1797, downloaded 0, added 388
+#28 38.87 Progress: resolved 0, reused 1797, downloaded 0, added 391
+#28 39.87 Progress: resolved 0, reused 1797, downloaded 0, added 400
+#28 40.87 Progress: resolved 0, reused 1797, downloaded 0, added 412
+#28 41.87 Progress: resolved 0, reused 1797, downloaded 0, added 413
+#28 42.87 Progress: resolved 0, reused 1797, downloaded 0, added 420
+#28 43.87 Progress: resolved 0, reused 1797, downloaded 0, added 424
+#28 44.87 Progress: resolved 0, reused 1797, downloaded 0, added 439
+#28 45.87 Progress: resolved 0, reused 1797, downloaded 0, added 457
+#28 47.13 Progress: resolved 0, reused 1797, downloaded 0, added 458
+#28 48.14 Progress: resolved 0, reused 1797, downloaded 0, added 464
+#28 49.14 Progress: resolved 0, reused 1797, downloaded 0, added 467
+#28 50.14 Progress: resolved 0, reused 1797, downloaded 0, added 493
+#28 51.14 Progress: resolved 0, reused 1797, downloaded 0, added 517
+#28 52.14 Progress: resolved 0, reused 1797, downloaded 0, added 522
+#28 53.14 Progress: resolved 0, reused 1797, downloaded 0, added 535
+#28 54.14 Progress: resolved 0, reused 1797, downloaded 0, added 567
+#28 55.14 Progress: resolved 0, reused 1797, downloaded 0, added 590
+#28 56.14 Progress: resolved 0, reused 1797, downloaded 0, added 592
+#28 57.14 Progress: resolved 0, reused 1797, downloaded 0, added 626
+#28 58.14 Progress: resolved 0, reused 1797, downloaded 0, added 638
+#28 59.14 Progress: resolved 0, reused 1797, downloaded 0, added 670
+#28 60.14 Progress: resolved 0, reused 1797, downloaded 0, added 691
+#28 61.14 Progress: resolved 0, reused 1797, downloaded 0, added 732
+#28 62.14 Progress: resolved 0, reused 1797, downloaded 0, added 755
+#28 63.14 Progress: resolved 0, reused 1797, downloaded 0, added 767
+#28 64.14 Progress: resolved 0, reused 1797, downloaded 0, added 782
+#28 65.14 Progress: resolved 0, reused 1797, downloaded 0, added 787
+#28 66.14 Progress: resolved 0, reused 1797, downloaded 0, added 801
+#28 67.14 Progress: resolved 0, reused 1797, downloaded 0, added 846
+#28 68.14 Progress: resolved 0, reused 1797, downloaded 0, added 894
+#28 69.14 Progress: resolved 0, reused 1797, downloaded 0, added 975
+#28 70.14 Progress: resolved 0, reused 1797, downloaded 0, added 1006
+#28 71.14 Progress: resolved 0, reused 1797, downloaded 0, added 1037
+#28 72.15 Progress: resolved 0, reused 1797, downloaded 0, added 1041
+#28 73.15 Progress: resolved 0, reused 1797, downloaded 0, added 1052
+#28 74.15 Progress: resolved 0, reused 1797, downloaded 0, added 1067
+#28 75.15 Progress: resolved 0, reused 1797, downloaded 0, added 1119
+#28 76.15 Progress: resolved 0, reused 1797, downloaded 0, added 1134
+#28 77.15 Progress: resolved 0, reused 1797, downloaded 0, added 1174
+#28 78.15 Progress: resolved 0, reused 1797, downloaded 0, added 1191
+#28 80.11 Progress: resolved 0, reused 1797, downloaded 0, added 1192
+#28 81.12 Progress: resolved 0, reused 1797, downloaded 0, added 1222
+#28 82.12 Progress: resolved 0, reused 1797, downloaded 0, added 1246
+#28 83.12 Progress: resolved 0, reused 1797, downloaded 0, added 1301
+#28 84.12 Progress: resolved 0, reused 1797, downloaded 0, added 1332
+#28 85.12 Progress: resolved 0, reused 1797, downloaded 0, added 1338
+#28 86.12 Progress: resolved 0, reused 1797, downloaded 0, added 1357
+#28 87.12 Progress: resolved 0, reused 1797, downloaded 0, added 1401
+#28 88.12 Progress: resolved 0, reused 1797, downloaded 0, added 1403
+#28 89.12 Progress: resolved 0, reused 1797, downloaded 0, added 1416
+#28 90.12 Progress: resolved 0, reused 1797, downloaded 0, added 1433
+#28 91.12 Progress: resolved 0, reused 1797, downloaded 0, added 1505
+#28 92.12 Progress: resolved 0, reused 1797, downloaded 0, added 1512
+#28 93.12 Progress: resolved 0, reused 1797, downloaded 0, added 1528
+#28 94.12 Progress: resolved 0, reused 1797, downloaded 0, added 1585
+#28 95.12 Progress: resolved 0, reused 1797, downloaded 0, added 1591
+#28 96.12 Progress: resolved 0, reused 1797, downloaded 0, added 1631
+#28 97.12 Progress: resolved 0, reused 1797, downloaded 0, added 1639
+#28 98.12 Progress: resolved 0, reused 1797, downloaded 0, added 1644
+#28 99.12 Progress: resolved 0, reused 1797, downloaded 0, added 1647
+#28 100.1 Progress: resolved 0, reused 1797, downloaded 0, added 1648
+#28 101.1 Progress: resolved 0, reused 1797, downloaded 0, added 1670
+#28 102.1 Progress: resolved 0, reused 1797, downloaded 0, added 1686
+#28 103.1 Progress: resolved 0, reused 1797, downloaded 0, added 1703
+#28 104.1 Progress: resolved 0, reused 1797, downloaded 0, added 1718
+#28 105.1 Progress: resolved 0, reused 1797, downloaded 0, added 1719
+#28 106.1 Progress: resolved 0, reused 1797, downloaded 0, added 1727
+#28 107.1 Progress: resolved 0, reused 1797, downloaded 0, added 1739
+#28 108.1 Progress: resolved 0, reused 1797, downloaded 0, added 1750
+#28 109.1 Progress: resolved 0, reused 1797, downloaded 0, added 1806
+#28 110.1 Progress: resolved 0, reused 1797, downloaded 0, added 1837
+#28 111.1 Progress: resolved 0, reused 1797, downloaded 0, added 1859
+#28 112.1 Progress: resolved 0, reused 1797, downloaded 0, added 1870
+#28 113.0 Progress: resolved 0, reused 1797, downloaded 0, added 1898, done
+#28 113.5 
+#28 113.5 dependencies:
+#28 113.5 + @norish/api 0.17.3-beta <- packages/api
+#28 113.5 + @norish/auth 0.17.3-beta <- packages/auth
+#28 113.5 + @norish/config 0.17.3-beta <- packages/config
+#28 113.5 + @norish/db 0.17.3-beta <- packages/db
+#28 113.5 + @norish/i18n 0.17.3-beta <- packages/i18n
+#28 113.5 + @norish/queue 0.17.3-beta <- packages/queue
+#28 113.5 + @norish/shared 0.17.3-beta <- packages/shared
+#28 113.5 + @norish/ui 0.17.3-beta <- packages/ui
+#28 113.5 
+#28 113.5 devDependencies:
+#28 113.5 + @norish/prettier-config <- tooling/prettier
+#28 113.5 
+#28 113.8 ╭ Warning ─────────────────────────────────────────────────────────────────────╮
+#28 113.8 │                                                                              │
+#28 113.8 │   Ignored build scripts: @parcel/watcher@2.5.6, @prisma/engines@7.4.2,       │
+#28 113.8 │   @swc/core@1.15.18, cpu-features@0.0.10, msgpackr-extract@3.0.3,            │
+#28 113.8 │   prisma@7.4.2, protobufjs@7.5.4, ssh2@1.17.0.                               │
+#28 113.8 │   Run "pnpm approve-builds" to pick which dependencies should be allowed     │
+#28 113.8 │   to run scripts.                                                            │
+#28 113.8 │                                                                              │
+#28 113.8 ╰──────────────────────────────────────────────────────────────────────────────╯
+#28 113.8 Done in 1m 53.2s using pnpm v10.30.1
+#28 DONE 114.1s
+
+#29 [build 1/8] RUN apk add --no-cache pkgconfig libpq-dev vips-dev
+#29 CACHED
+
+#30 [build 2/8] WORKDIR /app
+#30 CACHED
+
+#31 [build 3/8] COPY --from=deps /app/node_modules ./node_modules
+#31 DONE 54.4s
+
+#32 [build 4/8] COPY . .
+#32 DONE 1.0s
+
+#33 [build 5/8] RUN --mount=type=cache,target=/root/.local/share/pnpm/store     pnpm install --frozen-lockfile --ignore-scripts --child-concurrency=1
+#33 1.384 Scope: all 17 workspace projects
+#33 1.719 Lockfile is up to date, resolution step is skipped
+#33 2.419 Progress: resolved 0, reused 1, downloaded 0, added 0
+#33 3.681 Progress: resolved 0, reused 46, downloaded 0, added 0
+#33 5.009 Progress: resolved 0, reused 234, downloaded 0, added 0
+#33 5.165 Packages: +8 -292
+#33 5.165 ++------------------------------------------------------------------------------
+#33 5.531 
+#33 5.531    ╭──────────────────────────────────────────╮
+#33 5.531    │                                          │
+#33 5.531    │   Update available! 10.30.1 → 10.33.0.   │
+#33 5.531    │   Changelog: https://pnpm.io/v/10.33.0   │
+#33 5.531    │     To update, run: pnpm add -g pnpm     │
+#33 5.531    │                                          │
+#33 5.531    ╰──────────────────────────────────────────╯
+#33 5.531 
+#33 5.999 Progress: resolved 0, reused 275, downloaded 0, added 8, done
+#33 6.437 
+#33 6.438 ╭ Warning ─────────────────────────────────────────────────────────────────────╮
+#33 6.438 │                                                                              │
+#33 6.438 │   Ignored build scripts: @parcel/watcher@2.5.6, @prisma/engines@7.4.2,       │
+#33 6.438 │   @swc/core@1.15.18, cpu-features@0.0.10, msgpackr-extract@3.0.3,            │
+#33 6.438 │   prisma@7.4.2, protobufjs@7.5.4, ssh2@1.17.0.                               │
+#33 6.438 │   Run "pnpm approve-builds" to pick which dependencies should be allowed     │
+#33 6.438 │   to run scripts.                                                            │
+#33 6.438 │                                                                              │
+#33 6.438 ╰──────────────────────────────────────────────────────────────────────────────╯
+#33 6.490 Done in 5.9s using pnpm v10.30.1
+#33 DONE 6.6s
+
+#34 [build 6/8] RUN pnpm run build &&     rm -rf apps/web/.next/cache apps/web/.next/trace            apps/web/.next/dev apps/web/.next/diagnostics apps/web/.next/types &&     rm -rf apps/web/.next/standalone/node_modules/typescript            apps/web/.next/standalone/node_modules/ffmpeg-static
+#34 10.49 
+#34 10.49 > norish@0.17.3-beta build /app
+#34 10.49 > turbo run build
+#34 10.49 
+#34 10.55 
+#34 10.55 Attention:
+#34 10.55 Turborepo now collects completely anonymous telemetry regarding usage.
+#34 10.55 This information is used to shape the Turborepo roadmap and prioritize features.
+#34 10.55 You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
+#34 10.55 https://turborepo.dev/docs/telemetry
+#34 10.55 
+#34 10.55 • turbo 2.8.16
+#34 10.65 • Packages in scope: @norish/api, @norish/auth, @norish/config, @norish/db, @norish/eslint-config, @norish/i18n, @norish/prettier-config, @norish/queue, @norish/shared, @norish/shared-react, @norish/shared-server, @norish/tailwind-config, @norish/trpc, @norish/tsconfig, @norish/ui, @norish/web
+#34 10.65 • Running build in 16 packages
+#34 10.65 • Remote caching disabled
+#34 10.99 @norish/db:build: cache miss, executing 539f85f0dbb3b134
+#34 10.99 @norish/ui:build: cache miss, executing bea71f7f5a6033cd
+#34 10.99 @norish/i18n:build: cache miss, executing d3f9b516ba9b5720
+#34 11.43 @norish/db:build: 
+#34 11.43 @norish/db:build: > @norish/db@0.17.3-beta build /app/packages/db
+#34 11.43 @norish/db:build: > rm -rf dist && tsc -p tsconfig.json --noCheck
+#34 11.43 @norish/db:build: 
+#34 11.44 @norish/i18n:build: 
+#34 11.44 @norish/i18n:build: > @norish/i18n@0.17.3-beta build /app/packages/i18n
+#34 11.44 @norish/i18n:build: > rm -rf dist && tsc -p tsconfig.json --noCheck
+#34 11.44 @norish/i18n:build: 
+#34 11.45 @norish/ui:build: 
+#34 11.45 @norish/ui:build: > @norish/ui@0.17.3-beta build /app/packages/ui
+#34 11.45 @norish/ui:build: > rm -rf dist && tsc -p tsconfig.json --noCheck
+#34 11.45 @norish/ui:build: 
+#34 15.28 @norish/config:build: cache miss, executing db192a6cdc99f98a
+#34 15.68 @norish/config:build: 
+#34 15.68 @norish/config:build: > @norish/config@0.17.3-beta build /app/packages/config
+#34 15.68 @norish/config:build: > rm -rf dist && tsc -p tsconfig.json --noCheck
+#34 15.68 @norish/config:build: 
+#34 17.34 @norish/shared:build: cache miss, executing 4e43cd84c4957598
+#34 17.75 @norish/shared:build: 
+#34 17.75 @norish/shared:build: > @norish/shared@0.17.3-beta build /app/packages/shared
+#34 17.75 @norish/shared:build: > rm -rf dist && tsc -p tsconfig.json --noCheck
+#34 17.75 @norish/shared:build: 
+#34 20.50 @norish/shared-server:build: cache miss, executing 0d7e3fcfcdd9d8b9
+#34 20.87 @norish/shared-server:build: 
+#34 20.87 @norish/shared-server:build: > @norish/shared-server@0.17.3-beta build /app/packages/shared-server
+#34 20.87 @norish/shared-server:build: > rm -rf dist && tsc -p tsconfig.json --noCheck
+#34 20.87 @norish/shared-server:build: 
+#34 23.73 @norish/queue:build: cache miss, executing 2fffabf18e525fcc
+#34 24.14 @norish/queue:build: 
+#34 24.14 @norish/queue:build: > @norish/queue@0.17.3-beta build /app/packages/queue
+#34 24.14 @norish/queue:build: > rm -rf dist && tsc -p tsconfig.json --noCheck
+#34 24.14 @norish/queue:build: 
+#34 27.46 @norish/auth:build: cache miss, executing e37f4eb208f23e0d
+#34 27.86 @norish/auth:build: 
+#34 27.86 @norish/auth:build: > @norish/auth@0.17.3-beta build /app/packages/auth
+#34 27.86 @norish/auth:build: > rm -rf dist && tsc -p tsconfig.json --noCheck
+#34 27.86 @norish/auth:build: 
+#34 33.18 @norish/trpc:build: cache miss, executing 90ec464ecddf0193
+#34 33.60 @norish/trpc:build: 
+#34 33.60 @norish/trpc:build: > @norish/trpc@0.17.3-beta build /app/packages/trpc
+#34 33.60 @norish/trpc:build: > rm -rf dist .cache && tsc -p tsconfig.json --noCheck
+#34 33.60 @norish/trpc:build: 
+#34 41.23 @norish/api:build: cache miss, executing 1cbee6a88818872d
+#34 41.23 @norish/shared-react:build: cache miss, executing fd83af0aae9ae23e
+#34 41.68 @norish/shared-react:build: 
+#34 41.68 @norish/shared-react:build: > @norish/shared-react@0.17.3-beta build /app/packages/shared-react
+#34 41.68 @norish/shared-react:build: > rm -rf dist && tsc -p tsconfig.json --noCheck
+#34 41.68 @norish/shared-react:build: 
+#34 41.70 @norish/api:build: 
+#34 41.70 @norish/api:build: > @norish/api@0.17.3-beta build /app/packages/api
+#34 41.70 @norish/api:build: > rm -rf dist && tsc -p tsconfig.json --noCheck
+#34 41.70 @norish/api:build: 
+#34 48.73 @norish/web:build: cache miss, executing 20b2b395d669887e
+#34 49.05 @norish/web:build: 
+#34 49.05 @norish/web:build: > @norish/web@0.17.3-beta build /app/apps/web
+#34 49.05 @norish/web:build: > pnpm run build:web && pnpm run build:server && pnpm run update-sw
+#34 49.05 @norish/web:build: 
+#34 49.41 @norish/web:build: 
+#34 49.41 @norish/web:build: > @norish/web@0.17.3-beta build:web /app/apps/web
+#34 49.41 @norish/web:build: > next build
+#34 49.41 @norish/web:build: 
+#34 50.07 @norish/web:build: ▲ Next.js 16.1.6 (Turbopack)
+#34 50.07 @norish/web:build: 
+#34 50.10 @norish/web:build:   Creating an optimized production build ...
+#34 69.62 @norish/web:build: 
+#34 69.62 @norish/web:build: > Build error occurred
+#34 69.63 @norish/web:build: Error: Turbopack build failed with 7 errors:
+#34 69.63 @norish/web:build: ./packages/trpc/src/routers/households/index.ts:8:14
+#34 69.63 @norish/web:build: Ecmascript file had an error
+#34 69.63 @norish/web:build: [0m [90m  6 |[39m [36mexport[39m { householdEmitter[33m,[39m type [33mHouseholdSubscriptionEvents[39m[33m,[39m type [33mHouseholdUserInfo[39m } [36mfrom[39m [32m"@norish/queue"[39m[33m;[39m
+#34 69.63 @norish/web:build:  [90m  7 |[39m
+#34 69.63 @norish/web:build: [31m[1m>[22m[39m[90m  8 |[39m [36mexport[39m [36mconst[39m householdsRouter [33m=[39m router({
+#34 69.63 @norish/web:build:  [90m    |[39m              [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+#34 69.63 @norish/web:build:  [90m  9 |[39m   [33m...[39mhouseholdsRouter[33m.[39m_def[33m.[39mprocedures[33m,[39m
+#34 69.63 @norish/web:build:  [90m 10 |[39m   [33m...[39mhouseholdSubscriptionsRouter[33m.[39m_def[33m.[39mprocedures[33m,[39m
+#34 69.63 @norish/web:build:  [90m 11 |[39m })[33m;[39m[0m
+#34 69.63 @norish/web:build: 
+#34 69.63 @norish/web:build: the name `householdsRouter` is defined multiple times
+#34 69.63 @norish/web:build: 
+#34 69.63 @norish/web:build: Import trace:
+#34 69.63 @norish/web:build:   App Route:
+#34 69.63 @norish/web:build:     ./packages/trpc/src/routers/households/index.ts
+#34 69.63 @norish/web:build:     ./packages/trpc/src/router.ts
+#34 69.63 @norish/web:build:     ./packages/trpc/src/index.ts
+#34 69.63 @norish/web:build:     ./apps/web/app/api/trpc/[trpc]/route.ts
+#34 69.63 @norish/web:build: 
+#34 69.63 @norish/web:build: 
+#34 69.63 @norish/web:build: ./packages/trpc/src/routers/user/api-keys.ts:7:1
+#34 69.63 @norish/web:build: Export CreateApiKeyInputSchema doesn't exist in target module
+#34 69.63 @norish/web:build: [0m [90m  5 |[39m [36mimport[39m { router } [36mfrom[39m [32m"../../trpc"[39m[33m;[39m
+#34 69.63 @norish/web:build:  [90m  6 |[39m
+#34 69.63 @norish/web:build: [31m[1m>[22m[39m[90m  7 |[39m [36mimport[39m { [33mCreateApiKeyInputSchema[39m[33m,[39m [33mDeleteApiKeyInputSchema[39m[33m,[39m [33mToggleApiKeyInputSchema[39m } [36mfrom[39m [32m"@norish/queue"[39m[33m;[39m
+#34 69.63 @norish/web:build:  [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+#34 69.63 @norish/web:build:  [90m  8 |[39m
+#34 69.63 @norish/web:build:  [90m  9 |[39m [90m/**[39m
+#34 69.63 @norish/web:build:  [90m 10 |[39m [90m * Create a new API key[39m[0m
+#34 69.63 @norish/web:build: 
+#34 69.63 @norish/web:build: The export CreateApiKeyInputSchema was not found in module [project]/packages/queue/src/index.ts [app-route] (ecmascript).
+#34 69.63 @norish/web:build: Did you mean to import SaveCaldavConfigInputSchema?
+#34 69.63 @norish/web:build: All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+#34 69.63 @norish/web:build: 
+#34 69.63 @norish/web:build: Import trace:
+#34 69.63 @norish/web:build:   App Route:
+#34 69.63 @norish/web:build:     ./packages/trpc/src/routers/user/api-keys.ts
+#34 69.63 @norish/web:build:     ./packages/trpc/src/routers/user/index.ts
+#34 69.63 @norish/web:build:     ./packages/trpc/src/router.ts
+#34 69.63 @norish/web:build:     ./packages/trpc/src/index.ts
+#34 69.63 @norish/web:build:     ./apps/web/app/api/trpc/[trpc]/route.ts
+#34 69.63 @norish/web:build: 
+#34 69.63 @norish/web:build: 
+#34 69.63 @norish/web:build: ./packages/trpc/src/routers/user/api-keys.ts:7:1
+#34 69.63 @norish/web:build: Export DeleteApiKeyInputSchema doesn't exist in target module
+#34 69.63 @norish/web:build: [0m [90m  5 |[39m [36mimport[39m { router } [36mfrom[39m [32m"../../trpc"[39m[33m;[39m
+#34 69.63 @norish/web:build:  [90m  6 |[39m
+#34 69.63 @norish/web:build: [31m[1m>[22m[39m[90m  7 |[39m [36mimport[39m { [33mCreateApiKeyInputSchema[39m[33m,[39m [33mDeleteApiKeyInputSchema[39m[33m,[39m [33mToggleApiKeyInputSchema[39m } [36mfrom[39m [32m"@norish/queue"[39m[33m;[39m
+#34 69.63 @norish/web:build:  [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+#34 69.63 @norish/web:build:  [90m  8 |[39m
+#34 69.63 @norish/web:build:  [90m  9 |[39m [90m/**[39m
+#34 69.63 @norish/web:build:  [90m 10 |[39m [90m * Create a new API key[39m[0m
+#34 69.63 @norish/web:build: 
+#34 69.63 @norish/web:build: The export DeleteApiKeyInputSchema was not found in module [project]/packages/queue/src/index.ts [app-route] (ecmascript).
+#34 69.63 @norish/web:build: Did you mean to import DeleteCaldavConfigInputSchema?
+#34 69.63 @norish/web:build: All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+#34 69.63 @norish/web:build: 
+#34 69.63 @norish/web:build: Import trace:
+#34 69.63 @norish/web:build:   App Route:
+#34 69.63 @norish/web:build:     ./packages/trpc/src/routers/user/api-keys.ts
+#34 69.63 @norish/web:build:     ./packages/trpc/src/routers/user/index.ts
+#34 69.63 @norish/web:build:     ./packages/trpc/src/router.ts
+#34 69.63 @norish/web:build:     ./packages/trpc/src/index.ts
+#34 69.63 @norish/web:build:     ./apps/web/app/api/trpc/[trpc]/route.ts
+#34 69.63 @norish/web:build: 
+#34 69.63 @norish/web:build: 
+#34 69.63 @norish/web:build: ./packages/trpc/src/routers/user/api-keys.ts:7:1
+#34 69.63 @norish/web:build: Export ToggleApiKeyInputSchema doesn't exist in target module
+#34 69.63 @norish/web:build: [0m [90m  5 |[39m [36mimport[39m { router } [36mfrom[39m [32m"../../trpc"[39m[33m;[39m
+#34 69.63 @norish/web:build:  [90m  6 |[39m
+#34 69.63 @norish/web:build: [31m[1m>[22m[39m[90m  7 |[39m [36mimport[39m { [33mCreateApiKeyInputSchema[39m[33m,[39m [33mDeleteApiKeyInputSchema[39m[33m,[39m [33mToggleApiKeyInputSchema[39m } [36mfrom[39m [32m"@norish/queue"[39m[33m;[39m
+#34 69.63 @norish/web:build:  [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+#34 69.63 @norish/web:build:  [90m  8 |[39m
+#34 69.63 @norish/web:build:  [90m  9 |[39m [90m/**[39m
+#34 69.63 @norish/web:build:  [90m 10 |[39m [90m * Create a new API key[39m[0m
+#34 69.63 @norish/web:build: 
+#34 69.63 @norish/web:build: The export ToggleApiKeyInputSchema was not found in module [project]/packages/queue/src/index.ts [app-route] (ecmascript).
+#34 69.63 @norish/web:build: Did you mean to import SaveCaldavConfigInputSchema?
+#34 69.63 @norish/web:build: All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+#34 69.63 @norish/web:build: 
+#34 69.63 @norish/web:build: Import trace:
+#34 69.63 @norish/web:build:   App Route:
+#34 69.63 @norish/web:build:     ./packages/trpc/src/routers/user/api-keys.ts
+#34 69.63 @norish/web:build:     ./packages/trpc/src/routers/user/index.ts
+#34 69.63 @norish/web:build:     ./packages/trpc/src/router.ts
+#34 69.63 @norish/web:build:     ./packages/trpc/src/index.ts
+#34 69.63 @norish/web:build:     ./apps/web/app/api/trpc/[trpc]/route.ts
+#34 69.63 @norish/web:build: 
+#34 69.63 @norish/web:build: 
+#34 69.63 @norish/web:build: ./packages/trpc/src/routers/user/user.ts:31:1
+#34 69.63 @norish/web:build: Export UpdateNameInputSchema doesn't exist in target module
+#34 69.63 @norish/web:build: [0m [90m 29 |[39m [36mimport[39m { householdEmitter } [36mfrom[39m [32m"@norish/queue"[39m[33m;[39m
+#34 69.63 @norish/web:build:  [90m 30 |[39m
+#34 69.63 @norish/web:build: [31m[1m>[22m[39m[90m 31 |[39m [36mimport[39m { [33mUpdateNameInputSchema[39m[33m,[39m [33mUpdatePreferencesInputSchema[39m } [36mfrom[39m [32m"@norish/queue"[39m[33m;[39m
+#34 69.63 @norish/web:build:  [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+#34 69.63 @norish/web:build:  [90m 32 |[39m
+#34 69.63 @norish/web:build:  [90m 33 |[39m [90m/**[39m
+#34 69.63 @norish/web:build:  [90m 34 |[39m [90m * Get current user settings (user profile + API keys)[39m[0m
+#34 69.63 @norish/web:build: 
+#34 69.63 @norish/web:build: The export UpdateNameInputSchema was not found in module [project]/packages/queue/src/index.ts [app-route] (ecmascript).
+#34 69.63 @norish/web:build: Did you mean to import FetchCalendarsInputSchema?
+#34 69.63 @norish/web:build: All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+#34 69.63 @norish/web:build: 
+#34 69.63 @norish/web:build: Import trace:
+#34 69.63 @norish/web:build:   App Route:
+#34 69.63 @norish/web:build:     ./packages/trpc/src/routers/user/user.ts
+#34 69.63 @norish/web:build:     ./packages/trpc/src/routers/user/index.ts
+#34 69.63 @norish/web:build:     ./packages/trpc/src/router.ts
+#34 69.63 @norish/web:build:     ./packages/trpc/src/index.ts
+#34 69.63 @norish/web:build:     ./apps/web/app/api/trpc/[trpc]/route.ts
+#34 69.63 @norish/web:build: 
+#34 69.63 @norish/web:build: 
+#34 69.63 @norish/web:build: ./packages/trpc/src/routers/user/user.ts:31:1
+#34 69.63 @norish/web:build: Export UpdatePreferencesInputSchema doesn't exist in target module
+#34 69.63 @norish/web:build: [0m [90m 29 |[39m [36mimport[39m { householdEmitter } [36mfrom[39m [32m"@norish/queue"[39m[33m;[39m
+#34 69.63 @norish/web:build:  [90m 30 |[39m
+#34 69.63 @norish/web:build: [31m[1m>[22m[39m[90m 31 |[39m [36mimport[39m { [33mUpdateNameInputSchema[39m[33m,[39m [33mUpdatePreferencesInputSchema[39m } [36mfrom[39m [32m"@norish/queue"[39m[33m;[39m
+#34 69.63 @norish/web:build:  [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+#34 69.63 @norish/web:build:  [90m 32 |[39m
+#34 69.63 @norish/web:build:  [90m 33 |[39m [90m/**[39m
+#34 69.63 @norish/web:build:  [90m 34 |[39m [90m * Get current user settings (user profile + API keys)[39m[0m
+#34 69.63 @norish/web:build: 
+#34 69.63 @norish/web:build: The export UpdatePreferencesInputSchema was not found in module [project]/packages/queue/src/index.ts [app-route] (ecmascript).
+#34 69.63 @norish/web:build: Did you mean to import FetchCalendarsInputSchema?
+#34 69.63 @norish/web:build: All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+#34 69.63 @norish/web:build: 
+#34 69.63 @norish/web:build: Import trace:
+#34 69.63 @norish/web:build:   App Route:
+#34 69.63 @norish/web:build:     ./packages/trpc/src/routers/user/user.ts
+#34 69.63 @norish/web:build:     ./packages/trpc/src/routers/user/index.ts
+#34 69.63 @norish/web:build:     ./packages/trpc/src/router.ts
+#34 69.63 @norish/web:build:     ./packages/trpc/src/index.ts
+#34 69.63 @norish/web:build:     ./apps/web/app/api/trpc/[trpc]/route.ts
+#34 69.63 @norish/web:build: 
+#34 69.63 @norish/web:build: 
+#34 69.63 @norish/web:build: ./packages/trpc/src/router.ts:8:1
+#34 69.63 @norish/web:build: Export householdsAppRouter doesn't exist in target module
+#34 69.63 @norish/web:build: [0m [90m  6 |[39m [36mimport[39m { favoritesRouter } [36mfrom[39m [32m"./routers/favorites"[39m[33m;[39m
+#34 69.63 @norish/web:build:  [90m  7 |[39m [36mimport[39m { groceriesRouter } [36mfrom[39m [32m"./routers/groceries"[39m[33m;[39m
+#34 69.63 @norish/web:build: [31m[1m>[22m[39m[90m  8 |[39m [36mimport[39m { householdsAppRouter } [36mfrom[39m [32m"./routers/households"[39m[33m;[39m
+#34 69.63 @norish/web:build:  [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+#34 69.63 @norish/web:build:  [90m  9 |[39m [36mimport[39m { permissionsRouter } [36mfrom[39m [32m"./routers/permissions"[39m[33m;[39m
+#34 69.63 @norish/web:build:  [90m 10 |[39m [36mimport[39m { ratingsRouter } [36mfrom[39m [32m"./routers/ratings"[39m[33m;[39m
+#34 69.63 @norish/web:build:  [90m 11 |[39m [36mimport[39m { recipesRouter } [36mfrom[39m [32m"./routers/recipes"[39m[33m;[39m[0m
+#34 69.63 @norish/web:build: 
+#34 69.63 @norish/web:build: The export householdsAppRouter was not found in module [project]/packages/trpc/src/routers/households/index.ts [app-route] (ecmascript).
+#34 69.63 @norish/web:build: Did you mean to import householdsRouter?
+#34 69.63 @norish/web:build: All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+#34 69.63 @norish/web:build: 
+#34 69.63 @norish/web:build: Import trace:
+#34 69.63 @norish/web:build:   App Route:
+#34 69.63 @norish/web:build:     ./packages/trpc/src/router.ts
+#34 69.63 @norish/web:build:     ./packages/trpc/src/index.ts
+#34 69.63 @norish/web:build:     ./apps/web/app/api/trpc/[trpc]/route.ts
+#34 69.63 @norish/web:build: 
+#34 69.63 @norish/web:build: 
+#34 69.63 @norish/web:build:     at <unknown> (./packages/trpc/src/routers/households/index.ts:8:14)
+#34 69.63 @norish/web:build:     at <unknown> (./packages/trpc/src/routers/user/api-keys.ts:7:1)
+#34 69.63 @norish/web:build:     at <unknown> (./packages/trpc/src/routers/user/api-keys.ts:7:1)
+#34 69.63 @norish/web:build:     at <unknown> (./packages/trpc/src/routers/user/api-keys.ts:7:1)
+#34 69.63 @norish/web:build:     at <unknown> (./packages/trpc/src/routers/user/user.ts:31:1)
+#34 69.63 @norish/web:build:     at <unknown> (./packages/trpc/src/routers/user/user.ts:31:1)
+#34 69.63 @norish/web:build:     at <unknown> (./packages/trpc/src/router.ts:8:1)
+#34 69.80 @norish/web:build:  ELIFECYCLE  Command failed with exit code 1.
+#34 69.83 @norish/web:build:  ELIFECYCLE  Command failed with exit code 1.
+#34 69.84 @norish/web:build: ERROR: command finished with error: command (/app/apps/web) /usr/local/bin/pnpm run build exited (1)
+#34 69.84 @norish/web#build: command (/app/apps/web) /usr/local/bin/pnpm run build exited (1)
+#34 69.84 
+#34 69.84  Tasks:    11 successful, 12 total
+#34 69.84 Cached:    0 cached, 12 total
+#34 69.84   Time:    59.296s 
+#34 69.84 Failed:    @norish/web#build
+#34 69.84 
+#34 69.85  ERROR  run failed: command  exited (1)
+#34 69.88  ELIFECYCLE  Command failed with exit code 1.
+#34 ERROR: process "/bin/sh -c pnpm run build &&     rm -rf apps/web/.next/cache apps/web/.next/trace            apps/web/.next/dev apps/web/.next/diagnostics apps/web/.next/types &&     rm -rf apps/web/.next/standalone/node_modules/typescript            apps/web/.next/standalone/node_modules/ffmpeg-static" did not complete successfully: exit code: 1
+------
+ > [build 6/8] RUN pnpm run build &&     rm -rf apps/web/.next/cache apps/web/.next/trace            apps/web/.next/dev apps/web/.next/diagnostics apps/web/.next/types &&     rm -rf apps/web/.next/standalone/node_modules/typescript            apps/web/.next/standalone/node_modules/ffmpeg-static:
+69.84 @norish/web:build: ERROR: command finished with error: command (/app/apps/web) /usr/local/bin/pnpm run build exited (1)
+69.84 @norish/web#build: command (/app/apps/web) /usr/local/bin/pnpm run build exited (1)
+69.84 
+69.84  Tasks:    11 successful, 12 total
+69.84 Cached:    0 cached, 12 total
+69.84   Time:    59.296s 
+69.84 Failed:    @norish/web#build
+69.84 
+69.85  ERROR  run failed: command  exited (1)
+69.88  ELIFECYCLE  Command failed with exit code 1.
+------
+Dockerfile:86
+--------------------
+  85 |     
+  86 | >>> RUN pnpm run build && \
+  87 | >>>     rm -rf apps/web/.next/cache apps/web/.next/trace \
+  88 | >>>            apps/web/.next/dev apps/web/.next/diagnostics apps/web/.next/types && \
+  89 | >>>     rm -rf apps/web/.next/standalone/node_modules/typescript \
+  90 | >>>            apps/web/.next/standalone/node_modules/ffmpeg-static
+  91 |     
+--------------------
+ERROR: failed to build: failed to solve: process "/bin/sh -c pnpm run build &&     rm -rf apps/web/.next/cache apps/web/.next/trace            apps/web/.next/dev apps/web/.next/diagnostics apps/web/.next/types &&     rm -rf apps/web/.next/standalone/node_modules/typescript            apps/web/.next/standalone/node_modules/ffmpeg-static" did not complete successfully: exit code: 1

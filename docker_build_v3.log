@@ -1,0 +1,166 @@
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 9.70kB done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/node:22-alpine3.21
+#2 DONE 0.7s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 786B done
+#3 DONE 0.0s
+
+#4 [base 1/3] FROM docker.io/library/node:22-alpine3.21@sha256:af8023ec879993821f6d5b21382ed915622a1b0f1cc03dbeb6804afaf01f8885
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 220.83kB 0.1s done
+#5 DONE 0.1s
+
+#6 [runtime  6/15] COPY --from=build --chown=1000:1000 /app/apps/web/next.config.js ./apps/web/next.config.js
+#6 CACHED
+
+#7 [runtime 13/15] COPY --from=build --chown=1000:1000 /app/packages/ ./packages/
+#7 CACHED
+
+#8 [deps  5/20] COPY packages/auth/package.json ./packages/auth/package.json
+#8 CACHED
+
+#9 [runtime  8/15] COPY --from=build --chown=1000:1000 /app/package.json ./package.json
+#9 CACHED
+
+#10 [ytdlp 1/1] RUN if [ "amd64" = "arm64" ]; then       YT_DLP_BINARY="yt-dlp_musllinux_aarch64";     else       YT_DLP_BINARY="yt-dlp_musllinux";     fi &&     mkdir -p /ytdlp &&     wget -q "https://github.com/yt-dlp/yt-dlp/releases/download/2026.02.04/${YT_DLP_BINARY}" -O /ytdlp/yt-dlp &&     chmod +x /ytdlp/yt-dlp
+#10 CACHED
+
+#11 [deps  4/20] COPY packages/api/package.json ./packages/api/package.json
+#11 CACHED
+
+#12 [deps  9/20] COPY packages/queue/package.json ./packages/queue/package.json
+#12 CACHED
+
+#13 [deps  8/20] COPY packages/i18n/package.json ./packages/i18n/package.json
+#13 CACHED
+
+#14 [deps  6/20] COPY packages/config/package.json ./packages/config/package.json
+#14 CACHED
+
+#15 [build 8/8] RUN find /app/packages -type d -name '__tests__' -exec rm -rf {} + 2>/dev/null;     find /app/packages -type f (       -name '*.test.ts' -o -name '*.test.tsx' -o -name '*.spec.ts' -o -name '*.spec.tsx'       -o -name 'vitest.config.*' -o -name 'tsconfig*.json' -o -name 'eslint.config.*'     ) -delete 2>/dev/null;     true
+#15 CACHED
+
+#16 [deps 18/20] COPY tooling/typescript/package.json ./tooling/typescript/package.json
+#16 CACHED
+
+#17 [deps 16/20] COPY tooling/prettier/package.json ./tooling/prettier/package.json
+#17 CACHED
+
+#18 [runtime 12/15] COPY --from=build --chown=1000:1000 /app/dist-server/ ./dist-server/
+#18 CACHED
+
+#19 [runtime  1/15] RUN apk add --no-cache libpq ffmpeg vips &&     rm -rf /usr/local/lib/node_modules/npm /usr/local/bin/npm /usr/local/bin/npx /usr/local/bin/corepack &&     rm -rf /var/cache/apk/* /tmp/* /root/.npm
+#19 CACHED
+
+#20 [runtime  2/15] WORKDIR /app
+#20 CACHED
+
+#21 [deps  7/20] COPY packages/db/package.json ./packages/db/package.json
+#21 CACHED
+
+#22 [deps 19/20] COPY patches/ ./patches/
+#22 CACHED
+
+#23 [build 3/8] COPY --from=deps /app/node_modules ./node_modules
+#23 CACHED
+
+#24 [build 6/8] RUN pnpm run build &&     rm -rf apps/web/.next/cache apps/web/.next/trace            apps/web/.next/dev apps/web/.next/diagnostics apps/web/.next/types &&     rm -rf apps/web/.next/standalone/node_modules/typescript            apps/web/.next/standalone/node_modules/ffmpeg-static
+#24 CACHED
+
+#25 [builder-base 1/1] RUN npm install -g pnpm@10.30.1
+#25 CACHED
+
+#26 [deps  1/20] RUN apk add --no-cache python3 make g++ pkgconfig libpq-dev vips-dev
+#26 CACHED
+
+#27 [build 5/8] RUN --mount=type=cache,target=/root/.local/share/pnpm/store     pnpm install --frozen-lockfile --ignore-scripts --child-concurrency=1
+#27 CACHED
+
+#28 [runtime 10/15] COPY --from=build --chown=1000:1000 /app/apps/web/.next/static/ ./apps/web/.next/static/
+#28 CACHED
+
+#29 [runtime 14/15] RUN mkdir -p /app/uploads /app/bin &&     chown -R 1000:1000 /app/uploads /app/bin
+#29 CACHED
+
+#30 [build 4/8] COPY . .
+#30 CACHED
+
+#31 [deps  2/20] COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json .npmrc ./
+#31 CACHED
+
+#32 [deps 13/20] COPY packages/trpc/package.json ./packages/trpc/package.json
+#32 CACHED
+
+#33 [build 2/8] WORKDIR /app
+#33 CACHED
+
+#34 [runtime  5/15] COPY --from=build --chown=1000:1000 /app/apps/web/package.json ./apps/web/package.json
+#34 CACHED
+
+#35 [deps 11/20] COPY packages/shared-react/package.json ./packages/shared-react/package.json
+#35 CACHED
+
+#36 [deps 12/20] COPY packages/shared-server/package.json ./packages/shared-server/package.json
+#36 CACHED
+
+#37 [deps 20/20] RUN --mount=type=cache,target=/root/.local/share/pnpm/store     pnpm install --frozen-lockfile
+#37 CACHED
+
+#38 [base 3/3] WORKDIR /app
+#38 CACHED
+
+#39 [build 7/8] RUN pnpm deploy --filter @norish/web --prod /app/deploy &&     cd /app/deploy/node_modules &&     rm -rf @norish &&     rm -rf @expo @expo-google-fonts expo expo-*            @react-native @react-navigation react-native react-native-*            hermes-compiler fb-dotslash react-devtools-core &&     rm -rf typescript @esbuild esbuild tsx            @prisma prisma drizzle-kit            eslint @eslint @typescript-eslint eslint-*            prettier prettier-plugin-*            @tailwindcss tailwindcss postcss postcss-*            vitest @vitest @testing-library jsdom            @babel babel-plugin-* babel-preset-*            jest-* @jest fast-check axe-core            rollup terser            turbo turbo-* &&     rm -rf ffmpeg-static &&     cd @next && find . -maxdepth 1 -type d -name 'swc-*'       ! -name '*linux-x64-musl*' ! -name '*linux-arm64-musl*'       -exec rm -rf {} + && cd .. &&     cd @swc && find . -maxdepth 1 -type d -name 'core-*'       ! -name '*linux-x64-musl*' ! -name '*linux-arm64-musl*'       -exec rm -rf {} + && cd .. &&     cd @img && find . -maxdepth 1 -type d -name 'sharp-*'       ! -name '*linuxmusl-x64*' ! -name '*linuxmusl-arm64*'       -exec rm -rf {} + && cd .. &&     find . -maxdepth 1 -type d -name 'lightningcss-*'       ! -name '*linux-x64-musl*' ! -name '*linux-arm64-musl*'       -exec rm -rf {} + &&     rm -rf @next/eslint-plugin-next
+#39 CACHED
+
+#40 [runtime  4/15] COPY --from=build --chown=1000:1000 /app/apps/web/.next/standalone/apps/web/.next/ ./apps/web/.next/
+#40 CACHED
+
+#41 [runtime  7/15] COPY --from=build --chown=1000:1000 /app/apps/web/config/next-intl-request-config-path.js ./apps/web/config/next-intl-request-config-path.js
+#41 CACHED
+
+#42 [runtime  9/15] COPY --from=build --chown=1000:1000 /app/deploy/node_modules/ ./node_modules/
+#42 CACHED
+
+#43 [base 2/3] RUN apk upgrade --no-cache &&     apk add --no-cache ca-certificates libc6-compat
+#43 CACHED
+
+#44 [deps 14/20] COPY packages/ui/package.json ./packages/ui/package.json
+#44 CACHED
+
+#45 [runtime  3/15] RUN if [ "1000" != "1000" ] || [ "1000" != "1000" ]; then       addgroup -g 1000 -S norishapp 2>/dev/null;       adduser -u 1000 -S norish -G $(getent group 1000 | cut -d: -f1) 2>/dev/null;     fi
+#45 CACHED
+
+#46 [deps 15/20] COPY tooling/eslint/package.json ./tooling/eslint/package.json
+#46 CACHED
+
+#47 [deps 17/20] COPY tooling/tailwind/package.json ./tooling/tailwind/package.json
+#47 CACHED
+
+#48 [runtime 11/15] COPY --from=build --chown=1000:1000 /app/apps/web/public/ ./apps/web/public/
+#48 CACHED
+
+#49 [deps  3/20] COPY apps/web/package.json ./apps/web/package.json
+#49 CACHED
+
+#50 [deps 10/20] COPY packages/shared/package.json ./packages/shared/package.json
+#50 CACHED
+
+#51 [build 1/8] RUN apk add --no-cache pkgconfig libpq-dev vips-dev
+#51 CACHED
+
+#52 [runtime 15/15] COPY --from=ytdlp --chown=1000:1000 /ytdlp/yt-dlp /app/bin/yt-dlp
+#52 CACHED
+
+#53 exporting to image
+#53 exporting layers done
+#53 writing image sha256:f39670bc5afca7bd1a46311db3f2cbe59943a1cfff69a22038f52d04c19f0114 done
+#53 naming to docker.io/library/norish:local done
+#53 DONE 0.0s

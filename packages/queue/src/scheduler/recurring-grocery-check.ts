@@ -6,7 +6,7 @@ import {
   updateRecurringGrocery,
 } from "@norish/db/repositories/recurring-groceries";
 import { calculateNextOccurrence } from "@norish/shared/lib/recurrence/calculator";
-import { groceryEmitter } from "@norish/trpc/routers/groceries/emitter";
+import { groceryEmitter } from "@norish/queue";
 
 /**
  * Get the household key for a user (household ID or user ID if no household)

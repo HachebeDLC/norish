@@ -29,16 +29,14 @@ import {
   normalizeIngredientName,
   upsertIngredientStorePreference,
 } from "@norish/db/repositories/stores";
-import { completeInBring } from "@norish/api/services/bring/sync";
-import { addBringSyncJob } from "@norish/queue";
+import { completeInBring } from "@norish/shared-server/services/bring/sync";
+import { addBringSyncJob, groceryEmitter } from "@norish/queue";
 import { getQueues } from "@norish/queue/registry";
 import { trpcLogger as log } from "@norish/shared-server/logger";
 import { parseIngredientWithDefaults } from "@norish/shared/lib/helpers";
 
 import { authedProcedure } from "../../middleware";
 import { router } from "../../trpc";
-
-import { groceryEmitter } from "./emitter";
 
 /**
  * Normalize a grocery name for duplicate checking.

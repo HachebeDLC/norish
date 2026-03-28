@@ -21,7 +21,7 @@ import { trpcLogger as log } from "@norish/shared-server/logger";
 import { authedProcedure } from "../../middleware";
 import { router } from "../../trpc";
 
-import { calendarEmitter } from "./emitter";
+import { calendarEmitter } from "@norish/queue";
 
 const slotSchema = z.enum(["Breakfast", "Lunch", "Dinner", "Snack"]);
 const itemTypeSchema = z.enum(["recipe", "note"]);

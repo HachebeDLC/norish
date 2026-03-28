@@ -38,12 +38,16 @@ vi.mock("@norish/queue/redis/subscription-multiplexer", () => ({
   getOrCreateMultiplexer: vi.fn(),
 }));
 
-vi.mock("@norish/trpc/routers/recipes/emitter", () => ({
-  recipeEmitter: {
-    emitToUser: vi.fn(),
-    emitToHousehold: vi.fn(),
-  },
-}));
+vi.mock("@norish/queue", async (importOriginal) => {
+  const actual = await importOriginal<any>();
+  return {
+    ...actual,
+    recipeEmitter: {
+      emitToUser: vi.fn(),
+      emitToHousehold: vi.fn(),
+    },
+  };
+});
 
 describe("archiveRouter.importArchive", () => {
   beforeEach(() => {

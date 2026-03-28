@@ -1,0 +1,386 @@
+#0 building with "default" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 9.70kB done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/node:22-alpine3.21
+#2 DONE 0.7s
+
+#3 [internal] load .dockerignore
+#3 transferring context: 786B done
+#3 DONE 0.0s
+
+#4 [base 1/3] FROM docker.io/library/node:22-alpine3.21@sha256:af8023ec879993821f6d5b21382ed915622a1b0f1cc03dbeb6804afaf01f8885
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 254.32kB 0.1s done
+#5 DONE 0.1s
+
+#6 [deps  7/20] COPY packages/db/package.json ./packages/db/package.json
+#6 CACHED
+
+#7 [deps  5/20] COPY packages/auth/package.json ./packages/auth/package.json
+#7 CACHED
+
+#8 [deps  1/20] RUN apk add --no-cache python3 make g++ pkgconfig libpq-dev vips-dev
+#8 CACHED
+
+#9 [deps 15/20] COPY tooling/eslint/package.json ./tooling/eslint/package.json
+#9 CACHED
+
+#10 [build 1/8] RUN apk add --no-cache pkgconfig libpq-dev vips-dev
+#10 CACHED
+
+#11 [deps 12/20] COPY packages/shared-server/package.json ./packages/shared-server/package.json
+#11 CACHED
+
+#12 [deps 13/20] COPY packages/trpc/package.json ./packages/trpc/package.json
+#12 CACHED
+
+#13 [build 2/8] WORKDIR /app
+#13 CACHED
+
+#14 [deps  9/20] COPY packages/queue/package.json ./packages/queue/package.json
+#14 CACHED
+
+#15 [base 2/3] RUN apk upgrade --no-cache &&     apk add --no-cache ca-certificates libc6-compat
+#15 CACHED
+
+#16 [base 3/3] WORKDIR /app
+#16 CACHED
+
+#17 [deps 20/20] RUN --mount=type=cache,target=/root/.local/share/pnpm/store     pnpm install --frozen-lockfile
+#17 CACHED
+
+#18 [deps  6/20] COPY packages/config/package.json ./packages/config/package.json
+#18 CACHED
+
+#19 [deps  2/20] COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json .npmrc ./
+#19 CACHED
+
+#20 [deps 10/20] COPY packages/shared/package.json ./packages/shared/package.json
+#20 CACHED
+
+#21 [deps 16/20] COPY tooling/prettier/package.json ./tooling/prettier/package.json
+#21 CACHED
+
+#22 [deps 19/20] COPY patches/ ./patches/
+#22 CACHED
+
+#23 [deps  3/20] COPY apps/web/package.json ./apps/web/package.json
+#23 CACHED
+
+#24 [builder-base 1/1] RUN npm install -g pnpm@10.30.1
+#24 CACHED
+
+#25 [deps 14/20] COPY packages/ui/package.json ./packages/ui/package.json
+#25 CACHED
+
+#26 [deps 17/20] COPY tooling/tailwind/package.json ./tooling/tailwind/package.json
+#26 CACHED
+
+#27 [deps  4/20] COPY packages/api/package.json ./packages/api/package.json
+#27 CACHED
+
+#28 [deps 11/20] COPY packages/shared-react/package.json ./packages/shared-react/package.json
+#28 CACHED
+
+#29 [deps 18/20] COPY tooling/typescript/package.json ./tooling/typescript/package.json
+#29 CACHED
+
+#30 [deps  8/20] COPY packages/i18n/package.json ./packages/i18n/package.json
+#30 CACHED
+
+#31 [build 3/8] COPY --from=deps /app/node_modules ./node_modules
+#31 CACHED
+
+#32 [build 4/8] COPY . .
+#32 DONE 0.5s
+
+#33 [build 5/8] RUN --mount=type=cache,target=/root/.local/share/pnpm/store     pnpm install --frozen-lockfile --ignore-scripts --child-concurrency=1
+#33 0.772 Scope: all 17 workspace projects
+#33 0.993 Lockfile is up to date, resolution step is skipped
+#33 1.447 Progress: resolved 0, reused 1, downloaded 0, added 0
+#33 2.451 Progress: resolved 0, reused 139, downloaded 0, added 0
+#33 3.430 Packages: +8 -292
+#33 3.430 ++------------------------------------------------------------------------------
+#33 3.487 Progress: resolved 0, reused 275, downloaded 0, added 0
+#33 3.995 Progress: resolved 0, reused 275, downloaded 0, added 8, done
+#33 4.052 
+#33 4.052    ╭──────────────────────────────────────────╮
+#33 4.052    │                                          │
+#33 4.052    │   Update available! 10.30.1 → 10.33.0.   │
+#33 4.052    │   Changelog: https://pnpm.io/v/10.33.0   │
+#33 4.052    │     To update, run: pnpm add -g pnpm     │
+#33 4.052    │                                          │
+#33 4.052    ╰──────────────────────────────────────────╯
+#33 4.052 
+#33 4.411 
+#33 4.413 ╭ Warning ─────────────────────────────────────────────────────────────────────╮
+#33 4.413 │                                                                              │
+#33 4.413 │   Ignored build scripts: @parcel/watcher@2.5.6, @prisma/engines@7.4.2,       │
+#33 4.413 │   @swc/core@1.15.18, cpu-features@0.0.10, msgpackr-extract@3.0.3,            │
+#33 4.413 │   prisma@7.4.2, protobufjs@7.5.4, ssh2@1.17.0.                               │
+#33 4.413 │   Run "pnpm approve-builds" to pick which dependencies should be allowed     │
+#33 4.413 │   to run scripts.                                                            │
+#33 4.413 │                                                                              │
+#33 4.413 ╰──────────────────────────────────────────────────────────────────────────────╯
+#33 4.455 Done in 4s using pnpm v10.30.1
+#33 DONE 4.5s
+
+#34 [build 6/8] RUN pnpm run build &&     rm -rf apps/web/.next/cache apps/web/.next/trace            apps/web/.next/dev apps/web/.next/diagnostics apps/web/.next/types &&     rm -rf apps/web/.next/standalone/node_modules/typescript            apps/web/.next/standalone/node_modules/ffmpeg-static
+#34 0.725 
+#34 0.725 > norish@0.17.3-beta build /app
+#34 0.725 > turbo run build
+#34 0.725 
+#34 0.763 
+#34 0.763 Attention:
+#34 0.763 Turborepo now collects completely anonymous telemetry regarding usage.
+#34 0.763 This information is used to shape the Turborepo roadmap and prioritize features.
+#34 0.763 You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
+#34 0.763 https://turborepo.dev/docs/telemetry
+#34 0.763 
+#34 0.763 • turbo 2.8.16
+#34 0.858 • Packages in scope: @norish/api, @norish/auth, @norish/config, @norish/db, @norish/eslint-config, @norish/i18n, @norish/prettier-config, @norish/queue, @norish/shared, @norish/shared-react, @norish/shared-server, @norish/tailwind-config, @norish/trpc, @norish/tsconfig, @norish/ui, @norish/web
+#34 0.858 • Running build in 16 packages
+#34 0.858 • Remote caching disabled
+#34 1.216 @norish/db:build: cache miss, executing 88df8ff4edb15543
+#34 1.216 @norish/i18n:build: cache miss, executing f94e1a998c501b7e
+#34 1.216 @norish/ui:build: cache miss, executing 3d38386ae24c3598
+#34 1.561 @norish/db:build: 
+#34 1.561 @norish/db:build: > @norish/db@0.17.3-beta build /app/packages/db
+#34 1.561 @norish/db:build: > rm -rf dist && tsc -p tsconfig.json --noCheck
+#34 1.561 @norish/db:build: 
+#34 1.577 @norish/i18n:build: 
+#34 1.577 @norish/i18n:build: > @norish/i18n@0.17.3-beta build /app/packages/i18n
+#34 1.577 @norish/i18n:build: > rm -rf dist && tsc -p tsconfig.json --noCheck
+#34 1.577 @norish/i18n:build: 
+#34 1.577 @norish/ui:build: 
+#34 1.577 @norish/ui:build: > @norish/ui@0.17.3-beta build /app/packages/ui
+#34 1.577 @norish/ui:build: > rm -rf dist && tsc -p tsconfig.json --noCheck
+#34 1.577 @norish/ui:build: 
+#34 4.270 @norish/config:build: cache miss, executing da770bfe88cac6eb
+#34 4.821 @norish/config:build: 
+#34 4.821 @norish/config:build: > @norish/config@0.17.3-beta build /app/packages/config
+#34 4.821 @norish/config:build: > rm -rf dist && tsc -p tsconfig.json --noCheck
+#34 4.821 @norish/config:build: 
+#34 6.057 @norish/shared:build: cache miss, executing cf4e9222c00a6e22
+#34 6.611 @norish/shared:build: 
+#34 6.611 @norish/shared:build: > @norish/shared@0.17.3-beta build /app/packages/shared
+#34 6.611 @norish/shared:build: > rm -rf dist && tsc -p tsconfig.json --noCheck
+#34 6.611 @norish/shared:build: 
+#34 9.480 @norish/shared-server:build: cache miss, executing 1eaecbe89fb20b5b
+#34 9.829 @norish/shared-server:build: 
+#34 9.829 @norish/shared-server:build: > @norish/shared-server@0.17.3-beta build /app/packages/shared-server
+#34 9.829 @norish/shared-server:build: > rm -rf dist && tsc -p tsconfig.json --noCheck
+#34 9.829 @norish/shared-server:build: 
+#34 11.80 @norish/queue:build: cache miss, executing 3e62c23b6d537624
+#34 12.12 @norish/queue:build: 
+#34 12.12 @norish/queue:build: > @norish/queue@0.17.3-beta build /app/packages/queue
+#34 12.12 @norish/queue:build: > rm -rf dist && tsc -p tsconfig.json --noCheck
+#34 12.12 @norish/queue:build: 
+#34 14.64 @norish/auth:build: cache miss, executing cfddcb53f7c8e33b
+#34 14.99 @norish/auth:build: 
+#34 14.99 @norish/auth:build: > @norish/auth@0.17.3-beta build /app/packages/auth
+#34 14.99 @norish/auth:build: > rm -rf dist && tsc -p tsconfig.json --noCheck
+#34 14.99 @norish/auth:build: 
+#34 19.24 @norish/trpc:build: cache miss, executing 2a906f7de743f2a0
+#34 19.56 @norish/trpc:build: 
+#34 19.56 @norish/trpc:build: > @norish/trpc@0.17.3-beta build /app/packages/trpc
+#34 19.56 @norish/trpc:build: > rm -rf dist .cache && tsc -p tsconfig.json --noCheck
+#34 19.56 @norish/trpc:build: 
+#34 26.06 @norish/api:build: cache miss, executing bb0a6ef58099ad7e
+#34 26.06 @norish/shared-react:build: cache miss, executing f6d2a2696fd7d372
+#34 26.39 @norish/shared-react:build: 
+#34 26.39 @norish/shared-react:build: > @norish/shared-react@0.17.3-beta build /app/packages/shared-react
+#34 26.39 @norish/shared-react:build: > rm -rf dist && tsc -p tsconfig.json --noCheck
+#34 26.39 @norish/shared-react:build: 
+#34 26.42 @norish/api:build: 
+#34 26.42 @norish/api:build: > @norish/api@0.17.3-beta build /app/packages/api
+#34 26.42 @norish/api:build: > rm -rf dist && tsc -p tsconfig.json --noCheck
+#34 26.42 @norish/api:build: 
+#34 32.55 @norish/web:build: cache miss, executing 5c3493ce0f913321
+#34 32.86 @norish/web:build: 
+#34 32.86 @norish/web:build: > @norish/web@0.17.3-beta build /app/apps/web
+#34 32.86 @norish/web:build: > pnpm run build:web && pnpm run build:server && pnpm run update-sw
+#34 32.86 @norish/web:build: 
+#34 33.21 @norish/web:build: 
+#34 33.21 @norish/web:build: > @norish/web@0.17.3-beta build:web /app/apps/web
+#34 33.21 @norish/web:build: > next build
+#34 33.21 @norish/web:build: 
+#34 33.90 @norish/web:build: ▲ Next.js 16.1.6 (Turbopack)
+#34 33.90 @norish/web:build: 
+#34 33.94 @norish/web:build:   Creating an optimized production build ...
+#34 54.22 @norish/web:build: ✓ Compiled successfully in 20.0s
+#34 54.23 @norish/web:build:   Running TypeScript ...
+#34 65.67 @norish/web:build:   Collecting page data using 21 workers ...
+#34 67.89 @norish/web:build: ⚠ Using edge runtime on a page currently disables static generation for that page
+#34 71.66 @norish/web:build:   Generating static pages using 21 workers (0/15) ...
+#34 73.50 @norish/web:build:   Generating static pages using 21 workers (3/15) 
+#34 73.53 @norish/web:build:   Generating static pages using 21 workers (7/15) 
+#34 74.17 @norish/web:build:   Generating static pages using 21 workers (11/15) 
+#34 74.30 @norish/web:build: ✓ Generating static pages using 21 workers (15/15) in 2.6s
+#34 74.31 @norish/web:build:   Finalizing page optimization ...
+#34 74.96 @norish/web:build: 
+#34 74.96 @norish/web:build: Route (app)
+#34 74.96 @norish/web:build: ┌ ƒ /
+#34 74.96 @norish/web:build: ├ ƒ /_not-found
+#34 74.96 @norish/web:build: ├ ƒ /api/auth/[...all]
+#34 74.96 @norish/web:build: ├ ƒ /api/auth/error
+#34 74.96 @norish/web:build: ├ ƒ /api/health
+#34 74.96 @norish/web:build: ├ ƒ /api/import/recipe
+#34 74.96 @norish/web:build: ├ ƒ /api/trpc/[trpc]
+#34 74.96 @norish/web:build: ├ ƒ /auth-error
+#34 74.96 @norish/web:build: ├ ƒ /avatars/[id]
+#34 74.96 @norish/web:build: ├ ƒ /calendar
+#34 74.96 @norish/web:build: ├ ƒ /groceries
+#34 74.96 @norish/web:build: ├ ƒ /images/splash
+#34 74.96 @norish/web:build: ├ ƒ /login
+#34 74.96 @norish/web:build: ├ ○ /manifest.webmanifest
+#34 74.96 @norish/web:build: ├ ƒ /recipes/[id]
+#34 74.96 @norish/web:build: ├ ƒ /recipes/[id]/[filename]
+#34 74.96 @norish/web:build: ├ ƒ /recipes/[id]/steps/[filename]
+#34 74.96 @norish/web:build: ├ ƒ /recipes/edit/[id]
+#34 74.96 @norish/web:build: ├ ƒ /recipes/new
+#34 74.96 @norish/web:build: ├ ƒ /settings
+#34 74.96 @norish/web:build: ├ ƒ /settings/caldav
+#34 74.96 @norish/web:build: ├ ƒ /settings/household
+#34 74.96 @norish/web:build: ├ ƒ /settings/user
+#34 74.96 @norish/web:build: └ ƒ /signup
+#34 74.96 @norish/web:build: 
+#34 74.96 @norish/web:build: 
+#34 74.96 @norish/web:build: ƒ Proxy (Middleware)
+#34 74.96 @norish/web:build: 
+#34 74.96 @norish/web:build: ○  (Static)   prerendered as static content
+#34 74.96 @norish/web:build: ƒ  (Dynamic)  server-rendered on demand
+#34 74.96 @norish/web:build: 
+#34 75.53 @norish/web:build: 
+#34 75.53 @norish/web:build: > @norish/web@0.17.3-beta build:server /app/apps/web
+#34 75.53 @norish/web:build: > tsdown --config ./tsdown.config.ts
+#34 75.53 @norish/web:build: 
+#34 75.64 @norish/web:build: ℹ tsdown v0.20.3 powered by rolldown v1.0.0-rc.3
+#34 75.73 @norish/web:build: ℹ config file: /app/apps/web/tsdown.config.ts 
+#34 75.73 @norish/web:build: ℹ entry: server/index.ts
+#34 75.73 @norish/web:build: ℹ entry: server/cli.ts
+#34 75.73 @norish/web:build: ℹ entry: server/worker.ts
+#34 75.73 @norish/web:build: ℹ tsconfig: tsconfig.server.json
+#34 75.74 @norish/web:build: ℹ tsconfig: tsconfig.server.json
+#34 75.74 @norish/web:build: ℹ tsconfig: tsconfig.server.json
+#34 75.74 @norish/web:build: ℹ Build start
+#34 75.95 @norish/web:build: ℹ ../../dist-server/cli.mjs  1308.23 kB
+#34 75.95 @norish/web:build: ℹ 1 files, total: 1308.23 kB
+#34 75.96 @norish/web:build: ✔ Build complete in 224ms
+#34 75.96 @norish/web:build: ℹ ../../dist-server/worker.mjs              1499.76 kB
+#34 75.96 @norish/web:build: ℹ ../../dist-server/processor-BWoyHGkC.mjs    27.59 kB │ gzip: 6.51 kB
+#34 75.96 @norish/web:build: ℹ 2 files, total: 1527.34 kB
+#34 75.97 @norish/web:build: ✔ Build complete in 232ms
+#34 75.97 @norish/web:build: ℹ ../../dist-server/index.mjs                    1736.68 kB
+#34 75.97 @norish/web:build: ℹ ../../dist-server/unit-converter-BdRWf09P.mjs     6.45 kB │ gzip: 1.88 kB
+#34 75.97 @norish/web:build: ℹ 2 files, total: 1743.13 kB
+#34 75.97 @norish/web:build: ✔ Build complete in 233ms
+#34 76.43 @norish/web:build: 
+#34 76.43 @norish/web:build: > @norish/web@0.17.3-beta update-sw /app/apps/web
+#34 76.43 @norish/web:build: > node scripts/update-sw-version.js
+#34 76.43 @norish/web:build: 
+#34 77.74 
+#34 77.74  Tasks:    12 successful, 12 total
+#34 77.74 Cached:    0 cached, 12 total
+#34 77.74   Time:    1m16.973s 
+#34 77.74 
+#34 DONE 79.5s
+
+#35 [build 7/8] RUN pnpm deploy --filter @norish/web --prod /app/deploy &&     cd /app/deploy/node_modules &&     rm -rf @norish &&     rm -rf @expo @expo-google-fonts expo expo-*            @react-native @react-navigation react-native react-native-*            hermes-compiler fb-dotslash react-devtools-core &&     rm -rf typescript @esbuild esbuild tsx            @prisma prisma drizzle-kit            eslint @eslint @typescript-eslint eslint-*            prettier prettier-plugin-*            @tailwindcss tailwindcss postcss postcss-*            vitest @vitest @testing-library jsdom            @babel babel-plugin-* babel-preset-*            jest-* @jest fast-check axe-core            rollup terser            turbo turbo-* &&     rm -rf ffmpeg-static &&     cd @next && find . -maxdepth 1 -type d -name 'swc-*'       ! -name '*linux-x64-musl*' ! -name '*linux-arm64-musl*'       -exec rm -rf {} + && cd .. &&     cd @swc && find . -maxdepth 1 -type d -name 'core-*'       ! -name '*linux-x64-musl*' ! -name '*linux-arm64-musl*'       -exec rm -rf {} + && cd .. &&     cd @img && find . -maxdepth 1 -type d -name 'sharp-*'       ! -name '*linuxmusl-x64*' ! -name '*linuxmusl-arm64*'       -exec rm -rf {} + && cd .. &&     find . -maxdepth 1 -type d -name 'lightningcss-*'       ! -name '*linux-x64-musl*' ! -name '*linux-arm64-musl*'       -exec rm -rf {} + &&     rm -rf @next/eslint-plugin-next
+#35 3.442 Packages are copied from the content-addressable store to the virtual store.
+#35 3.442   Content-addressable store is at: /root/.local/share/pnpm/store/v10
+#35 3.442   Virtual store is at:             deploy/node_modules/.pnpm
+#35 3.884 deploy                                   |    +1395 ++++++++++++++++++++++++++++
+#35 4.295 deploy                                   | Progress: resolved 0, reused 1, downloaded 0, added 0
+#35 5.303 deploy                                   | Progress: resolved 0, reused 11, downloaded 87, added 3
+#35 6.340 deploy                                   | Progress: resolved 0, reused 11, downloaded 214, added 7
+#35 7.341 deploy                                   | Progress: resolved 0, reused 11, downloaded 387, added 7
+#35 8.348 deploy                                   | Progress: resolved 0, reused 11, downloaded 524, added 9
+#35 9.360 deploy                                   | Progress: resolved 0, reused 11, downloaded 740, added 27
+#35 10.39 deploy                                   | Progress: resolved 0, reused 11, downloaded 1111, added 106
+#35 11.39 deploy                                   | Progress: resolved 0, reused 11, downloaded 1317, added 917
+#35 12.08 deploy                                   | Progress: resolved 0, reused 11, downloaded 1317, added 1395, done
+#35 12.09 deploy/node_modules/@heroui/shared-utils postinstall$ node -e "try{require('./scripts/postinstall.js')}catch(e){}"
+#35 12.11 deploy/node_modules/esbuild postinstall$ node install.js
+#35 12.11 .../vite/node_modules/esbuild postinstall$ node install.js
+#35 12.13 .../core-utils/node_modules/esbuild postinstall$ node install.js
+#35 12.17 deploy/node_modules/sharp install$ node install/check.js || npm run build
+#35 12.17 deploy/node_modules/@heroui/shared-utils postinstall: Done
+#35 12.19 .../vite/node_modules/esbuild postinstall: Done
+#35 12.19 deploy/node_modules/esbuild postinstall: Done
+#35 12.20 deploy/node_modules/ffmpeg-static install$ node install.js
+#35 12.22 .../core-utils/node_modules/esbuild postinstall: Done
+#35 12.25 deploy/node_modules/sharp install: Done
+#35 13.80 deploy/node_modules/ffmpeg-static install: Done
+#35 14.56 ╭ Warning ─────────────────────────────────────────────────────────────────────╮
+#35 14.56 │                                                                              │
+#35 14.56 │   Ignored build scripts: @parcel/watcher@2.5.6, @prisma/engines@7.4.2,       │
+#35 14.56 │   @swc/core@1.15.18, msgpackr-extract@3.0.3, prisma@7.4.2.                   │
+#35 14.56 │   Run "pnpm approve-builds" to pick which dependencies should be allowed     │
+#35 14.56 │   to run scripts.                                                            │
+#35 14.56 │                                                                              │
+#35 14.56 ╰──────────────────────────────────────────────────────────────────────────────╯
+#35 DONE 17.1s
+
+#36 [build 8/8] RUN find /app/packages -type d -name '__tests__' -exec rm -rf {} + 2>/dev/null;     find /app/packages -type f (       -name '*.test.ts' -o -name '*.test.tsx' -o -name '*.spec.ts' -o -name '*.spec.tsx'       -o -name 'vitest.config.*' -o -name 'tsconfig*.json' -o -name 'eslint.config.*'     ) -delete 2>/dev/null;     true
+#36 DONE 0.4s
+
+#37 [runtime  2/15] WORKDIR /app
+#37 CACHED
+
+#38 [runtime  1/15] RUN apk add --no-cache libpq ffmpeg vips &&     rm -rf /usr/local/lib/node_modules/npm /usr/local/bin/npm /usr/local/bin/npx /usr/local/bin/corepack &&     rm -rf /var/cache/apk/* /tmp/* /root/.npm
+#38 CACHED
+
+#39 [runtime  3/15] RUN if [ "1000" != "1000" ] || [ "1000" != "1000" ]; then       addgroup -g 1000 -S norishapp 2>/dev/null;       adduser -u 1000 -S norish -G $(getent group 1000 | cut -d: -f1) 2>/dev/null;     fi
+#39 CACHED
+
+#40 [runtime  4/15] COPY --from=build --chown=1000:1000 /app/apps/web/.next/standalone/apps/web/.next/ ./apps/web/.next/
+#40 DONE 0.2s
+
+#41 [runtime  5/15] COPY --from=build --chown=1000:1000 /app/apps/web/package.json ./apps/web/package.json
+#41 DONE 0.0s
+
+#42 [ytdlp 1/1] RUN if [ "amd64" = "arm64" ]; then       YT_DLP_BINARY="yt-dlp_musllinux_aarch64";     else       YT_DLP_BINARY="yt-dlp_musllinux";     fi &&     mkdir -p /ytdlp &&     wget -q "https://github.com/yt-dlp/yt-dlp/releases/download/2026.02.04/${YT_DLP_BINARY}" -O /ytdlp/yt-dlp &&     chmod +x /ytdlp/yt-dlp
+#42 CACHED
+
+#43 [runtime  6/15] COPY --from=build --chown=1000:1000 /app/apps/web/next.config.js ./apps/web/next.config.js
+#43 DONE 0.1s
+
+#44 [runtime  7/15] COPY --from=build --chown=1000:1000 /app/apps/web/config/next-intl-request-config-path.js ./apps/web/config/next-intl-request-config-path.js
+#44 DONE 0.0s
+
+#45 [runtime  8/15] COPY --from=build --chown=1000:1000 /app/package.json ./package.json
+#45 DONE 0.2s
+
+#46 [runtime  9/15] COPY --from=build --chown=1000:1000 /app/deploy/node_modules/ ./node_modules/
+#46 DONE 36.6s
+
+#47 [runtime 10/15] COPY --from=build --chown=1000:1000 /app/apps/web/.next/static/ ./apps/web/.next/static/
+#47 DONE 0.6s
+
+#48 [runtime 11/15] COPY --from=build --chown=1000:1000 /app/apps/web/public/ ./apps/web/public/
+#48 DONE 0.3s
+
+#49 [runtime 12/15] COPY --from=build --chown=1000:1000 /app/dist-server/ ./dist-server/
+#49 DONE 0.6s
+
+#50 [runtime 13/15] COPY --from=build --chown=1000:1000 /app/packages/ ./packages/
+#50 DONE 1.1s
+
+#51 [runtime 14/15] RUN mkdir -p /app/uploads /app/bin &&     chown -R 1000:1000 /app/uploads /app/bin
+#51 DONE 0.8s
+
+#52 [runtime 15/15] COPY --from=ytdlp --chown=1000:1000 /ytdlp/yt-dlp /app/bin/yt-dlp
+#52 DONE 2.7s
+
+#53 exporting to image
+#53 exporting layers
+#53 exporting layers 12.2s done
+#53 writing image sha256:f39670bc5afca7bd1a46311db3f2cbe59943a1cfff69a22038f52d04c19f0114 done
+#53 naming to docker.io/library/norish:local 0.0s done
+#53 DONE 12.2s

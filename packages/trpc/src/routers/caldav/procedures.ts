@@ -22,7 +22,7 @@ import { createLogger } from "@norish/shared-server/logger";
 import { authedProcedure } from "../../middleware";
 import { router } from "../../trpc";
 
-import { caldavEmitter } from "./emitter";
+import { caldavEmitter } from "@norish/queue";
 import {
   DeleteCaldavConfigInputSchema,
   FetchCalendarsInputSchema,

@@ -30,7 +30,11 @@
     "./ai/unit-converter": "./src/ai/unit-converter.ts",
     "./ai/utils/category-matcher": "./src/ai/utils/category-matcher.ts",
     "./caldav/ics-helpers": "./src/caldav/ics-helpers.ts",
-    "./lib/workspace-paths": "./src/lib/workspace-paths.ts"
+    "./lib/workspace-paths": "./src/lib/workspace-paths.ts",
+    "./services/hellofresh/client": "./src/services/hellofresh/client.ts",
+    "./services/hellofresh/mapper": "./src/services/hellofresh/mapper.ts",
+    "./services/bring/client": "./src/services/bring/client.ts",
+    "./services/bring/sync": "./src/services/bring/sync.ts"
   },
   "scripts": {
     "build": "rm -rf dist && tsc -p tsconfig.json --noCheck",

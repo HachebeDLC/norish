@@ -1,9 +1,9 @@
-import type { RecipeSubscriptionEvents } from "../recipes/types";
+import type { RecipeSubscriptionEvents } from "@norish/queue";
 
 import { createSubscriptionIterable } from "../../helpers";
 import { authedProcedure } from "../../middleware";
 import { router } from "../../trpc";
-import { recipeEmitter } from "../recipes/emitter";
+import { recipeEmitter } from "@norish/queue";
 
 /**
  * Archive import subscriptions

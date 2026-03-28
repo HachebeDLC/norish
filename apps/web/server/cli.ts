@@ -9,7 +9,7 @@ import { getAdapterUserByEmail, setUserAsOwnerAndAdmin } from "@norish/db/reposi
 import { setConfig } from "@norish/db/repositories/server-config";
 import { ServerConfigKeys } from "@norish/config/zod/server-config";
 import { v4 as uuidv4 } from "uuid";
-import { mapHelloFreshToNorish } from "@norish/api/services/hellofresh/mapper";
+import { mapHelloFreshToNorish } from "@norish/shared-server/services/hellofresh/mapper";
 import fs from "fs";
 import { auth } from "@norish/auth";
 import { users, verification } from "@norish/db/schema/auth";

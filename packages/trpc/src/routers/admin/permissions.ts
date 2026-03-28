@@ -4,7 +4,7 @@ import { trpcLogger as log } from "@norish/shared-server/logger";
 
 import { adminProcedure } from "../../middleware";
 import { router } from "../../trpc";
-import { permissionsEmitter } from "../permissions/emitter";
+import { permissionsEmitter } from "@norish/queue";
 
 /**
  * Update recipe permission policy.

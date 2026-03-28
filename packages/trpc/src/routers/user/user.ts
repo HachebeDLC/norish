@@ -26,7 +26,7 @@ import { buildAvatarFilename, isAvatarFilenameForUser } from "@norish/shared/lib
 import { emitConnectionInvalidation } from "../../connection-manager";
 import { authedProcedure } from "../../middleware";
 import { router } from "../../trpc";
-import { householdEmitter } from "../households/emitter";
+import { householdEmitter } from "@norish/queue";
 
 import { UpdateNameInputSchema, UpdatePreferencesInputSchema } from "./types";
 

@@ -1,7 +1,7 @@
 import { createPolicyAwareSubscription } from "../../helpers";
 import { router } from "../../trpc";
 
-import { ratingsEmitter } from "./emitter";
+import { ratingsEmitter } from "@norish/queue";
 
 const onRatingUpdated = createPolicyAwareSubscription(
   ratingsEmitter,

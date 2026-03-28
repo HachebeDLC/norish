@@ -17,7 +17,7 @@ import { calculateNextOccurrence, getTodayString } from "@norish/shared/lib/recu
 import { authedProcedure } from "../../middleware";
 import { router } from "../../trpc";
 
-import { groceryEmitter } from "./emitter";
+import { groceryEmitter } from "@norish/queue";
 
 const createRecurring = authedProcedure
   .input(

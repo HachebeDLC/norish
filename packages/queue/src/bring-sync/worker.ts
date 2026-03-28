@@ -1,7 +1,7 @@
 import type { Job } from "bullmq";
 import { BringSyncJobData } from "@norish/queue/contracts/job-types";
 import { createLogger } from "@norish/shared-server/logger";
-import { syncToBring } from "@norish/api/services/bring/sync";
+import { syncToBring } from "@norish/shared-server/services/bring/sync";
 import { getGroceriesByIds, listGroceriesByUser } from "@norish/db/repositories/groceries";
 import { getBullClient } from "@norish/queue/redis/bullmq";
 import {

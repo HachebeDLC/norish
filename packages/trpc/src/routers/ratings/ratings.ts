@@ -7,7 +7,7 @@ import { emitByPolicy } from "../../helpers";
 import { authedProcedure } from "../../middleware";
 import { router } from "../../trpc";
 
-import { ratingsEmitter } from "./emitter";
+import { ratingsEmitter } from "@norish/queue";
 
 interface UserContext {
   user: { id: string };
