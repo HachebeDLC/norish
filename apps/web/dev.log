@@ -1,0 +1,36 @@
+
+> @norish/web@0.17.3-beta dev /home/hachebe/hellofresh-database/norish-repo/apps/web
+> tsx watch server/index.ts
+
+/home/hachebe/hellofresh-database/norish-repo/packages/config/src/env-config-server.ts:230
+  configInstance = ServerConfigSchema.parse(process.env);
+                                      ^
+
+ZodError: [
+  {
+    "code": "invalid_value",
+    "values": [
+      "development",
+      "production"
+    ],
+    "path": [
+      "NODE_ENV"
+    ],
+    "message": "Invalid option: expected one of \"development\"|\"production\""
+  },
+  {
+    "expected": "string",
+    "code": "invalid_type",
+    "path": [
+      "MASTER_KEY"
+    ],
+    "message": "Invalid input: expected string, received undefined"
+  }
+]
+    at initializeServerConfig (/home/hachebe/hellofresh-database/norish-repo/packages/config/src/env-config-server.ts:230:39)
+    at <anonymous> (/home/hachebe/hellofresh-database/norish-repo/packages/config/src/env-config-server.ts:235:30)
+    at ModuleJob.run (node:internal/modules/esm/module_job:377:25)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:691:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)
+
+Node.js v24.10.0
