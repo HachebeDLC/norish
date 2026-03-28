@@ -1,12 +1,13 @@
 import Entypo from '@expo/vector-icons/Entypo';
 import { Button, Separator, useThemeColor } from 'heroui-native';
 import React, { useCallback, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, Linking } from 'react-native';
 import { useIntl } from 'react-intl';
 import { withUniwind } from 'uniwind';
 
 import type { RecipeIngredientsDto } from '@norish/shared/contracts';
 import { formatAmount } from '@norish/shared/lib/format-amount';
+import { generateBringWebUrl, generateBringAppUrl, type BringItem } from '@norish/shared';
 
 import { useAmountDisplayPreference } from '@/hooks/use-amount-display-preference';
 
@@ -111,6 +112,37 @@ export function RecipeIngredients({
 
   const scale = servings / baseServings;
 
+  const handleSendToBring = async () => {
+    const items: BringItem[] = ingredients
+      .filter((it) => !it.ingredientName?.trim().startsWith("#"))
+      .map((it) => {
+        const amount = it.amount != null ? Number(it.amount) * scale : null;
+        const formattedAmount = amount != null ? formatAmount(amount, mode) : "";
+        const spec = [formattedAmount, it.unit].filter(Boolean).join(" ");
+        
+        return {
+          itemId: it.ingredientName?.replace(/^#+\s*/, "") ?? "",
+          spec,
+        };
+      });
+
+    if (items.length === 0) return;
+
+    const appUrl = generateBringAppUrl(items);
+    const webUrl = generateBringWebUrl(items);
+
+    try {
+      const supported = await Linking.canOpenURL(appUrl);
+      if (supported) {
+        await Linking.openURL(appUrl);
+      } else {
+        await Linking.openURL(webUrl);
+      }
+    } catch (error) {
+      await Linking.openURL(webUrl);
+    }
+  };
+
   return (
     <View style={styles.container}>
       {/* Header row: title + toggle + servings control */}
@@ -178,6 +210,13 @@ export function RecipeIngredients({
           </React.Fragment>
         );
       })}
+
+      <Button
+        className="mt-6 h-12 rounded-2xl bg-[#da1a2c]"
+        onPress={handleSendToBring}
+      >
+        <Text className="text-base font-bold text-white">Send to Bring!</Text>
+      </Button>
     </View>
   );
 }
