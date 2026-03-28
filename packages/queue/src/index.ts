@@ -78,6 +78,10 @@ export { startScheduledTasksWorker, stopScheduledTasksWorker } from "./scheduled
 export { startHelloFreshSyncWorker, stopHelloFreshSyncWorker } from "./hellofresh-sync/worker";
 export { startBringSyncWorker, stopBringSyncWorker } from "./bring-sync/worker";
 
+// Emitters
+export { recipeEmitter } from "./recipes/emitter";
+export type { RecipeSubscriptionEvents } from "./recipes/types";
+
 // Types from @norish/shared/contracts
 export type {
   RecipeImportJobData,

@@ -34,3 +34,171 @@ ZodError: [
     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)
 
 Node.js v24.10.0
+3:10:38 PM [tsx] unlink in ./../../packages/trpc/src/routers/recipes/emitter.ts Rerunning...
+c
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+Error [ERR_MODULE_NOT_FOUND]: Cannot find module '/home/hachebe/hellofresh-database/norish-repo/packages/api/node_modules/@norish/trpc/src/routers/recipes/emitter.ts' imported from /home/hachebe/hellofresh-database/norish-repo/packages/api/src/caldav/event-listener.ts
+    at finalizeResolution (node:internal/modules/esm/resolve:274:11)
+    at moduleResolve (node:internal/modules/esm/resolve:864:10)
+    at defaultResolve (node:internal/modules/esm/resolve:990:11)
+    at nextResolve (node:internal/modules/esm/hooks:748:28)
+    at resolveBase (file:///home/hachebe/hellofresh-database/norish-repo/node_modules/tsx/dist/esm/index.mjs?1774707038573:2:3744)
+    at resolveDirectory (file:///home/hachebe/hellofresh-database/norish-repo/node_modules/tsx/dist/esm/index.mjs?1774707038573:2:4243)
+    at resolveTsPaths (file:///home/hachebe/hellofresh-database/norish-repo/node_modules/tsx/dist/esm/index.mjs?1774707038573:2:4984)
+    at resolve (file:///home/hachebe/hellofresh-database/norish-repo/node_modules/tsx/dist/esm/index.mjs?1774707038573:2:5361)
+    at nextResolve (node:internal/modules/esm/hooks:748:28)
+    at Hooks.resolve (node:internal/modules/esm/hooks:240:30) {
+  code: 'ERR_MODULE_NOT_FOUND',
+  url: 'file:///home/hachebe/hellofresh-database/norish-repo/packages/api/node_modules/@norish/trpc/src/routers/recipes/emitter.ts'
+}
+
+Node.js v24.10.0
+3:10:52 PM [tsx] change in ./../../node_modules/@norish/trpc/src/routers/recipes/emitter.ts Rerunning...
+c
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+Error [ERR_MODULE_NOT_FOUND]: Cannot find module '/home/hachebe/hellofresh-database/norish-repo/packages/api/node_modules/@norish/trpc/src/routers/recipes/emitter.ts' imported from /home/hachebe/hellofresh-database/norish-repo/packages/api/src/caldav/event-listener.ts
+    at finalizeResolution (node:internal/modules/esm/resolve:274:11)
+    at moduleResolve (node:internal/modules/esm/resolve:864:10)
+    at defaultResolve (node:internal/modules/esm/resolve:990:11)
+    at nextResolve (node:internal/modules/esm/hooks:748:28)
+    at resolveBase (file:///home/hachebe/hellofresh-database/norish-repo/node_modules/tsx/dist/esm/index.mjs?1774707052174:2:3744)
+    at resolveDirectory (file:///home/hachebe/hellofresh-database/norish-repo/node_modules/tsx/dist/esm/index.mjs?1774707052174:2:4243)
+    at resolveTsPaths (file:///home/hachebe/hellofresh-database/norish-repo/node_modules/tsx/dist/esm/index.mjs?1774707052174:2:4984)
+    at resolve (file:///home/hachebe/hellofresh-database/norish-repo/node_modules/tsx/dist/esm/index.mjs?1774707052174:2:5361)
+    at nextResolve (node:internal/modules/esm/hooks:748:28)
+    at Hooks.resolve (node:internal/modules/esm/hooks:240:30) {
+  code: 'ERR_MODULE_NOT_FOUND',
+  url: 'file:///home/hachebe/hellofresh-database/norish-repo/packages/api/node_modules/@norish/trpc/src/routers/recipes/emitter.ts'
+}
+
+Node.js v24.10.0
+3:11:43 PM [tsx] change in ./../../packages/queue/src/index.ts Rerunning...
+c
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+Error [ERR_MODULE_NOT_FOUND]: Cannot find module '/home/hachebe/hellofresh-database/norish-repo/packages/api/node_modules/@norish/trpc/src/routers/recipes/emitter.ts' imported from /home/hachebe/hellofresh-database/norish-repo/packages/api/src/caldav/event-listener.ts
+    at finalizeResolution (node:internal/modules/esm/resolve:274:11)
+    at moduleResolve (node:internal/modules/esm/resolve:864:10)
+    at defaultResolve (node:internal/modules/esm/resolve:990:11)
+    at nextResolve (node:internal/modules/esm/hooks:748:28)
+    at resolveBase (file:///home/hachebe/hellofresh-database/norish-repo/node_modules/tsx/dist/esm/index.mjs?1774707104051:2:3744)
+    at resolveDirectory (file:///home/hachebe/hellofresh-database/norish-repo/node_modules/tsx/dist/esm/index.mjs?1774707104051:2:4243)
+    at resolveTsPaths (file:///home/hachebe/hellofresh-database/norish-repo/node_modules/tsx/dist/esm/index.mjs?1774707104051:2:4984)
+    at resolve (file:///home/hachebe/hellofresh-database/norish-repo/node_modules/tsx/dist/esm/index.mjs?1774707104051:2:5361)
+    at nextResolve (node:internal/modules/esm/hooks:748:28)
+    at Hooks.resolve (node:internal/modules/esm/hooks:240:30) {
+  code: 'ERR_MODULE_NOT_FOUND',
+  url: 'file:///home/hachebe/hellofresh-database/norish-repo/packages/api/node_modules/@norish/trpc/src/routers/recipes/emitter.ts'
+}
+
+Node.js v24.10.0
+3:11:54 PM [tsx] change in ./../../packages/queue/src/hellofresh-sync/worker.ts Rerunning...
+c
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+Error [ERR_MODULE_NOT_FOUND]: Cannot find module '/home/hachebe/hellofresh-database/norish-repo/packages/api/node_modules/@norish/trpc/src/routers/recipes/emitter.ts' imported from /home/hachebe/hellofresh-database/norish-repo/packages/api/src/caldav/event-listener.ts
+    at finalizeResolution (node:internal/modules/esm/resolve:274:11)
+    at moduleResolve (node:internal/modules/esm/resolve:864:10)
+    at defaultResolve (node:internal/modules/esm/resolve:990:11)
+    at nextResolve (node:internal/modules/esm/hooks:748:28)
+    at resolveBase (file:///home/hachebe/hellofresh-database/norish-repo/node_modules/tsx/dist/esm/index.mjs?1774707114580:2:3744)
+    at resolveDirectory (file:///home/hachebe/hellofresh-database/norish-repo/node_modules/tsx/dist/esm/index.mjs?1774707114580:2:4243)
+    at resolveTsPaths (file:///home/hachebe/hellofresh-database/norish-repo/node_modules/tsx/dist/esm/index.mjs?1774707114580:2:4984)
+    at resolve (file:///home/hachebe/hellofresh-database/norish-repo/node_modules/tsx/dist/esm/index.mjs?1774707114580:2:5361)
+    at nextResolve (node:internal/modules/esm/hooks:748:28)
+    at Hooks.resolve (node:internal/modules/esm/hooks:240:30) {
+  code: 'ERR_MODULE_NOT_FOUND',
+  url: 'file:///home/hachebe/hellofresh-database/norish-repo/packages/api/node_modules/@norish/trpc/src/routers/recipes/emitter.ts'
+}
+
+Node.js v24.10.0
+3:12:52 PM [tsx] change in ./../../packages/trpc/src/routers/recipes/recipes.ts Rerunning...
+c
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+Error [ERR_MODULE_NOT_FOUND]: Cannot find module '/home/hachebe/hellofresh-database/norish-repo/packages/api/node_modules/@norish/trpc/src/routers/recipes/emitter.ts' imported from /home/hachebe/hellofresh-database/norish-repo/packages/api/src/caldav/event-listener.ts
+    at finalizeResolution (node:internal/modules/esm/resolve:274:11)
+    at moduleResolve (node:internal/modules/esm/resolve:864:10)
+    at defaultResolve (node:internal/modules/esm/resolve:990:11)
+    at nextResolve (node:internal/modules/esm/hooks:748:28)
+    at resolveBase (file:///home/hachebe/hellofresh-database/norish-repo/node_modules/tsx/dist/esm/index.mjs?1774707172914:2:3744)
+    at resolveDirectory (file:///home/hachebe/hellofresh-database/norish-repo/node_modules/tsx/dist/esm/index.mjs?1774707172914:2:4243)
+    at resolveTsPaths (file:///home/hachebe/hellofresh-database/norish-repo/node_modules/tsx/dist/esm/index.mjs?1774707172914:2:4984)
+    at resolve (file:///home/hachebe/hellofresh-database/norish-repo/node_modules/tsx/dist/esm/index.mjs?1774707172914:2:5361)
+    at nextResolve (node:internal/modules/esm/hooks:748:28)
+    at Hooks.resolve (node:internal/modules/esm/hooks:240:30) {
+  code: 'ERR_MODULE_NOT_FOUND',
+  url: 'file:///home/hachebe/hellofresh-database/norish-repo/packages/api/node_modules/@norish/trpc/src/routers/recipes/emitter.ts'
+}
+
+Node.js v24.10.0
+3:13:02 PM [tsx] change in ./../../packages/trpc/src/routers/recipes/index.ts Rerunning...
+c
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+Error [ERR_MODULE_NOT_FOUND]: Cannot find module '/home/hachebe/hellofresh-database/norish-repo/packages/api/node_modules/@norish/trpc/src/routers/recipes/emitter.ts' imported from /home/hachebe/hellofresh-database/norish-repo/packages/api/src/caldav/event-listener.ts
+    at finalizeResolution (node:internal/modules/esm/resolve:274:11)
+    at moduleResolve (node:internal/modules/esm/resolve:864:10)
+    at defaultResolve (node:internal/modules/esm/resolve:990:11)
+    at nextResolve (node:internal/modules/esm/hooks:748:28)
+    at resolveBase (file:///home/hachebe/hellofresh-database/norish-repo/node_modules/tsx/dist/esm/index.mjs?1774707182605:2:3744)
+    at resolveDirectory (file:///home/hachebe/hellofresh-database/norish-repo/node_modules/tsx/dist/esm/index.mjs?1774707182605:2:4243)
+    at resolveTsPaths (file:///home/hachebe/hellofresh-database/norish-repo/node_modules/tsx/dist/esm/index.mjs?1774707182605:2:4984)
+    at resolve (file:///home/hachebe/hellofresh-database/norish-repo/node_modules/tsx/dist/esm/index.mjs?1774707182605:2:5361)
+    at nextResolve (node:internal/modules/esm/hooks:748:28)
+    at Hooks.resolve (node:internal/modules/esm/hooks:240:30) {
+  code: 'ERR_MODULE_NOT_FOUND',
+  url: 'file:///home/hachebe/hellofresh-database/norish-repo/packages/api/node_modules/@norish/trpc/src/routers/recipes/emitter.ts'
+}
+
+Node.js v24.10.0
+3:13:07 PM [tsx] change in ./../../packages/trpc/src/routers/recipes/subscriptions.ts Rerunning...
+c
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+Error [ERR_MODULE_NOT_FOUND]: Cannot find module '/home/hachebe/hellofresh-database/norish-repo/packages/api/node_modules/@norish/trpc/src/routers/recipes/emitter.ts' imported from /home/hachebe/hellofresh-database/norish-repo/packages/api/src/caldav/event-listener.ts
+    at finalizeResolution (node:internal/modules/esm/resolve:274:11)
+    at moduleResolve (node:internal/modules/esm/resolve:864:10)
+    at defaultResolve (node:internal/modules/esm/resolve:990:11)
+    at nextResolve (node:internal/modules/esm/hooks:748:28)
+    at resolveBase (file:///home/hachebe/hellofresh-database/norish-repo/node_modules/tsx/dist/esm/index.mjs?1774707187669:2:3744)
+    at resolveDirectory (file:///home/hachebe/hellofresh-database/norish-repo/node_modules/tsx/dist/esm/index.mjs?1774707187669:2:4243)
+    at resolveTsPaths (file:///home/hachebe/hellofresh-database/norish-repo/node_modules/tsx/dist/esm/index.mjs?1774707187669:2:4984)
+    at resolve (file:///home/hachebe/hellofresh-database/norish-repo/node_modules/tsx/dist/esm/index.mjs?1774707187669:2:5361)
+    at nextResolve (node:internal/modules/esm/hooks:748:28)
+    at Hooks.resolve (node:internal/modules/esm/hooks:240:30) {
+  code: 'ERR_MODULE_NOT_FOUND',
+  url: 'file:///home/hachebe/hellofresh-database/norish-repo/packages/api/node_modules/@norish/trpc/src/routers/recipes/emitter.ts'
+}
+
+Node.js v24.10.0
+3:13:14 PM [tsx] change in ./../../packages/trpc/src/routers/recipes/index.ts Rerunning...
+c
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+Error [ERR_MODULE_NOT_FOUND]: Cannot find module '/home/hachebe/hellofresh-database/norish-repo/packages/api/node_modules/@norish/trpc/src/routers/recipes/emitter.ts' imported from /home/hachebe/hellofresh-database/norish-repo/packages/api/src/caldav/event-listener.ts
+    at finalizeResolution (node:internal/modules/esm/resolve:274:11)
+    at moduleResolve (node:internal/modules/esm/resolve:864:10)
+    at defaultResolve (node:internal/modules/esm/resolve:990:11)
+    at nextResolve (node:internal/modules/esm/hooks:748:28)
+    at resolveBase (file:///home/hachebe/hellofresh-database/norish-repo/node_modules/tsx/dist/esm/index.mjs?1774707194203:2:3744)
+    at resolveDirectory (file:///home/hachebe/hellofresh-database/norish-repo/node_modules/tsx/dist/esm/index.mjs?1774707194203:2:4243)
+    at resolveTsPaths (file:///home/hachebe/hellofresh-database/norish-repo/node_modules/tsx/dist/esm/index.mjs?1774707194203:2:4984)
+    at resolve (file:///home/hachebe/hellofresh-database/norish-repo/node_modules/tsx/dist/esm/index.mjs?1774707194203:2:5361)
+    at nextResolve (node:internal/modules/esm/hooks:748:28)
+    at Hooks.resolve (node:internal/modules/esm/hooks:240:30) {
+  code: 'ERR_MODULE_NOT_FOUND',
+  url: 'file:///home/hachebe/hellofresh-database/norish-repo/packages/api/node_modules/@norish/trpc/src/routers/recipes/emitter.ts'
+}
+
+Node.js v24.10.0

@@ -47,7 +47,7 @@ import { emitByPolicy } from "../../helpers";
 import { adminProcedure, authedProcedure } from "../../middleware";
 import { router } from "../../trpc";
 
-import { recipeEmitter } from "./emitter";
+import { recipeEmitter } from "@norish/queue";
 
 interface UserContext {
   user: { id: string };

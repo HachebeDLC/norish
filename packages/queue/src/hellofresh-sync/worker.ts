@@ -10,7 +10,7 @@ import { getBullClient } from "@norish/queue/redis/bullmq";
 import { db } from "@norish/db/drizzle";
 import { recipes, steps, recipeIngredients } from "@norish/db/schema";
 import { and, eq, isNull, sql } from "drizzle-orm";
-import { recipeEmitter } from "@norish/trpc/routers/recipes/emitter";
+import { recipeEmitter } from "../recipes/emitter";
 import {
   baseWorkerOptions,
   QUEUE_NAMES,

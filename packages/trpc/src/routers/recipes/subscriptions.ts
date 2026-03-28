@@ -1,7 +1,7 @@
 import { createPolicyAwareSubscription } from "../../helpers";
 import { router } from "../../trpc";
 
-import { recipeEmitter } from "./emitter";
+import { recipeEmitter } from "@norish/queue";
 
 const onCreated = createPolicyAwareSubscription(recipeEmitter, "created", "recipe created");
 const onImportStarted = createPolicyAwareSubscription(

@@ -6,8 +6,8 @@ import { recipesProcedures } from "./recipes";
 import { recipesSubscriptions } from "./subscriptions";
 import { videosProcedures } from "./videos";
 
-export { recipeEmitter } from "./emitter";
-export type { RecipeSubscriptionEvents } from "./types";
+export { recipeEmitter } from "@norish/queue";
+export type { RecipeSubscriptionEvents } from "@norish/queue";
 
 export const recipesRouter = router({
   ...recipesProcedures._def.procedures,
