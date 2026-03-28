@@ -4,6 +4,7 @@ import type { GroceryDto } from "@norish/shared/contracts";
 import type { RecurrencePattern } from "@norish/shared/contracts/recurrence";
 
 import {
+  ArrowPathIcon,
   BookOpenIcon,
   BuildingStorefrontIcon,
   CheckIcon,
