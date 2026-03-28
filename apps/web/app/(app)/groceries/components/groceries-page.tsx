@@ -68,6 +68,7 @@ export function GroceriesPage() {
   } = useGroceriesUIContext();
 
   const t = useTranslations("groceries.page");
+  const tActions = useTranslations("common.actions");
 
   const handleSendToBring = () => {
     // Only send items that are not done
@@ -167,7 +168,7 @@ export function GroceriesPage() {
               size="md"
               onPress={handleSendToBring}
             >
-              {t("sendToBring")}
+              {tActions("sendToBring")}
             </Button>
             {/* Settings dropdown with view mode and store management */}
             <Dropdown>
