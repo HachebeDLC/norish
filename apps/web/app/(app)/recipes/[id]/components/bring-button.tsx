@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@heroui/react";
-import { generateBringWebUrl, type BringItem } from "@norish/shared";
+import { generateBringWebUrl, BRING_BRAND_COLOR, type BringItem } from "@norish/shared";
 import { useTranslations } from "next-intl";
 
 import { useRecipeContextRequired } from "../context";
@@ -37,10 +37,11 @@ export default function BringButton() {
   return (
     <Button
       fullWidth
-      className="bg-[#da1a2c] text-white font-semibold"
+      style={{ backgroundColor: BRING_BRAND_COLOR }}
+      className="text-white font-semibold"
       onPress={handleSendToBring}
     >
-      Send to Bring!
+      {t("sendToBring")}
     </Button>
   );
 }

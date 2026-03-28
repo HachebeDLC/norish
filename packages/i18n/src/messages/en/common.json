@@ -32,7 +32,8 @@
     "revealSecret": "Reveal secret",
     "hideSecret": "Hide secret",
     "enterNewValue": "Enter new value",
-    "cancelEditing": "Cancel editing"
+    "cancelEditing": "Cancel editing",
+    "sendToBring": "Send to Bring!"
   },
   "status": {
     "loading": "Loading...",

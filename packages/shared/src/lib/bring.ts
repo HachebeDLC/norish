@@ -10,6 +10,8 @@ export interface BringItem {
   spec: string;
 }
 
+export const BRING_BRAND_COLOR = "#da1a2c";
+
 const BRING_WEB_BASE = "https://api.getbring.com/rest/v2/bringlists/import";
 const BRING_APP_BASE = "bringimport://import";
 const SOURCE_NAME = "Norish";

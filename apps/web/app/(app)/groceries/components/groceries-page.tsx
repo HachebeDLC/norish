@@ -19,7 +19,7 @@ import {
   DropdownTrigger,
   Switch,
 } from "@heroui/react";
-import { generateBringWebUrl, type BringItem } from "@norish/shared";
+import { generateBringWebUrl, BRING_BRAND_COLOR, type BringItem } from "@norish/shared";
 import { useTranslations } from "next-intl";
 
 
@@ -161,12 +161,13 @@ export function GroceriesPage() {
               {t("addItem")}
             </Button>
             <Button
-              className="hidden font-medium md:flex bg-[#da1a2c] text-white"
+              className="hidden font-medium md:flex text-white"
+              style={{ backgroundColor: BRING_BRAND_COLOR }}
               radius="full"
               size="md"
               onPress={handleSendToBring}
             >
-              Send to Bring!
+              {t("sendToBring")}
             </Button>
             {/* Settings dropdown with view mode and store management */}
             <Dropdown>

@@ -7,7 +7,7 @@ import { withUniwind } from 'uniwind';
 
 import type { RecipeIngredientsDto } from '@norish/shared/contracts';
 import { formatAmount } from '@norish/shared/lib/format-amount';
-import { generateBringWebUrl, generateBringAppUrl, type BringItem } from '@norish/shared';
+import { generateBringWebUrl, generateBringAppUrl, BRING_BRAND_COLOR, type BringItem } from '@norish/shared';
 
 import { useAmountDisplayPreference } from '@/hooks/use-amount-display-preference';
 
@@ -212,10 +212,13 @@ export function RecipeIngredients({
       })}
 
       <Button
-        className="mt-6 h-12 rounded-2xl bg-[#da1a2c]"
+        className="mt-6 h-12 rounded-2xl"
+        style={{ backgroundColor: BRING_BRAND_COLOR }}
         onPress={handleSendToBring}
       >
-        <Text className="text-base font-bold text-white">Send to Bring!</Text>
+        <Text className="text-base font-bold text-white">
+          {intl.formatMessage({ id: "common.actions.sendToBring" })}
+        </Text>
       </Button>
     </View>
   );
