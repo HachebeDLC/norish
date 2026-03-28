@@ -230,6 +230,16 @@ export function GroceriesPage() {
                     {t("manageStores")}
                   </DropdownItem>
                 </DropdownSection>
+                <DropdownSection title="Bring!">
+                  <DropdownItem
+                    key="send-to-bring"
+                    className="md:hidden"
+                    startContent={<ArrowPathIcon className="h-4 w-4" />}
+                    onPress={handleSendToBring}
+                  >
+                    {tActions("sendToBring")}
+                  </DropdownItem>
+                </DropdownSection>
               </DropdownMenu>
             </Dropdown>
           </div>

@@ -53,20 +53,28 @@ export default function BringIntegrationCard() {
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      // 1. Remove existing Bring tokens
+      // 1. Get current bring tokens to preserve values if using placeholders
       const existingBringTokens = tokens.filter(t => t.domain === "getbring.com");
-      for (const token of existingBringTokens) {
-        await removeMutation.mutateAsync({ id: token.id });
-      }
-
-      // 2. Create new ones (only if user provided new values or kept placeholders)
+      
+      // We need to fetch the actual values if we want to re-save them, 
+      // but since they are encrypted and 'list' doesn't return them,
+      // the safest approach is to ONLY delete and recreate what has actually changed.
+      
       if (email && email !== LINKED_PLACEHOLDER_EMAIL) {
+        const oldEmail = existingBringTokens.find(t => t.name === "email");
+        if (oldEmail) await removeMutation.mutateAsync({ id: oldEmail.id });
         await createMutation.mutateAsync({ domain: "getbring.com", name: "email", value: email, type: "header" });
       }
+
       if (password) {
+        const oldPass = existingBringTokens.find(t => t.name === "password");
+        if (oldPass) await removeMutation.mutateAsync({ id: oldPass.id });
         await createMutation.mutateAsync({ domain: "getbring.com", name: "password", value: password, type: "header" });
       }
+
       if (listUuid && listUuid !== LINKED_PLACEHOLDER_UUID) {
+        const oldUuid = existingBringTokens.find(t => t.name === "list_uuid");
+        if (oldUuid) await removeMutation.mutateAsync({ id: oldUuid.id });
         await createMutation.mutateAsync({ domain: "getbring.com", name: "list_uuid", value: listUuid, type: "header" });
       }
 
