@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   generateBringDeeplink,
   generateBringAppUrl,
+  generateBringWebUrl,
 } from "../../src/lib/bring";
 
 describe("Bring! Integration Logic", () => {
@@ -79,6 +80,27 @@ describe("Bring! Integration Logic", () => {
       const parsedItems = JSON.parse(params.get("items")!);
 
       expect(parsedItems[0].itemId).toBe("Chili-Flocken");
+    });
+  });
+
+  describe("generateBringWebUrl", () => {
+    const items = [
+      { itemId: "Milk", spec: "1 liter" },
+      { itemId: "Eggs", spec: "6 pieces" },
+    ];
+
+    it("generates a correct Web import link", () => {
+      const url = generateBringWebUrl(items);
+
+      expect(url).toContain("https://www.getbring.com/import");
+      expect(url).toContain("source=Norish");
+
+      const urlObj = new URL(url);
+      const itemsParam = urlObj.searchParams.get("items");
+
+      expect(itemsParam).toBeDefined();
+      const parsedItems = JSON.parse(itemsParam!);
+      expect(parsedItems).toEqual(items);
     });
   });
 });

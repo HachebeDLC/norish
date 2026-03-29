@@ -50,3 +50,16 @@ export function generateBringAppUrl(items: BringItem[]): string {
 
   return `bringimport://import?${params.toString()}`;
 }
+
+/**
+ * Generates a Web-to-Web Bring! import link using the https://www.getbring.com/import endpoint.
+ * Use this on the web to open Bring! in a new browser tab.
+ */
+export function generateBringWebUrl(items: BringItem[]): string {
+  const params = new URLSearchParams({
+    items: JSON.stringify(items),
+    source: SOURCE_NAME,
+  });
+
+  return `https://www.getbring.com/import?${params.toString()}`;
+}

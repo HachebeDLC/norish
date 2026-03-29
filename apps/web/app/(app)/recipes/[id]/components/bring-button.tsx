@@ -1,52 +1,44 @@
-/**
- * Bring! Integration Utilities
- *
- * Based on the official Bring! Import Developer Guide:
- * https://sites.google.com/getbring.com/bring-import-dev-guide/web-to-app-integration
- */
+"use client";
 
-export interface BringItem {
-  itemId: string;
-  spec: string;
-}
+import React from "react";
+import { ArrowTopRightOnSquareIcon } from "@heroicons/react/16/solid";
+import { Button } from "@heroui/react";
+import { useTranslations } from "next-intl";
+import { BRING_BRAND_COLOR, generateBringDeeplink } from "@norish/shared";
 
-export const BRING_BRAND_COLOR = "#da1a2c";
+import { useRecipeContextRequired } from "../context";
 
-const SOURCE_NAME = "Norish";
+export default function BringButton() {
+  const { recipe, currentServings } = useRecipeContextRequired();
+  const t = useTranslations("common.actions");
 
-/**
- * Generates a Web-to-App Bring! deep link using the official deeplink endpoint.
- *
- * Bring! will parse the recipe page at `recipeUrl` for schema.org/Recipe markup
- * and redirect the user into the Bring! app (or web app on desktop) with the
- * ingredients pre-loaded.
- *
- * Requires itemprop="ingredients" elements on the recipe page.
- */
-export function generateBringDeeplink(
-  recipeUrl: string,
-  baseQuantity: number = 4,
-  requestedQuantity: number = 4
-): string {
-  const params = new URLSearchParams({
-    url: recipeUrl,
-    source: "web",
-    baseQuantity: String(baseQuantity),
-    requestedQuantity: String(requestedQuantity),
-  });
+  // If we don't have a URL, we can't generate a Bring! deeplink because
+  // Bring! needs to crawl the page for schema.org markup.
+  // In a real app, we might want to generate a canonical URL for our own page
+  // if it's publicly accessible.
+  const recipeUrl = recipe.url || (typeof window !== "undefined" ? window.location.href : "");
 
-  return `https://api.getbring.com/rest/bringrecipes/deeplink?${params.toString()}`;
-}
+  if (!recipeUrl) {
+    return null;
+  }
 
-/**
- * Generates an App-to-App Bring! deep link using the bringimport:// scheme.
- * Use this in native mobile apps (React Native).
- */
-export function generateBringAppUrl(items: BringItem[]): string {
-  const params = new URLSearchParams({
-    items: JSON.stringify(items),
-    source: SOURCE_NAME,
-  });
+  const handleSendToBring = () => {
+    const url = generateBringDeeplink(
+      recipeUrl,
+      recipe.servings || currentServings,
+      currentServings
+    );
+    window.open(url, "_blank", "noopener,noreferrer");
+  };
 
-  return `bringimport://import?${params.toString()}`;
+  return (
+    <Button
+      className="w-full text-white"
+      style={{ backgroundColor: BRING_BRAND_COLOR }}
+      startContent={<ArrowTopRightOnSquareIcon className="h-5 w-5" />}
+      onPress={handleSendToBring}
+    >
+      {t("sendToBring")}
+    </Button>
+  );
 }
