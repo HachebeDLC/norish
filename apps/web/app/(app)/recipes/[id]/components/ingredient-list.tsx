@@ -10,24 +10,22 @@ import SmartMarkdownRenderer from "@/components/shared/smart-markdown-renderer";
 import { useAmountDisplayPreference } from "@/hooks/use-amount-display-preference";
 import { useUnitFormatter } from "@/hooks/use-unit-formatter";
 
-
-
 export default function IngredientsList() {
   const { adjustedIngredients, recipe } = useRecipeContextRequired();
   const [checked, setChecked] = useState<Set<number>>(() => new Set());
   const { mode } = useAmountDisplayPreference();
   const { formatUnitOnly } = useUnitFormatter();
 
-  // Use adjustedIngredients directly, fall back to recipe ingredients only if empty
-  const display = adjustedIngredients?.length > 0 ? adjustedIngredients : recipe.recipeIngredients;
+  const display =
+    adjustedIngredients?.length > 0
+      ? adjustedIngredients
+      : recipe.recipeIngredients;
 
   const toggle = (idx: number) => {
     setChecked((prev) => {
       const next = new Set(prev);
-
       if (next.has(idx)) next.delete(idx);
       else next.add(idx);
-
       return next;
     });
   };
@@ -40,7 +38,11 @@ export default function IngredientsList() {
   };
 
   return (
-    <ul className="space-y-2">
+    // itemScope + itemType enable schema.org/Recipe parsing by Bring! and Google.
+    // Each ingredient <li> carries itemprop="recipeIngredient" with the full
+    // "amount unit name" string in a hidden <meta> so Bring! can parse it without
+    // interfering with our visual rendering.
+    <ul className="space-y-2" itemScope itemType="http://schema.org/Recipe">
       {display
         .filter((it) => it.systemUsed === recipe.systemUsed)
         .sort((a, b) => a.order - b.order)
@@ -49,23 +51,40 @@ export default function IngredientsList() {
 
           if (isHeading) {
             const headingText = it.ingredientName.trim().replace(/^#+\s*/, "");
-
             return (
               <li key={`heading-${idx}`} className="list-none">
                 <div className="px-3 py-2">
-                  <h3 className="text-foreground text-base font-semibold">{headingText}</h3>
+                  <h3 className="text-foreground text-base font-semibold">
+                    {headingText}
+                  </h3>
                 </div>
               </li>
             );
           }
 
           const amount = formatAmount(it.amount, mode);
-          // Format unit with locale-aware display
           const unit = it.unit ? formatUnitOnly(it.unit, it.amount) : "";
           const isChecked = checked.has(idx);
 
+          // Build the machine-readable ingredient string for Bring!/schema.org.
+          // Strip the localised "(s)"/"(es)" pluralisation suffixes from the unit
+          // so Bring! gets clean values like "150 g Langostinos" not "150 gramo(s)".
+          const cleanUnit = unit.replace(/\([^)]*\)/g, "").trim();
+          const schemaIngredient = [amount, cleanUnit, it.ingredientName]
+            .filter(Boolean)
+            .join(" ");
+
           return (
-            <li key={`${it.ingredientName}-${idx}`}>
+            <li
+              key={`${it.ingredientName}-${idx}`}
+              itemProp="recipeIngredient"
+            >
+              {/*
+               * Hidden <meta> carries the machine-readable value for Bring! parser.
+               * The visible UI below is unchanged — this doesn't affect rendering.
+               */}
+              <meta content={schemaIngredient} itemProp="recipeIngredient" />
+
               <div
                 aria-pressed={isChecked}
                 className={`group flex cursor-pointer items-center gap-3 rounded-xl px-3 py-2.5 transition-all duration-200 select-none ${
@@ -112,7 +131,10 @@ export default function IngredientsList() {
                   <span
                     className={`text-base ${isChecked ? "text-default-400 line-through" : "text-base"}`}
                   >
-                    <SmartMarkdownRenderer disableLinks={isChecked} text={it.ingredientName} />
+                    <SmartMarkdownRenderer
+                      disableLinks={isChecked}
+                      text={it.ingredientName}
+                    />
                   </span>
                 </div>
               </div>

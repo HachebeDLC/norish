@@ -92,7 +92,7 @@ describe("Bring! Integration Logic", () => {
     it("generates a correct Web import link", () => {
       const url = generateBringWebUrl(items);
 
-      expect(url).toContain("https://www.getbring.com/import");
+      expect(url).toContain("https://deeplink.getbring.com/import");
       expect(url).toContain("source=Norish");
 
       const urlObj = new URL(url);
