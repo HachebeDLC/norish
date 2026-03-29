@@ -21,7 +21,7 @@ export class BringClient {
   private static caches = new Map<string, BringTokenData>();
   private readonly baseUrl = "https://api.getbring.com/rest/v2";
 
-  constructor(private email?: string, private password?: string) {}
+  constructor(private email?: string, private password?: string) { }
 
   /**
    * Logs into Bring! and returns token data.
@@ -40,7 +40,7 @@ export class BringClient {
     }
 
     log.info({ email: this.email }, "Logging into Bring! API...");
-    
+
     const response = await fetch(`${this.baseUrl}/bringauth`, {
       method: "POST",
       headers: {
@@ -59,8 +59,8 @@ export class BringClient {
     }
 
     const data = await response.json();
-    
-    const tokenData = {
+
+    const tokenData: BringTokenData = {
       token: data.access_token,
       uuid: data.uuid,
       expiresAt: now + data.expires_in,
@@ -72,24 +72,35 @@ export class BringClient {
   }
 
   /**
-   * Internal helper to make authenticated requests with automatic retry on 401.
+   * Internal helper to make authenticated requests.
+   *
+   * Bring! v2 requires the token as `X-Access-Token`, not `Authorization: Bearer`.
+   * Automatically retries once on 401 by forcing a fresh login.
    */
-  private async request(url: string, options: RequestInit = {}, retry = true): Promise<Response> {
+  private async request(
+    url: string,
+    options: RequestInit = {},
+    retry = true
+  ): Promise<Response> {
     const auth = await this.login();
-    
-    const mergedOptions = {
+
+    const mergedOptions: RequestInit = {
       ...options,
       headers: {
         ...options.headers,
-        Authorization: `Bearer ${auth.token}`,
+        // Bring! v2 API uses X-Access-Token, not Authorization: Bearer
+        "X-Access-Token": auth.token,
       },
     };
 
     const response = await fetch(url, mergedOptions);
 
-    // If unauthorized and we haven't retried yet, force re-login and retry
+    // Force re-login and retry once on 401
     if (response.status === 401 && retry && this.email) {
-      log.warn({ email: this.email }, "Bring! token expired or invalid, retrying login...");
+      log.warn(
+        { email: this.email },
+        "Bring! token expired or invalid, retrying login..."
+      );
       BringClient.caches.delete(this.email);
       return this.request(url, options, false);
     }
@@ -99,58 +110,84 @@ export class BringClient {
 
   async loadLists(): Promise<BringList[]> {
     const auth = await this.login();
-    const response = await this.request(`${this.baseUrl}/users/${auth.uuid}/lists`);
+    const response = await this.request(
+      `${this.baseUrl}/users/${auth.uuid}/lists`
+    );
 
-    if (!response.ok) throw new Error(`Failed to load Bring! lists: ${response.statusText}`);
-    
+    if (!response.ok)
+      throw new Error(`Failed to load Bring! lists: ${response.statusText}`);
+
     const data = await response.json();
     return data.lists;
   }
 
-  async getItems(listUuid: string): Promise<{ purchase: BringListItem[], recently: BringListItem[] }> {
-    const response = await this.request(`${this.baseUrl}/bringlists/${listUuid}`);
+  async getItems(
+    listUuid: string
+  ): Promise<{ purchase: BringListItem[]; recently: BringListItem[] }> {
+    const response = await this.request(
+      `${this.baseUrl}/bringlists/${listUuid}`
+    );
 
-    if (!response.ok) throw new Error(`Failed to load Bring! items: ${response.statusText}`);
-    
-    return await response.json();
+    if (!response.ok)
+      throw new Error(`Failed to load Bring! items: ${response.statusText}`);
+
+    return response.json();
   }
 
-  async saveItem(listUuid: string, name: string, specification: string = ""): Promise<void> {
-    const response = await this.request(`${this.baseUrl}/bringlists/${listUuid}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: new URLSearchParams({
-        uuid: listUuid,
-        purchase: name,
-        specification: specification,
-      }),
-    });
+  async saveItem(
+    listUuid: string,
+    name: string,
+    specification: string = ""
+  ): Promise<void> {
+    const response = await this.request(
+      `${this.baseUrl}/bringlists/${listUuid}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: new URLSearchParams({
+          uuid: listUuid,
+          purchase: name,
+          specification,
+        }),
+      }
+    );
 
     if (!response.ok && response.status !== 204) {
       const errorText = await response.text();
-      log.error({ status: response.status, errorText, name }, "Failed to add item to Bring!");
+      log.error(
+        { status: response.status, errorText, name },
+        "Failed to add item to Bring!"
+      );
       throw new Error(`Failed to add item to Bring!: ${response.statusText}`);
     }
   }
 
   async completeItem(listUuid: string, name: string): Promise<void> {
-    const response = await this.request(`${this.baseUrl}/bringlists/${listUuid}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: new URLSearchParams({
-        uuid: listUuid,
-        recently: name,
-      }),
-    });
+    const response = await this.request(
+      `${this.baseUrl}/bringlists/${listUuid}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: new URLSearchParams({
+          uuid: listUuid,
+          recently: name,
+        }),
+      }
+    );
 
     if (!response.ok && response.status !== 204) {
       const errorText = await response.text();
-      log.error({ status: response.status, errorText, name }, "Failed to complete item in Bring!");
-      throw new Error(`Failed to complete item in Bring!: ${response.statusText}`);
+      log.error(
+        { status: response.status, errorText, name },
+        "Failed to complete item in Bring!"
+      );
+      throw new Error(
+        `Failed to complete item in Bring!: ${response.statusText}`
+      );
     }
   }
 }

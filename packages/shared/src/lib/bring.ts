@@ -1,8 +1,8 @@
 /**
  * Bring! Integration Utilities
- * 
+ *
  * Based on the official Bring! Import Developer Guide:
- * https://sites.google.com/getbring.com/bring-import-dev-guide/home
+ * https://sites.google.com/getbring.com/bring-import-dev-guide/web-to-app-integration
  */
 
 export interface BringItem {
@@ -12,33 +12,41 @@ export interface BringItem {
 
 export const BRING_BRAND_COLOR = "#da1a2c";
 
-const BRING_WEB_BASE = "https://api.getbring.com/rest/v2/bringlists/import";
-const BRING_APP_BASE = "bringimport://import";
 const SOURCE_NAME = "Norish";
 
 /**
- * Generates a Web-to-App Bring! import URL.
+ * Generates a Web-to-App Bring! deep link using the official deeplink endpoint.
+ *
+ * Bring! will parse the recipe page at `recipeUrl` for schema.org/Recipe markup
+ * and redirect the user into the Bring! app (or web app on desktop) with the
+ * ingredients pre-loaded.
+ *
+ * Requires itemprop="ingredients" elements on the recipe page.
  */
-export function generateBringWebUrl(items: BringItem[]): string {
-  const payload = JSON.stringify(items);
+export function generateBringDeeplink(
+  recipeUrl: string,
+  baseQuantity: number = 4,
+  requestedQuantity: number = 4
+): string {
   const params = new URLSearchParams({
-    items: payload,
-    source: SOURCE_NAME,
+    url: recipeUrl,
+    source: "web",
+    baseQuantity: String(baseQuantity),
+    requestedQuantity: String(requestedQuantity),
   });
 
-  return `${BRING_WEB_BASE}?${params.toString()}`;
+  return `https://api.getbring.com/rest/bringrecipes/deeplink?${params.toString()}`;
 }
 
 /**
- * Generates an App-to-App Bring! deep link.
+ * Generates an App-to-App Bring! deep link using the bringimport:// scheme.
+ * Use this in native mobile apps (React Native).
  */
 export function generateBringAppUrl(items: BringItem[]): string {
-  const payload = JSON.stringify(items);
   const params = new URLSearchParams({
-    items: payload,
+    items: JSON.stringify(items),
     source: SOURCE_NAME,
   });
 
-  // URLSearchParams.toString() works for custom schemes too
-  return `${BRING_APP_BASE}?${params.toString()}`;
+  return `bringimport://import?${params.toString()}`;
 }

@@ -1,58 +1,52 @@
-"use client";
+/**
+ * Bring! Integration Utilities
+ *
+ * Based on the official Bring! Import Developer Guide:
+ * https://sites.google.com/getbring.com/bring-import-dev-guide/web-to-app-integration
+ */
 
-import { Button } from "@heroui/react";
-import { generateBringWebUrl, BRING_BRAND_COLOR, type BringItem } from "@norish/shared";
-import { useTranslations } from "next-intl";
+export interface BringItem {
+  itemId: string;
+  spec: string;
+}
 
-import { useRecipeContext } from "../context";
-import { useUnitFormatter } from "@/hooks/use-unit-formatter";
+export const BRING_BRAND_COLOR = "#da1a2c";
 
-export default function BringButton() {
-  const t = useTranslations("common.actions");
-  const { recipe, adjustedIngredients } = useRecipeContext();
-  const { formatUnitOnly } = useUnitFormatter();
+const SOURCE_NAME = "Norish";
 
-  if (!recipe) return null;
+/**
+ * Generates a Web-to-App Bring! deep link using the official deeplink endpoint.
+ *
+ * Bring! will parse the recipe page at `recipeUrl` for schema.org/Recipe markup
+ * and redirect the user into the Bring! app (or web app on desktop) with the
+ * ingredients pre-loaded.
+ *
+ * Requires itemprop="ingredients" elements on the recipe page.
+ */
+export function generateBringDeeplink(
+  recipeUrl: string,
+  baseQuantity: number = 4,
+  requestedQuantity: number = 4
+): string {
+  const params = new URLSearchParams({
+    url: recipeUrl,
+    source: "web",
+    baseQuantity: String(baseQuantity),
+    requestedQuantity: String(requestedQuantity),
+  });
 
-  const handleSendToBring = () => {
-    // Safety check for ingredients
-    const ingredients = adjustedIngredients && adjustedIngredients.length > 0 
-      ? adjustedIngredients 
-      : (recipe?.recipeIngredients || []);
-    
-    if (ingredients.length === 0) return;
+  return `https://api.getbring.com/rest/bringrecipes/deeplink?${params.toString()}`;
+}
 
-    // Map Norish ingredients to BringItem format
-    const items: BringItem[] = ingredients
-      .filter((it) => it.systemUsed === recipe.systemUsed && !it.ingredientName?.trim().startsWith("#"))
-      .map((it) => {
-        const unit = it.unit ? formatUnitOnly(it.unit, it.amount) : "";
-        const spec = it.amount ? `${it.amount} ${unit}`.trim() : unit;
-        
-        return {
-          itemId: it.ingredientName?.replace(/^#+\s*/, "") || "Unknown",
-          spec: spec,
-        };
-      });
+/**
+ * Generates an App-to-App Bring! deep link using the bringimport:// scheme.
+ * Use this in native mobile apps (React Native).
+ */
+export function generateBringAppUrl(items: BringItem[]): string {
+  const params = new URLSearchParams({
+    items: JSON.stringify(items),
+    source: SOURCE_NAME,
+  });
 
-    if (items.length === 0) return;
-
-    const url = generateBringWebUrl(items);
-    
-    // Use window only if available (client side)
-    if (typeof window !== "undefined") {
-      window.open(url, "_blank", "noopener,noreferrer");
-    }
-  };
-
-  return (
-    <Button
-      fullWidth
-      style={{ backgroundColor: BRING_BRAND_COLOR }}
-      className="text-white font-semibold"
-      onPress={handleSendToBring}
-    >
-      {t("sendToBring")}
-    </Button>
-  );
+  return `bringimport://import?${params.toString()}`;
 }
