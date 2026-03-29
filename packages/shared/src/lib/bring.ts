@@ -15,11 +15,27 @@ export const BRING_BRAND_COLOR = "#da1a2c";
 const SOURCE_NAME = "Norish";
 
 /**
- * Generates a Web-to-App Bring! deep link using the official deeplink endpoint.
+ * Generates a Web-to-App Bring! import URL using the structured items format.
+ *
+ * Opens https://deeplink.getbring.com/import in the browser, which redirects
+ * to the Bring! app on mobile or the Bring! web app on desktop.
+ *
+ * Items should use clean, short specs — e.g. "150 g" not "150 gramo(s)".
+ */
+export function generateBringWebUrl(items: BringItem[]): string {
+  const params = new URLSearchParams({
+    items: JSON.stringify(items),
+    source: SOURCE_NAME,
+  });
+
+  return `https://deeplink.getbring.com/import?${params.toString()}`;
+}
+
+/**
+ * Generates a Web-to-App Bring! deep link via the recipe parser endpoint.
  *
  * Bring! will parse the recipe page at `recipeUrl` for schema.org/Recipe markup
- * and redirect the user into the Bring! app (or web app on desktop) with the
- * ingredients pre-loaded.
+ * and redirect the user into the Bring! app with ingredients pre-loaded.
  *
  * Requires itemprop="ingredients" elements on the recipe page.
  */
@@ -49,17 +65,4 @@ export function generateBringAppUrl(items: BringItem[]): string {
   });
 
   return `bringimport://import?${params.toString()}`;
-}
-
-/**
- * Generates a Web-to-Web Bring! import link using the https://www.getbring.com/import endpoint.
- * Use this on the web to open Bring! in a new browser tab.
- */
-export function generateBringWebUrl(items: BringItem[]): string {
-  const params = new URLSearchParams({
-    items: JSON.stringify(items),
-    source: SOURCE_NAME,
-  });
-
-  return `https://www.getbring.com/import?${params.toString()}`;
 }
