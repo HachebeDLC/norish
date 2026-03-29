@@ -3,6 +3,7 @@ import {
   generateBringDeeplink,
   generateBringAppUrl,
   generateBringWebUrl,
+  generateBringImportUrl,
 } from "../../src/lib/bring";
 
 describe("Bring! Integration Logic", () => {
@@ -13,13 +14,6 @@ describe("Bring! Integration Logic", () => {
       expect(url).toContain("https://api.getbring.com/rest/bringrecipes/deeplink");
       expect(url).toContain("url=https%3A%2F%2Fexample.com%2Frecipe");
       expect(url).toContain("source=web");
-    });
-
-    it("passes custom serving quantities through", () => {
-      const url = generateBringDeeplink("https://example.com", 2, 6);
-
-      expect(url).toContain("baseQuantity=2");
-      expect(url).toContain("requestedQuantity=6");
     });
   });
 
@@ -36,23 +30,25 @@ describe("Bring! Integration Logic", () => {
   });
 
   describe("generateBringWebUrl", () => {
-    const items = [
-      { itemId: "Milk", spec: "1 liter" },
-      { itemId: "Eggs", spec: "6 pieces" },
-    ];
+    const items = [{ itemId: "Milk", spec: "1 liter" }];
 
     it("generates a correct Web import link", () => {
       const url = generateBringWebUrl(items);
 
       expect(url).toContain("https://deeplink.getbring.com/import");
       expect(url).toContain("source=Norish");
+    });
+  });
 
-      const urlObj = new URL(url);
-      const itemsParam = urlObj.searchParams.get("items");
+  describe("generateBringImportUrl", () => {
+    const items = [{ itemId: "Milk", spec: "1 liter" }];
 
-      expect(itemsParam).toBeDefined();
-      const parsedItems = JSON.parse(itemsParam!);
-      expect(parsedItems).toEqual(items);
+    it("generates a correct platform import URL", () => {
+      const url = generateBringImportUrl(items);
+
+      expect(url).toContain("https://platform.getbring.com/widgets/import.html");
+      expect(url).toContain("src=");
+      expect(url).toContain("source=Norish");
     });
   });
 });

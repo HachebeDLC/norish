@@ -4,7 +4,7 @@ import React from "react";
 import { ArrowTopRightOnSquareIcon } from "@heroicons/react/16/solid";
 import { Button } from "@heroui/react";
 import { useTranslations } from "next-intl";
-import { BRING_BRAND_COLOR, generateBringWebUrl, type BringItem } from "@norish/shared";
+import { BRING_BRAND_COLOR, generateBringImportUrl, type BringItem } from "@norish/shared";
 
 import { useRecipeContextRequired } from "../context";
 
@@ -28,7 +28,7 @@ export default function BringButton() {
       };
     });
 
-    const url = generateBringWebUrl(items);
+    const url = generateBringImportUrl(items);
     window.open(url, "_blank", "noopener,noreferrer");
   };
 

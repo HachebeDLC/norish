@@ -20,7 +20,7 @@ import {
   DropdownTrigger,
   Switch,
 } from "@heroui/react";
-import { generateBringWebUrl, BRING_BRAND_COLOR, type BringItem } from "@norish/shared";
+import { generateBringImportUrl, BRING_BRAND_COLOR, type BringItem } from "@norish/shared";
 import { useTranslations } from "next-intl";
 
 
@@ -82,7 +82,7 @@ export function GroceriesPage() {
 
     if (items.length === 0) return;
 
-    const url = generateBringWebUrl(items);
+    const url = generateBringImportUrl(items);
     window.open(url, "_blank", "noopener,noreferrer");
   };
 
