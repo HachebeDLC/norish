@@ -229,8 +229,29 @@
     {
       "idx": 32,
       "version": "7",
+      "when": 1775741366971,
+      "tag": "0031_outgoing_killraven",
+      "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "7",
       "when": 1775746726268,
       "tag": "0032_strong_invisible_woman",
+      "breakpoints": true
+    },
+    {
+      "idx": 34,
+      "version": "7",
+      "when": 1775756726268,
+      "tag": "0032_rainy_randall",
+      "breakpoints": true
+    },
+    {
+      "idx": 35,
+      "version": "7",
+      "when": 1775766726268,
+      "tag": "0033_graceful_living_tribunal",
       "breakpoints": true
     }
   ]
