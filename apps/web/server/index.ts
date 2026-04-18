@@ -8,12 +8,73 @@ import { seedServerConfig } from "@norish/api/startup/seed-config";
 import { registerShutdownHandlers } from "@norish/api/startup/shutdown";
 import { initializeVideoProcessing } from "@norish/api/startup/video-processing";
 import { initializeServerConfig, SERVER_CONFIG } from "@norish/config/env-config-server";
+import { db } from "@norish/db/drizzle";
+import { recipes } from "@norish/db/schema";
+import { addHelloFreshSyncJob, getQueues, initializeQueues, closeAllQueues } from "@norish/queue";
 import { startWorkers } from "@norish/queue/start-workers";
 import { serverLogger as log, redactUrl } from "@norish/shared-server/logger";
+import { sql } from "drizzle-orm";
 
 import { startEmbeddedParser } from "./embedded-parser";
 
+async function runHelloFreshSync(country?: string, locale?: string) {
+  const countryCode = country || "ES";
+  const hfLocale = locale || "es-ES";
+
+  log.info(`[HF-Sync] Starting synchronization for ${countryCode} (${hfLocale})...`);
+
+  initializeQueues();
+  const queues = getQueues();
+
+  try {
+    const result = await addHelloFreshSyncJob(queues.hellofreshSync, {
+      countryCode,
+      locale: hfLocale,
+    });
+    log.info(`[HF-Sync] Job status: ${result.status}. Job ID: ${result.job?.id || "N/A"}`);
+  } catch (error) {
+    log.error({ err: error }, "[HF-Sync] Failed to enqueue job");
+    process.exit(1);
+  } finally {
+    await closeAllQueues();
+    setTimeout(() => process.exit(0), 1000);
+  }
+}
+
+async function runHelloFreshCleanup() {
+  log.info("[HF-Clean] Starting cleanup of HelloFresh recipes...");
+  try {
+    const result = await db.delete(recipes).where(sql`${recipes.url} LIKE '%hellofresh.%'`);
+
+    log.info({ count: result.rowCount }, "[HF-Clean] Successfully removed HelloFresh recipes.");
+  } catch (error) {
+    log.error({ err: error }, "[HF-Clean] Failed to cleanup recipes");
+    process.exit(1);
+  } finally {
+    setTimeout(() => process.exit(0), 1000);
+  }
+}
+
 async function main() {
+  const args = process.argv.slice(2);
+  const isSyncMode = args.includes("hf-sync") || process.env.HF_SYNC_TRIGGER === "true";
+  const isCleanMode = args.includes("hf-clean");
+
+  // CLI DISPATCHER - MUST BE BEFORE ANY SERVER LOGIC
+  if (isSyncMode) {
+    const idx = args.indexOf("hf-sync");
+    const country = idx !== -1 ? args[idx + 1] : process.env.HF_COUNTRY;
+    const locale = idx !== -1 ? args[idx + 2] : process.env.HF_LOCALE;
+    await runHelloFreshSync(country, locale);
+    return;
+  }
+
+  if (isCleanMode) {
+    await runHelloFreshCleanup();
+    return;
+  }
+
+  // Normal server startup
   const config = initializeServerConfig();
   const embeddedParser = await startEmbeddedParser(config);
 

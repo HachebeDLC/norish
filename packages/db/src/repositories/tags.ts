@@ -22,12 +22,53 @@ export async function listAllTagNames(): Promise<string[]> {
   return rows.map((r) => r.name).filter(Boolean);
 }
 
+export async function listTags(
+  categories?: string[],
+  search?: string,
+  limit: number = 100
+): Promise<TagDto[]> {
+  const whereConditions: any[] = [];
+
+  if (categories?.length) {
+    whereConditions.push(inArray(tags.category, categories));
+  }
+
+  if (search) {
+    whereConditions.push(ilike(tags.name, `%${search}%`));
+  }
+
+  const whereClause = whereConditions.length ? and(...whereConditions) : undefined;
+
+  const rows = await db
+    .select()
+    .from(tags)
+    .where(whereClause)
+    .orderBy(asc(tags.name))
+    .limit(limit);
+
+  const parsed = TagArraySchema.safeParse(rows);
+  if (!parsed.success) throw new Error("Failed to parse tags");
+
+  return parsed.data;
+}
+
 function ensureNonEmptyName(name: string): string {
   const cleaned = stripHtmlTags(name);
 
   if (cleaned.length === 0) throw new Error("Tag name cannot be empty");
 
   return cleaned;
+}
+
+function getCategoryFromName(name: string): string {
+  const lower = name.toLowerCase();
+
+  if (lower.startsWith("allergen:")) return "allergen";
+  if (lower.startsWith("cuisine:")) return "cuisine";
+  if (lower.startsWith("utensil:")) return "utensil";
+  if (lower.startsWith("difficulty:")) return "difficulty";
+
+  return "dietary";
 }
 
 export async function findTagById(id: string): Promise<TagDto | null> {
@@ -51,10 +92,14 @@ export async function findTagByName(name: string): Promise<TagDto | null> {
   return parsed.success ? parsed.data : null;
 }
 
-export async function createTag(name: string): Promise<TagDto> {
+export async function createTag(name: string, category?: string): Promise<TagDto> {
   const cleaned = ensureNonEmptyName(name);
+  const tagCategory = category ?? getCategoryFromName(cleaned);
 
-  await db.insert(tags).values({ name: cleaned }).onConflictDoNothing();
+  await db
+    .insert(tags)
+    .values({ name: cleaned, category: tagCategory })
+    .onConflictDoNothing();
 
   const after = await findTagByName(cleaned);
 
@@ -79,17 +124,20 @@ export async function getOrCreateManyTags(names: string[]): Promise<TagDto[]> {
   if (cleaned.length === 0) return [];
 
   return await db.transaction(async (tx) => {
-    await tx
-      .insert(tags)
-      .values(cleaned.map((name) => ({ name })))
-      .onConflictDoNothing();
-
     const lowers = Array.from(new Set(cleaned.map((n) => n.toLowerCase())));
-    const rows = await tx
-      .select()
-      .from(tags)
-      .where(inArray(sql`lower(${tags.name})`, lowers));
 
+    const existing = await tx.select().from(tags).where(inArray(sql`lower(${tags.name})`, lowers));
+    const existingSet = new Set(existing.map((t) => t.name.toLowerCase()));
+    const toInsert = cleaned.filter((name) => !existingSet.has(name.toLowerCase()));
+
+    if (toInsert.length > 0) {
+      await tx
+        .insert(tags)
+        .values(toInsert.map((name) => ({ name, category: getCategoryFromName(name) })))
+        .onConflictDoNothing();
+    }
+
+    const rows = await tx.select().from(tags).where(inArray(sql`lower(${tags.name})`, lowers));
     const parsed = TagArraySchema.safeParse(rows);
 
     if (!parsed.success) throw new Error("Failed to parse tags");
@@ -103,17 +151,20 @@ export async function getOrCreateManyTagsTx(tx: any, names: string[]): Promise<T
 
   if (cleaned.length === 0) return [];
 
-  await tx
-    .insert(tags)
-    .values(cleaned.map((name: string) => ({ name })))
-    .onConflictDoNothing();
-
   const lowers = Array.from(new Set(cleaned.map((n) => n.toLowerCase())));
-  const rows = await tx
-    .select()
-    .from(tags)
-    .where(inArray(sql`lower(${tags.name})`, lowers));
 
+  const existing = await tx.select().from(tags).where(inArray(sql`lower(${tags.name})`, lowers));
+  const existingSet = new Set(existing.map((t: { name: string }) => t.name.toLowerCase()));
+  const toInsert = cleaned.filter((name) => !existingSet.has(name.toLowerCase()));
+
+  if (toInsert.length > 0) {
+    await tx
+      .insert(tags)
+      .values(toInsert.map((name) => ({ name, category: getCategoryFromName(name) })))
+      .onConflictDoNothing();
+  }
+
+  const rows = await tx.select().from(tags).where(inArray(sql`lower(${tags.name})`, lowers));
   const parsed = TagArraySchema.safeParse(rows);
 
   if (!parsed.success) throw new Error("Failed to parse tags (tx)");

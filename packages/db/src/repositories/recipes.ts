@@ -277,7 +277,8 @@ export async function listRecipes(
   sortMode: SortOrder = "dateDesc",
   minRating?: number,
   maxCookingTime?: number,
-  categories?: RecipeCategory[]
+  categories?: RecipeCategory[],
+  excludedTagNames?: string[]
 ): Promise<{ recipes: RecipeDashboardDTO[]; total: number }> {
   const whereConditions: any[] = [];
 
@@ -377,40 +378,43 @@ export async function listRecipes(
     }
   }
 
-  let tagFilteredIds: string[] | undefined;
-
   if (tagNames?.length) {
     const normalizedTags = tagNames.map((t) => t.toLowerCase());
-    const tagRelations = await db.query.recipeTags.findMany({
-      columns: { recipeId: true },
-      with: { tag: { columns: { name: true } } },
-    });
 
-    const recipeTagMap = new Map<string, Set<string>>();
-
-    for (const rel of tagRelations) {
-      const tagName = rel.tag?.name?.toLowerCase();
-
-      if (!tagName) continue;
-      if (!recipeTagMap.has(rel.recipeId)) {
-        recipeTagMap.set(rel.recipeId, new Set());
+    if (filterMode === "AND") {
+      // For AND, we need to ensure the recipe has ALL the specified tags
+      for (const tag of normalizedTags) {
+        whereConditions.push(
+          sql`EXISTS (
+            SELECT 1 FROM ${recipeTags} rt
+            JOIN ${tags} t ON rt.tag_id = t.id
+            WHERE rt.recipe_id = ${recipes.id} AND LOWER(t.name) = ${tag}
+          )`
+        );
       }
-      recipeTagMap.get(rel.recipeId)!.add(tagName);
+    } else {
+      // For OR, we need to ensure the recipe has ANY of the specified tags
+      whereConditions.push(
+        sql`EXISTS (
+          SELECT 1 FROM ${recipeTags} rt
+          JOIN ${tags} t ON rt.tag_id = t.id
+          WHERE rt.recipe_id = ${recipes.id} AND LOWER(t.name) IN ${normalizedTags}
+        )`
+      );
     }
+  }
 
-    tagFilteredIds = Array.from(recipeTagMap.entries())
-      .filter(([_, tagSet]) =>
-        filterMode === "AND"
-          ? normalizedTags.every((t) => tagSet.has(t))
-          : normalizedTags.some((t) => tagSet.has(t))
-      )
-      .map(([recipeId]) => recipeId);
+  if (excludedTagNames?.length) {
+    const normalizedExcluded = excludedTagNames.map((t) => t.toLowerCase());
 
-    if (!tagFilteredIds.length) {
-      return { recipes: [], total: 0 };
-    }
-
-    whereConditions.push(inArray(recipes.id, tagFilteredIds));
+    // Exclude recipes that have ANY of these tags
+    whereConditions.push(
+      sql`NOT EXISTS (
+        SELECT 1 FROM ${recipeTags} rt
+        JOIN ${tags} t ON rt.tag_id = t.id
+        WHERE rt.recipe_id = ${recipes.id} AND LOWER(t.name) IN ${normalizedExcluded}
+      )`
+    );
   }
 
   if (categories?.length) {
@@ -650,26 +654,32 @@ export async function createRecipeWithRefs(
   };
 
   const finalRecipeId = await db.transaction(async (tx) => {
-    const [inserted] = await tx
+    const [result] = await tx
       .insert(recipes)
       .values(toInsert)
-      .onConflictDoNothing({ target: [recipes.url, recipes.userId] })
+      .onConflictDoUpdate({
+        target: [recipes.id],
+        set: {
+          name: toInsert.name,
+          description: toInsert.description,
+          notes: toInsert.notes,
+          url: toInsert.url,
+          image: toInsert.image,
+          servings: toInsert.servings,
+          systemUsed: toInsert.systemUsed,
+          prepMinutes: toInsert.prepMinutes,
+          cookMinutes: toInsert.cookMinutes,
+          totalMinutes: toInsert.totalMinutes,
+          calories: toInsert.calories,
+          fat: toInsert.fat,
+          carbs: toInsert.carbs,
+          protein: toInsert.protein,
+          categories: toInsert.categories,
+        },
+      })
       .returning({ id: recipes.id });
 
-    if (!inserted) {
-      const existing = await tx.query.recipes.findFirst({
-        where: and(eq(recipes.url, toInsert.url!), eq(recipes.userId, userId ?? "")),
-        columns: { id: true },
-      });
-
-      if (!existing) {
-        throw new Error("Failed to save recipe");
-      }
-
-      return existing.id;
-    }
-
-    const rid = inserted.id;
+    const rid = result.id;
 
     if (payload.tags.length) {
       await attachTagsToRecipeByInputTx(
@@ -699,28 +709,32 @@ export async function createRecipeWithRefs(
       );
     }
 
-    // Insert gallery images if provided
     if (payload.images && payload.images.length > 0) {
-      await tx.insert(recipeImages).values(
-        payload.images.map((img) => ({
-          recipeId: rid,
-          image: img.image,
-          order: String(img.order ?? 0),
-        }))
-      );
+      await tx
+        .insert(recipeImages)
+        .values(
+          payload.images.map((img) => ({
+            recipeId: rid,
+            image: img.image,
+            order: String(img.order ?? 0),
+          }))
+        )
+        .onConflictDoNothing();
     }
 
-    // Insert videos if provided
     if (payload.videos && payload.videos.length > 0) {
-      await tx.insert(recipeVideos).values(
-        payload.videos.map((v) => ({
-          recipeId: rid,
-          video: v.video,
-          thumbnail: v.thumbnail ?? null,
-          duration: v.duration != null ? String(v.duration) : null,
-          order: String(v.order ?? 0),
-        }))
-      );
+      await tx
+        .insert(recipeVideos)
+        .values(
+          payload.videos.map((v) => ({
+            recipeId: rid,
+            video: v.video,
+            thumbnail: v.thumbnail ?? null,
+            duration: v.duration != null ? String(v.duration) : null,
+            order: String(v.order ?? 0),
+          }))
+        )
+        .onConflictDoNothing();
     }
 
     return rid;

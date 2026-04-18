@@ -12,6 +12,7 @@ export type RecipeFilters = {
   search?: string;
   searchFields?: SearchField[];
   tags?: string[];
+  excludedTags?: string[];
   categories?: RecipeCategory[];
   filterMode?: "AND" | "OR";
   sortMode?: "titleAsc" | "titleDesc" | "dateAsc" | "dateDesc" | "none";
@@ -77,6 +78,7 @@ export function createUseRecipesQuery(
       search,
       searchFields,
       tags,
+      excludedTags,
       categories,
       filterMode = "OR",
       sortMode = "dateDesc",
@@ -103,6 +105,7 @@ export function createUseRecipesQuery(
         search,
         searchFields,
         tags,
+        excludedTags,
         categories,
         filterMode,
         sortMode,

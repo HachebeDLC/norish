@@ -15,7 +15,7 @@ import {
 import { createMockAuthedContext, createMockHousehold, createMockUser } from "./test-utils";
 
 vi.mock("@norish/db/repositories/ratings", () => import("../mocks/ratings-repository"));
-vi.mock("@norish/trpc/routers/ratings/emitter", () => import("../mocks/ratings-emitter"));
+vi.mock("@norish/queue", () => import("../mocks/ratings-emitter"));
 vi.mock("@norish/config/server-config-loader", () => ({
   getRecipePermissionPolicy: vi.fn().mockResolvedValue({ view: "household" }),
 }));

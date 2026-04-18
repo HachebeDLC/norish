@@ -1,10 +1,12 @@
+import type { StoreSubscriptionEvents } from "@norish/queue";
+
 import { trpcLogger as log } from "@norish/shared-server/logger";
 
-import type { StoreSubscriptionEvents } from "./types";
 import { createSubscriptionIterable } from "../../helpers";
 import { authedProcedure } from "../../middleware";
 import { router } from "../../trpc";
-import { storeEmitter } from "./emitter";
+
+import { storeEmitter } from "@norish/queue";
 
 const onCreated = authedProcedure.subscription(async function* ({ ctx, signal }) {
   const eventName = storeEmitter.householdEvent(ctx.householdKey, "created");

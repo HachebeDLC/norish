@@ -34,7 +34,10 @@ import {
 vi.mock("@norish/db/repositories/server-config", () => import("../mocks/server-config"));
 vi.mock("@norish/db/repositories/users", () => import("../mocks/users"));
 vi.mock("@norish/auth/connection-tests", () => import("../mocks/connection-tests"));
-vi.mock("@norish/trpc/routers/permissions/emitter", () => import("../mocks/permissions-emitter"));
+vi.mock(
+  "@norish/queue",
+  () => import("../mocks/permissions-emitter")
+);
 vi.mock("@norish/config/server-config-loader", () => ({
   getRecipePermissionPolicy: vi.fn().mockResolvedValue({
     view: "everyone",
@@ -176,7 +179,6 @@ describe("admin procedures", () => {
         model: "gpt-4",
         temperature: 0.7,
         maxTokens: 4096,
-        timeoutMs: 300000,
         autoTagAllergies: true,
         alwaysUseAI: false,
         autoTaggingMode: "disabled" as const,
@@ -227,7 +229,6 @@ describe("admin procedures", () => {
         model: "gpt-4",
         temperature: 0.7,
         maxTokens: 4096,
-        timeoutMs: 300000,
         autoTagAllergies: true,
         alwaysUseAI: false,
         autoTaggingMode: "disabled" as const,

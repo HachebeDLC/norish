@@ -8,7 +8,7 @@ import { getRecipeFull, getRecipeOwnerId } from "@norish/db";
 import { trpcLogger as log } from "@norish/shared-server/logger";
 
 import { emitByPolicy } from "../../helpers";
-import { recipeEmitter } from "./emitter";
+import { recipeEmitter } from "@norish/queue";
 
 export type RecipeUserContext = {
   user: { id: string };

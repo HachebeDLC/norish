@@ -29,7 +29,6 @@
     "apiKeys": {
       "title": "Klucze API",
       "description": "Klucze API umożliwiają programowy dostęp do API Norish. Używaj ich do integracji, skrótów i automatyzacji.",
-      "docsLink": "Otwórz dokumentację API",
       "keyNameLabel": "Nazwa klucza (opcjonalnie)",
       "keyNamePlaceholder": "np. Skrót iOS",
       "createKey": "Utwórz klucz",
@@ -129,32 +128,19 @@
       },
       "applyError": "Nie udało się zastosować preferencji"
     },
-    "shareLinks": {
-      "title": "Linki do udostępniania przepisów",
-      "description": "Przeglądaj i zarządzaj wszystkimi publicznymi linkami do przepisów, które utworzyłeś.",
-      "empty": "Nie znaleziono linków do udostępniania.",
-      "table": {
-        "recipe": "PRZEPIS",
-        "status": "STATUS",
-        "created": "UTWORZONO",
-        "expires": "WYGASA",
-        "actions": "AKCJE"
-      },
-      "revokeModal": {
-        "title": "Odwołaj link",
-        "message": "Ten link do {recipeName} przestanie działać do momentu reaktywacji.",
-        "confirm": "Odwołaj"
-      },
-      "reactivateModal": {
-        "title": "Reaktywuj link",
-        "message": "Ten link do {recipeName} znowu stanie się aktywny.",
-        "confirm": "Reaktywuj"
-      },
-      "deleteModal": {
-        "title": "Usuń link",
-        "message": "Usunąć ten link do {recipeName}? Tej operacji nie można cofnąć.",
-        "confirm": "Usuń link"
-      }
+    "bring": {
+      "title": "Lista zakupów Bring!",
+      "description": "Połącz konto Bring!, aby automatycznie synchronizować swoje zakupy Norish.",
+      "emailLabel": "E-mail",
+      "emailPlaceholder": "twoj-email-bring@przyklad.com",
+      "emailLinked": "Konto jest aktualnie połączone",
+      "passwordLabel": "Hasło",
+      "passwordPlaceholder": "••••••••",
+      "listUuidLabel": "UUID listy",
+      "listUuidPlaceholder": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+      "listUuidHint": "UUID listy znajdziesz w adresie URL aplikacji webowej Bring! lub w ustawieniach udostępniania w aplikacji mobilnej.",
+      "saveSuccess": "Konfiguracja Bring! zapisana",
+      "saveError": "Nie udało się zapisać konfiguracji Bring!"
     }
   },
   "household": {
@@ -207,9 +193,7 @@
       "regenerateButton": "Wygeneruj ponownie",
       "expired": "Wygasł",
       "noCodeDescription": "Brak aktywnego kodu dołączenia. Wygeneruj go, aby zaprosić nowych członków.",
-      "generateButton": "Wygeneruj kod dołączenia",
-      "copySuccess": "Skopiowano kod dołączenia",
-      "copyFailed": "Nie udało się skopiować kodu dołączenia"
+      "generateButton": "Wygeneruj kod dołączenia"
     },
     "create": {
       "title": "Utwórz gospodarstwo domowe",
@@ -305,34 +289,6 @@
     }
   },
   "admin": {
-    "shareLinks": {
-      "title": "Moderacja udostępniania przepisów",
-      "description": "Przeglądaj publiczne linki do przepisów w całej instancji i moderuj ich cykl życia.",
-      "empty": "Nie znaleziono linków do udostępniania.",
-      "table": {
-        "recipe": "PRZEPIS",
-        "owner": "WŁAŚCICIEL",
-        "status": "STATUS",
-        "created": "UTWORZONO",
-        "expires": "WYGASA",
-        "actions": "AKCJE"
-      },
-      "revokeModal": {
-        "title": "Odwołaj link",
-        "message": "Ten link do {recipeName} przestanie działać do momentu reaktywacji.",
-        "confirm": "Odwołaj"
-      },
-      "reactivateModal": {
-        "title": "Reaktywuj link",
-        "message": "Ten link do {recipeName} znowu stanie się aktywny.",
-        "confirm": "Reaktywuj"
-      },
-      "deleteModal": {
-        "title": "Usuń link",
-        "message": "Usunąć ten link do {recipeName}? Tej operacji nie można cofnąć.",
-        "confirm": "Usuń link"
-      }
-    },
     "general": {
       "title": "Ogólne",
       "allowRegistration": "Zezwalaj na rejestrację nowych użytkowników",
@@ -550,7 +506,6 @@
       "temperature": "Temperatura: {value}",
       "temperatureHint": "Niżej = bardziej precyzyjne, Wyżej = bardziej kreatywne",
       "maxTokens": "Maks. tokenów",
-      "requestTimeout": "Limit czasu żądania (ms)",
       "autoTagAllergies": "Automatyczne wykrywanie tagów alergii",
       "autoTagAllergiesDescription": "Automatycznie dodawaj tagi związane z alergiami podczas importowania przepisów",
       "alwaysUseAI": "Zawsze używaj AI przy imporcie",
@@ -578,8 +533,6 @@
       "maxFileSizeDescription": "Maksymalny rozmiar pobieranego pliku wideo",
       "ytDlpVersion": "Wersja yt-dlp",
       "ytDlpVersionDescription": "Wersja yt-dlp używana do pobierania wideo",
-      "ytDlpProxy": "yt-dlp Proxy",
-      "ytDlpProxyDescription": "Proxy HTTP/SOCKS5 dla yt-dlp",
       "transcription": "Transkrypcja",
       "transcriptionDescription": "Zamień dźwięk z wideo na tekst do ekstrakcji przepisu",
       "transcriptionProvider": "Dostawca transkrypcji",
@@ -624,6 +577,27 @@
       "invalidJson": "Nieprawidłowy format JSON",
       "failedToSave": "Nie udało się zapisać",
       "failedToRestore": "Nie udało się przywrócić domyślnych"
+    },
+    "hellofreshSync": {
+      "title": "Synchronizacja HelloFresh",
+      "description": "Masowy import przepisów z katalogów HelloFresh według kraju.",
+      "countryLabel": "Kod kraju",
+      "countryPlaceholder": "np. ES, DE, US",
+      "localeLabel": "Lokalizacja",
+      "localePlaceholder": "np. es-ES, de-DE",
+      "syncButton": "Rozpocznij pełną synchronizację",
+      "cleanupButton": "Usuń wszystkie przepisy HF",
+      "cleanupConfirm": "Czy na pewno chcesz usunąć wszystkie przepisy HelloFresh z bazy danych? Tej operacji nie można cofnąć.",
+      "cleanupSuccess": "Pomyślnie usunięto {count} przepisów",
+      "syncStarted": "Zadanie synchronizacji zostało dodane do kolejki",
+      "status": {
+        "idle": "Gotowy",
+        "fetching": "Pobieranie strony {page}...",
+        "processing": "Przetwarzanie: {current} z {total} przepisów",
+        "skipped": "Aktualny ({total} przepisów)",
+        "completed": "Synchronizacja zakończona: zaimportowano {count} przepisów",
+        "failed": "Synchronizacja nie powiodła się: {reason}"
+      }
     }
   }
 }

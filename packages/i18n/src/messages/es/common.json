@@ -32,7 +32,8 @@
     "revealSecret": "Mostrar secreto",
     "hideSecret": "Ocultar secreto",
     "enterNewValue": "Introduce un nuevo valor",
-    "cancelEditing": "Cancelar edición"
+    "cancelEditing": "Cancelar edición",
+    "sendToBring": "Enviar a Bring!"
   },
   "status": {
     "loading": "Cargando...",
@@ -213,5 +214,11 @@
     "notification_body": "{label} ha terminado!",
     "notifications_disabled": "Las notificaciones están desactivadas",
     "notifications_disabled_hint": "Activa las notificaciones en la configuración de tu navegador para recibir alertas cuando los temporizadores terminen en segundo plano."
+  },
+  "bring": {
+    "syncSuccess": "{count, plural, one {# artículo} other {# artículos}} enviado{count, plural, one {} other {s}} a Bring!",
+    "notConfigured": "Bring! no configurado",
+    "notConfiguredHint": "Ve a Ajustes para configurar tu cuenta de Bring!",
+    "syncError": "Error al sincronizar con Bring!"
   }
 }

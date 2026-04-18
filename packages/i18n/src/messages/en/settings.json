@@ -91,6 +91,20 @@
         "confirmButton": "Delete Token"
       }
     },
+    "bring": {
+      "title": "Bring! Shopping List",
+      "description": "Link your Bring! account to sync your Norish groceries automatically.",
+      "emailLabel": "Email",
+      "emailPlaceholder": "your-bring-email@example.com",
+      "emailLinked": "Account is currently linked",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "••••••••",
+      "listUuidLabel": "List UUID",
+      "listUuidPlaceholder": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+      "listUuidHint": "You can find your List UUID in the Bring! web app URL or mobile app share settings.",
+      "saveSuccess": "Bring! configuration saved",
+      "saveError": "Failed to save Bring! config"
+    },
     "dangerZone": {
       "title": "Danger Zone",
       "description": "Once you delete your account, there is no going back. Please be certain.",
@@ -519,6 +533,27 @@
         "queued": "{count, plural, =0 {No recipes to categorize} one {# recipe queued} other {# recipes queued}}",
         "success": "Categorization started",
         "error": "Failed to start categorization"
+      }
+    },
+    "hellofreshSync": {
+      "title": "HelloFresh Sync",
+      "description": "Bulk import recipes from HelloFresh catalogs by country.",
+      "countryLabel": "Country Code",
+      "countryPlaceholder": "e.g. ES, DE, US",
+      "localeLabel": "Locale",
+      "localePlaceholder": "e.g. es-ES, de-DE",
+      "syncButton": "Start Full Sync",
+      "cleanupButton": "Remove All HF Recipes",
+      "cleanupConfirm": "Are you sure you want to delete all HelloFresh recipes from the database? This cannot be undone.",
+      "cleanupSuccess": "Successfully removed {count} recipes",
+      "syncStarted": "Sychronization job queued",
+      "status": {
+        "idle": "Ready",
+        "fetching": "Fetching page {page}...",
+        "processing": "Processing: {current} of {total} recipes",
+        "skipped": "Up to date ({total} recipes)",
+        "completed": "Sync finished: {count} recipes imported",
+        "failed": "Sync failed: {reason}"
       }
     },
     "aiConfig": {

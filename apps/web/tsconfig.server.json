@@ -1,6 +1,6 @@
 {
   "extends": "@norish/tsconfig/base.json",
-  "include": ["server/index.ts", "server/**/*"],
+  "include": ["server/index.ts", "server/**/*", "bin/**/*"],
   "exclude": ["node_modules", ".next"],
   "compilerOptions": {
     "module": "ESNext",

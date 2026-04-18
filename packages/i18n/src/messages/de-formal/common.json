@@ -32,7 +32,8 @@
     "revealSecret": "Geheimnis anzeigen",
     "hideSecret": "Geheimnis verbergen",
     "enterNewValue": "Neuen Wert eingeben",
-    "cancelEditing": "Bearbeitung abbrechen"
+    "cancelEditing": "Bearbeitung abbrechen",
+    "sendToBring": "An Bring! senden"
   },
   "status": {
     "loading": "Wird geladen...",
@@ -213,5 +214,11 @@
     "notification_body": "{label} ist fertig!",
     "notifications_disabled": "Benachrichtigungen sind deaktiviert",
     "notifications_disabled_hint": "Aktivieren Sie Benachrichtigungen in Ihren Browser-Einstellungen, um Hinweise zu erhalten, wenn Timer im Hintergrund ablaufen."
+  },
+  "bring": {
+    "syncSuccess": "{count, plural, one {# Artikel} other {# Artikel}} an Bring! gesendet",
+    "notConfigured": "Bring! nicht konfiguriert",
+    "notConfiguredHint": "Gehen Sie zu den Einstellungen, um Ihr Bring!-Konto zu konfigurieren",
+    "syncError": "Synchronisierung mit Bring! fehlgeschlagen"
   }
 }

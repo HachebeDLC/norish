@@ -38,6 +38,9 @@ export { createAutoCategorizationQueue } from "./auto-categorization/queue";
 export { createAllergyDetectionQueue } from "./allergy-detection/queue";
 export { createCaldavSyncQueue } from "./caldav-sync/queue";
 export { createScheduledTasksQueue } from "./scheduled-tasks/queue";
+export { createHelloFreshSyncQueue } from "./hellofresh-sync/queue";
+export { createHelloFreshImageRepairQueue } from "./hellofresh-image-repair/queue";
+export { createBringSyncQueue } from "./bring-sync/queue";
 
 // Producers
 export { addImportJob } from "./recipe-import/producer";
@@ -52,6 +55,9 @@ export {
 } from "./auto-categorization/producer";
 export { addAllergyDetectionJob, isAllergyDetectionJobActive } from "./allergy-detection/producer";
 export { addCaldavSyncJob } from "./caldav-sync/producer";
+export { addHelloFreshSyncJob } from "./hellofresh-sync/producer";
+export { addHelloFreshImageRepairJob } from "./hellofresh-image-repair/producer";
+export { addBringSyncJob } from "./bring-sync/producer";
 export { initializeScheduledJobs } from "./scheduled-tasks/producer";
 
 // Workers
@@ -73,6 +79,30 @@ export {
 } from "./allergy-detection/worker";
 export { startCaldavSyncWorker, stopCaldavSyncWorker } from "./caldav-sync/worker";
 export { startScheduledTasksWorker, stopScheduledTasksWorker } from "./scheduled-tasks/worker";
+export { startHelloFreshSyncWorker, stopHelloFreshSyncWorker } from "./hellofresh-sync/worker";
+export {
+  startHelloFreshImageRepairWorker,
+  stopHelloFreshImageRepairWorker,
+} from "./hellofresh-image-repair/worker";
+export { startBringSyncWorker, stopBringSyncWorker } from "./bring-sync/worker";
+
+// Emitters
+export * from "./recipes/emitter";
+export * from "./recipes/types";
+export * from "./groceries/emitter";
+export * from "./groceries/types";
+export * from "./households/emitter";
+export * from "./households/types";
+export * from "./caldav/emitter";
+export * from "./caldav/types";
+export * from "./stores/emitter";
+export * from "./stores/types";
+export * from "./permissions/emitter";
+export * from "./permissions/types";
+export * from "./calendar/emitter";
+export * from "./calendar/types";
+export * from "./ratings/emitter";
+export * from "./ratings/types";
 
 // Types from @norish/shared/contracts
 export type {
@@ -92,6 +122,10 @@ export type {
   AddAllergyDetectionJobResult,
   CaldavSyncJobData,
   CaldavSyncOperation,
+  HelloFreshSyncJobData,
+  HelloFreshImageRepairJobData,
+  AddHelloFreshImageRepairJobResult,
+  BringSyncJobData,
 } from "@norish/queue/contracts/job-types";
 
 // Types from scheduled-tasks

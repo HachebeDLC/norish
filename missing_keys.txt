@@ -1,0 +1,276 @@
+
+Checking locale keys (source: en)
+
+============================================================
+
+da:
+    Missing 30 key(s):
+    - [common] actions.sendToBring
+    - [settings] user.bring.title
+    - [settings] user.bring.description
+    - [settings] user.bring.emailLabel
+    - [settings] user.bring.emailPlaceholder
+    - [settings] user.bring.emailLinked
+    - [settings] user.bring.passwordLabel
+    - [settings] user.bring.passwordPlaceholder
+    - [settings] user.bring.listUuidLabel
+    - [settings] user.bring.listUuidPlaceholder
+    - [settings] user.bring.listUuidHint
+    - [settings] user.bring.saveSuccess
+    - [settings] user.bring.saveError
+    - [settings] admin.hellofreshSync.title
+    - [settings] admin.hellofreshSync.description
+    - [settings] admin.hellofreshSync.countryLabel
+    - [settings] admin.hellofreshSync.countryPlaceholder
+    - [settings] admin.hellofreshSync.localeLabel
+    - [settings] admin.hellofreshSync.localePlaceholder
+    - [settings] admin.hellofreshSync.syncButton
+    - [settings] admin.hellofreshSync.cleanupButton
+    - [settings] admin.hellofreshSync.cleanupConfirm
+    - [settings] admin.hellofreshSync.cleanupSuccess
+    - [settings] admin.hellofreshSync.syncStarted
+    - [settings] admin.hellofreshSync.status.idle
+    - [settings] admin.hellofreshSync.status.fetching
+    - [settings] admin.hellofreshSync.status.processing
+    - [settings] admin.hellofreshSync.status.skipped
+    - [settings] admin.hellofreshSync.status.completed
+    - [settings] admin.hellofreshSync.status.failed
+
+de-formal:
+    Missing 30 key(s):
+    - [common] actions.sendToBring
+    - [settings] user.bring.title
+    - [settings] user.bring.description
+    - [settings] user.bring.emailLabel
+    - [settings] user.bring.emailPlaceholder
+    - [settings] user.bring.emailLinked
+    - [settings] user.bring.passwordLabel
+    - [settings] user.bring.passwordPlaceholder
+    - [settings] user.bring.listUuidLabel
+    - [settings] user.bring.listUuidPlaceholder
+    - [settings] user.bring.listUuidHint
+    - [settings] user.bring.saveSuccess
+    - [settings] user.bring.saveError
+    - [settings] admin.hellofreshSync.title
+    - [settings] admin.hellofreshSync.description
+    - [settings] admin.hellofreshSync.countryLabel
+    - [settings] admin.hellofreshSync.countryPlaceholder
+    - [settings] admin.hellofreshSync.localeLabel
+    - [settings] admin.hellofreshSync.localePlaceholder
+    - [settings] admin.hellofreshSync.syncButton
+    - [settings] admin.hellofreshSync.cleanupButton
+    - [settings] admin.hellofreshSync.cleanupConfirm
+    - [settings] admin.hellofreshSync.cleanupSuccess
+    - [settings] admin.hellofreshSync.syncStarted
+    - [settings] admin.hellofreshSync.status.idle
+    - [settings] admin.hellofreshSync.status.fetching
+    - [settings] admin.hellofreshSync.status.processing
+    - [settings] admin.hellofreshSync.status.skipped
+    - [settings] admin.hellofreshSync.status.completed
+    - [settings] admin.hellofreshSync.status.failed
+
+de-informal:
+    Missing 30 key(s):
+    - [common] actions.sendToBring
+    - [settings] user.bring.title
+    - [settings] user.bring.description
+    - [settings] user.bring.emailLabel
+    - [settings] user.bring.emailPlaceholder
+    - [settings] user.bring.emailLinked
+    - [settings] user.bring.passwordLabel
+    - [settings] user.bring.passwordPlaceholder
+    - [settings] user.bring.listUuidLabel
+    - [settings] user.bring.listUuidPlaceholder
+    - [settings] user.bring.listUuidHint
+    - [settings] user.bring.saveSuccess
+    - [settings] user.bring.saveError
+    - [settings] admin.hellofreshSync.title
+    - [settings] admin.hellofreshSync.description
+    - [settings] admin.hellofreshSync.countryLabel
+    - [settings] admin.hellofreshSync.countryPlaceholder
+    - [settings] admin.hellofreshSync.localeLabel
+    - [settings] admin.hellofreshSync.localePlaceholder
+    - [settings] admin.hellofreshSync.syncButton
+    - [settings] admin.hellofreshSync.cleanupButton
+    - [settings] admin.hellofreshSync.cleanupConfirm
+    - [settings] admin.hellofreshSync.cleanupSuccess
+    - [settings] admin.hellofreshSync.syncStarted
+    - [settings] admin.hellofreshSync.status.idle
+    - [settings] admin.hellofreshSync.status.fetching
+    - [settings] admin.hellofreshSync.status.processing
+    - [settings] admin.hellofreshSync.status.skipped
+    - [settings] admin.hellofreshSync.status.completed
+    - [settings] admin.hellofreshSync.status.failed
+
+es:
+    All keys match source
+
+fr:
+    Missing 30 key(s):
+    - [common] actions.sendToBring
+    - [settings] user.bring.title
+    - [settings] user.bring.description
+    - [settings] user.bring.emailLabel
+    - [settings] user.bring.emailPlaceholder
+    - [settings] user.bring.emailLinked
+    - [settings] user.bring.passwordLabel
+    - [settings] user.bring.passwordPlaceholder
+    - [settings] user.bring.listUuidLabel
+    - [settings] user.bring.listUuidPlaceholder
+    - [settings] user.bring.listUuidHint
+    - [settings] user.bring.saveSuccess
+    - [settings] user.bring.saveError
+    - [settings] admin.hellofreshSync.title
+    - [settings] admin.hellofreshSync.description
+    - [settings] admin.hellofreshSync.countryLabel
+    - [settings] admin.hellofreshSync.countryPlaceholder
+    - [settings] admin.hellofreshSync.localeLabel
+    - [settings] admin.hellofreshSync.localePlaceholder
+    - [settings] admin.hellofreshSync.syncButton
+    - [settings] admin.hellofreshSync.cleanupButton
+    - [settings] admin.hellofreshSync.cleanupConfirm
+    - [settings] admin.hellofreshSync.cleanupSuccess
+    - [settings] admin.hellofreshSync.syncStarted
+    - [settings] admin.hellofreshSync.status.idle
+    - [settings] admin.hellofreshSync.status.fetching
+    - [settings] admin.hellofreshSync.status.processing
+    - [settings] admin.hellofreshSync.status.skipped
+    - [settings] admin.hellofreshSync.status.completed
+    - [settings] admin.hellofreshSync.status.failed
+
+ko:
+    Missing 30 key(s):
+    - [common] actions.sendToBring
+    - [settings] user.bring.title
+    - [settings] user.bring.description
+    - [settings] user.bring.emailLabel
+    - [settings] user.bring.emailPlaceholder
+    - [settings] user.bring.emailLinked
+    - [settings] user.bring.passwordLabel
+    - [settings] user.bring.passwordPlaceholder
+    - [settings] user.bring.listUuidLabel
+    - [settings] user.bring.listUuidPlaceholder
+    - [settings] user.bring.listUuidHint
+    - [settings] user.bring.saveSuccess
+    - [settings] user.bring.saveError
+    - [settings] admin.hellofreshSync.title
+    - [settings] admin.hellofreshSync.description
+    - [settings] admin.hellofreshSync.countryLabel
+    - [settings] admin.hellofreshSync.countryPlaceholder
+    - [settings] admin.hellofreshSync.localeLabel
+    - [settings] admin.hellofreshSync.localePlaceholder
+    - [settings] admin.hellofreshSync.syncButton
+    - [settings] admin.hellofreshSync.cleanupButton
+    - [settings] admin.hellofreshSync.cleanupConfirm
+    - [settings] admin.hellofreshSync.cleanupSuccess
+    - [settings] admin.hellofreshSync.syncStarted
+    - [settings] admin.hellofreshSync.status.idle
+    - [settings] admin.hellofreshSync.status.fetching
+    - [settings] admin.hellofreshSync.status.processing
+    - [settings] admin.hellofreshSync.status.skipped
+    - [settings] admin.hellofreshSync.status.completed
+    - [settings] admin.hellofreshSync.status.failed
+
+nl:
+    Missing 30 key(s):
+    - [common] actions.sendToBring
+    - [settings] user.bring.title
+    - [settings] user.bring.description
+    - [settings] user.bring.emailLabel
+    - [settings] user.bring.emailPlaceholder
+    - [settings] user.bring.emailLinked
+    - [settings] user.bring.passwordLabel
+    - [settings] user.bring.passwordPlaceholder
+    - [settings] user.bring.listUuidLabel
+    - [settings] user.bring.listUuidPlaceholder
+    - [settings] user.bring.listUuidHint
+    - [settings] user.bring.saveSuccess
+    - [settings] user.bring.saveError
+    - [settings] admin.hellofreshSync.title
+    - [settings] admin.hellofreshSync.description
+    - [settings] admin.hellofreshSync.countryLabel
+    - [settings] admin.hellofreshSync.countryPlaceholder
+    - [settings] admin.hellofreshSync.localeLabel
+    - [settings] admin.hellofreshSync.localePlaceholder
+    - [settings] admin.hellofreshSync.syncButton
+    - [settings] admin.hellofreshSync.cleanupButton
+    - [settings] admin.hellofreshSync.cleanupConfirm
+    - [settings] admin.hellofreshSync.cleanupSuccess
+    - [settings] admin.hellofreshSync.syncStarted
+    - [settings] admin.hellofreshSync.status.idle
+    - [settings] admin.hellofreshSync.status.fetching
+    - [settings] admin.hellofreshSync.status.processing
+    - [settings] admin.hellofreshSync.status.skipped
+    - [settings] admin.hellofreshSync.status.completed
+    - [settings] admin.hellofreshSync.status.failed
+
+pl:
+    Missing 30 key(s):
+    - [common] actions.sendToBring
+    - [settings] user.bring.title
+    - [settings] user.bring.description
+    - [settings] user.bring.emailLabel
+    - [settings] user.bring.emailPlaceholder
+    - [settings] user.bring.emailLinked
+    - [settings] user.bring.passwordLabel
+    - [settings] user.bring.passwordPlaceholder
+    - [settings] user.bring.listUuidLabel
+    - [settings] user.bring.listUuidPlaceholder
+    - [settings] user.bring.listUuidHint
+    - [settings] user.bring.saveSuccess
+    - [settings] user.bring.saveError
+    - [settings] admin.hellofreshSync.title
+    - [settings] admin.hellofreshSync.description
+    - [settings] admin.hellofreshSync.countryLabel
+    - [settings] admin.hellofreshSync.countryPlaceholder
+    - [settings] admin.hellofreshSync.localeLabel
+    - [settings] admin.hellofreshSync.localePlaceholder
+    - [settings] admin.hellofreshSync.syncButton
+    - [settings] admin.hellofreshSync.cleanupButton
+    - [settings] admin.hellofreshSync.cleanupConfirm
+    - [settings] admin.hellofreshSync.cleanupSuccess
+    - [settings] admin.hellofreshSync.syncStarted
+    - [settings] admin.hellofreshSync.status.idle
+    - [settings] admin.hellofreshSync.status.fetching
+    - [settings] admin.hellofreshSync.status.processing
+    - [settings] admin.hellofreshSync.status.skipped
+    - [settings] admin.hellofreshSync.status.completed
+    - [settings] admin.hellofreshSync.status.failed
+
+ru:
+    Missing 30 key(s):
+    - [common] actions.sendToBring
+    - [settings] user.bring.title
+    - [settings] user.bring.description
+    - [settings] user.bring.emailLabel
+    - [settings] user.bring.emailPlaceholder
+    - [settings] user.bring.emailLinked
+    - [settings] user.bring.passwordLabel
+    - [settings] user.bring.passwordPlaceholder
+    - [settings] user.bring.listUuidLabel
+    - [settings] user.bring.listUuidPlaceholder
+    - [settings] user.bring.listUuidHint
+    - [settings] user.bring.saveSuccess
+    - [settings] user.bring.saveError
+    - [settings] admin.hellofreshSync.title
+    - [settings] admin.hellofreshSync.description
+    - [settings] admin.hellofreshSync.countryLabel
+    - [settings] admin.hellofreshSync.countryPlaceholder
+    - [settings] admin.hellofreshSync.localeLabel
+    - [settings] admin.hellofreshSync.localePlaceholder
+    - [settings] admin.hellofreshSync.syncButton
+    - [settings] admin.hellofreshSync.cleanupButton
+    - [settings] admin.hellofreshSync.cleanupConfirm
+    - [settings] admin.hellofreshSync.cleanupSuccess
+    - [settings] admin.hellofreshSync.syncStarted
+    - [settings] admin.hellofreshSync.status.idle
+    - [settings] admin.hellofreshSync.status.fetching
+    - [settings] admin.hellofreshSync.status.processing
+    - [settings] admin.hellofreshSync.status.skipped
+    - [settings] admin.hellofreshSync.status.completed
+    - [settings] admin.hellofreshSync.status.failed
+
+============================================================
+
+  Missing keys detected. Please add translations.
+

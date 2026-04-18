@@ -29,12 +29,15 @@ import {
   addAllergyDetectionJob,
   addAutoCategorizationJob,
   addAutoTaggingJob,
+  addHelloFreshImageRepairJob,
+  addHelloFreshSyncJob,
   addImageImportJob,
   addImportJob,
   addNutritionEstimationJob,
   addPasteImportJob,
   preparePasteImport,
 } from "@norish/queue";
+import { recipeEmitter } from "@norish/queue";
 import { getQueues } from "@norish/queue/registry";
 import { trpcLogger as log } from "@norish/shared-server/logger";
 import { deleteRecipeImagesDir } from "@norish/shared-server/media/storage";
@@ -43,9 +46,8 @@ import { FilterMode, RecipeCategory, SortOrder } from "@norish/shared/contracts"
 import { FullRecipeSchema, RecipeListResultSchema } from "@norish/shared/contracts/zod";
 
 import { emitByPolicy } from "../../helpers";
-import { authedProcedure } from "../../middleware";
+import { adminProcedure, authedProcedure } from "../../middleware";
 import { router } from "../../trpc";
-import { recipeEmitter } from "./emitter";
 import { assertRecipeAccess, findRecipeForViewer, handleRecipeError } from "./helpers";
 import {
   randomRecipeInputSchema,
@@ -80,6 +82,7 @@ export const listProcedure = authedProcedure
       search,
       searchFields,
       tags,
+      excludedTags,
       filterMode,
       sortMode,
       minRating,
@@ -106,7 +109,8 @@ export const listProcedure = authedProcedure
       sortMode as SortOrder,
       minRating,
       maxCookingTime,
-      categories
+      categories,
+      excludedTags
     );
 
     log.debug({ count: result.recipes.length, total: result.total }, "Listed recipes");
@@ -148,24 +152,8 @@ export const getProcedure = authedProcedure
     return recipe;
   });
 
-export const createRecipeProcedure = authedProcedure
-  .meta({
-    openapi: {
-      method: "POST",
-      path: "/recipes",
-      protect: true,
-      tags: ["Recipes"],
-      summary: "Create a recipe",
-      description: "Creates a recipe directly from structured recipe data without parser transformation.",
-      errorResponses: {
-        401: "Missing or invalid API credentials",
-      },
-    },
-  })
-  .input(FullRecipeInsertSchema)
-  .output(z.uuid())
-  .mutation(({ ctx, input }) => {
-    const recipeId = input.id ?? randomUUID();
+export const createProcedure = authedProcedure.input(FullRecipeInsertSchema).mutation(({ ctx, input }) => {
+  const recipeId = input.id ?? randomUUID();
 
     log.info(
       { userId: ctx.user.id, recipeName: input.name, recipeId, providedId: input.id },
@@ -206,7 +194,7 @@ export const createRecipeProcedure = authedProcedure
     return recipeId;
   });
 
-const update = authedProcedure.input(RecipeUpdateInputSchema).mutation(({ ctx, input }) => {
+export const updateProcedure = authedProcedure.input(RecipeUpdateInputSchema).mutation(({ ctx, input }) => {
   const { id, data, version } = input;
 
   log.info({ userId: ctx.user.id, recipeId: id }, "Updating recipe");
@@ -242,7 +230,7 @@ const update = authedProcedure.input(RecipeUpdateInputSchema).mutation(({ ctx, i
   return { success: true };
 });
 
-const updateCategories = authedProcedure
+export const updateCategoriesProcedure = authedProcedure
   .input(
     z.object({
       recipeId: z.string().uuid(),
@@ -285,7 +273,7 @@ const updateCategories = authedProcedure
     return { success: true };
   });
 
-const deleteProcedure = authedProcedure
+export const deleteProcedure = authedProcedure
   .input(RecipeDeleteInputSchema)
   .mutation(({ ctx, input }) => {
     const { id, version } = input;
@@ -360,7 +348,7 @@ export const importFromUrlProcedure = authedProcedure
     return recipeId;
   });
 
-const reserveId = authedProcedure.query(() => {
+export const reserveIdProcedure = authedProcedure.query(() => {
   const recipeId = randomUUID();
 
   log.debug({ recipeId }, "Reserved recipe ID for step image uploads");
@@ -368,7 +356,7 @@ const reserveId = authedProcedure.query(() => {
   return { recipeId };
 });
 
-const convertMeasurements = authedProcedure
+export const convertMeasurementsProcedure = authedProcedure
   .input(RecipeConvertInputSchema)
   .mutation(({ ctx, input }) => {
     const { recipeId, targetSystem, version } = input;
@@ -509,7 +497,7 @@ const convertMeasurements = authedProcedure
     return { success: true };
   });
 
-const autocomplete = authedProcedure
+export const autocompleteProcedure = authedProcedure
   .input(recipeAutocompleteInputSchema)
   .query(async ({ ctx, input }) => {
     log.debug({ userId: ctx.user.id, query: input.query }, "Searching recipes for autocomplete");
@@ -525,7 +513,7 @@ const autocomplete = authedProcedure
     return results;
   });
 
-const getRandomRecipe = authedProcedure
+export const getRandomRecipeProcedure = authedProcedure
   .input(randomRecipeInputSchema)
   .query(async ({ ctx, input }) => {
     const listCtx: RecipeListContext = {
@@ -549,7 +537,7 @@ const getRandomRecipe = authedProcedure
     return { id: selected.id, name: selected.name, image: selected.image };
   });
 
-const importFromImagesProcedure = authedProcedure
+export const importFromImagesProcedure = authedProcedure
   .input(z.instanceof(FormData))
   .mutation(async ({ ctx, input }) => {
     const files: Array<{ data: string; mimeType: string; filename: string }> = [];
@@ -652,7 +640,7 @@ export const importFromPasteProcedure = authedProcedure
     return { recipeIds: preparedImport.recipeIds };
   });
 
-const estimateNutrition = authedProcedure
+export const estimateNutritionProcedure = authedProcedure
   .input(recipeIdInputSchema)
   .mutation(async ({ ctx, input }) => {
     const { recipeId } = input;
@@ -713,7 +701,7 @@ const estimateNutrition = authedProcedure
     return { success: true };
   });
 
-const triggerAutoTag = authedProcedure
+export const triggerAutoTagProcedure = authedProcedure
   .input(recipeIdInputSchema)
   .mutation(async ({ ctx, input }) => {
     const { recipeId } = input;
@@ -780,7 +768,7 @@ const triggerAutoTag = authedProcedure
     return { success: true };
   });
 
-const triggerAutoCategorize = authedProcedure
+export const triggerAutoCategorizeProcedure = authedProcedure
   .input(recipeIdInputSchema)
   .mutation(async ({ ctx, input }) => {
     const { recipeId } = input;
@@ -836,7 +824,7 @@ const triggerAutoCategorize = authedProcedure
     return { success: true };
   });
 
-const triggerAllergyDetection = authedProcedure
+export const triggerAllergyDetectionProcedure = authedProcedure
   .input(recipeIdInputSchema)
   .mutation(async ({ ctx, input }) => {
     const { recipeId } = input;
@@ -908,22 +896,76 @@ const triggerAllergyDetection = authedProcedure
     return { success: true };
   });
 
+export const repairHellofreshImagesProcedure = authedProcedure
+  .input(
+    z.object({
+      recipeId: z.string().uuid().optional(),
+    })
+  )
+  .mutation(async ({ ctx, input }) => {
+    const queues = getQueues();
+
+    const result = await addHelloFreshImageRepairJob(queues.hellofreshImageRepair, {
+      recipeId: input.recipeId,
+    });
+
+    if (result.status === "duplicate") {
+      throw new TRPCError({
+        code: "CONFLICT",
+        message: "Image repair is already in progress",
+      });
+    }
+
+    return { success: true };
+  });
+
+export const hellofreshSyncProcedure = authedProcedure
+  .input(
+    z.object({
+      countryCode: z.string().min(2).max(5).default("ES"),
+      locale: z.string().min(2).max(10).default("es-ES"),
+    })
+  )
+  .mutation(async ({ ctx, input }) => {
+    const { countryCode, locale } = input;
+    const queues = getQueues();
+
+    const result = await addHelloFreshSyncJob(queues.hellofreshSync, {
+      countryCode,
+      locale,
+      userId: ctx.user.id,
+      householdKey: ctx.householdKey,
+      householdUserIds: ctx.householdUserIds,
+    });
+
+    if (result.status === "duplicate") {
+      throw new TRPCError({
+        code: "CONFLICT",
+        message: "HelloFresh sync is already in progress for this country and locale",
+      });
+    }
+
+    return { success: true };
+  });
+
 export const recipesProcedures = router({
   list: listProcedure,
   get: getProcedure,
-  create: createRecipeProcedure,
-  update,
+  create: createProcedure,
+  update: updateProcedure,
   delete: deleteProcedure,
   importFromUrl: importFromUrlProcedure,
   importFromImages: importFromImagesProcedure,
   importFromPaste: importFromPasteProcedure,
-  convertMeasurements,
-  estimateNutrition,
-  triggerAutoTag,
-  triggerAutoCategorize,
-  triggerAllergyDetection,
-  reserveId,
-  autocomplete,
-  updateCategories,
-  getRandomRecipe,
+  convertMeasurements: convertMeasurementsProcedure,
+  estimateNutrition: estimateNutritionProcedure,
+  triggerAutoTag: triggerAutoTagProcedure,
+  triggerAutoCategorize: triggerAutoCategorizeProcedure,
+  triggerAllergyDetection: triggerAllergyDetectionProcedure,
+  reserveId: reserveIdProcedure,
+  autocomplete: autocompleteProcedure,
+  updateCategories: updateCategoriesProcedure,
+  getRandomRecipe: getRandomRecipeProcedure,
+  repairHellofreshImages: repairHellofreshImagesProcedure,
+  hellofreshSync: hellofreshSyncProcedure,
 });

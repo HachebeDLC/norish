@@ -32,7 +32,8 @@
     "revealSecret": "Показать секрет",
     "hideSecret": "Скрыть секрет",
     "enterNewValue": "Введите новое значение",
-    "cancelEditing": "Отменить редактирование"
+    "cancelEditing": "Отменить редактирование",
+    "sendToBring": "Отправить в Bring!"
   },
   "status": {
     "loading": "Загрузка...",
@@ -213,5 +214,11 @@
     "notification_body": "{label} завершён!",
     "notifications_disabled": "Уведомления отключены",
     "notifications_disabled_hint": "Включите уведомления в настройках браузера, чтобы получать оповещения при завершении таймеров в фоновом режиме."
+  },
+  "bring": {
+    "syncSuccess": "{count, plural, one {# товар} few {# товара} other {# товаров}} отправлено в Bring!",
+    "notConfigured": "Bring! не настроен",
+    "notConfiguredHint": "Перейдите в Настройки, чтобы настроить аккаунт Bring!",
+    "syncError": "Не удалось синхронизировать с Bring!"
   }
 }

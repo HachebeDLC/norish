@@ -115,3 +115,27 @@ export type AddAllergyDetectionJobResult =
   | { status: "queued"; job: Job<AllergyDetectionJobData> }
   | { status: "duplicate"; existingJobId: string }
   | { status: "skipped"; reason: "disabled" | "no_allergies" };
+
+export interface HelloFreshSyncJobData {
+  countryCode: string;
+  locale: string;
+  userId?: string;
+  householdKey?: string;
+  householdUserIds?: string[] | null;
+}
+
+export interface BringSyncJobData {
+  userId: string;
+  householdKey: string;
+  // If provided, syncs only these items. If not, syncs all pending.
+  itemIds?: string[];
+}
+
+export interface HelloFreshImageRepairJobData {
+  /** Restrict repair to a single recipe ID; omit to repair all broken images. */
+  recipeId?: string;
+}
+
+export type AddHelloFreshImageRepairJobResult =
+  | { status: "queued"; job: import("bullmq").Job<HelloFreshImageRepairJobData> }
+  | { status: "duplicate"; existingJobId: string };

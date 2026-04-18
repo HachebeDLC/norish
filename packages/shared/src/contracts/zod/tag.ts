@@ -1,5 +1,5 @@
-import { createInsertSchema, createSelectSchema, createUpdateSchema } from "drizzle-zod";
 import { z } from "zod";
+import { createInsertSchema, createSelectSchema, createUpdateSchema } from "drizzle-zod";
 
 import { tags } from "@norish/db/schema";
 
@@ -15,3 +15,9 @@ export const TagSummarySchema = z.object({
   version: z.number(),
 });
 export const TagNameSchema = TagSelectBaseSchema.pick({ name: true });
+
+export const TagListInputSchema = z.object({
+  categories: z.array(z.string()).optional(),
+  search: z.string().optional(),
+  limit: z.number().int().min(1).max(1000).default(100),
+});

@@ -32,7 +32,8 @@
     "revealSecret": "시크릿 표시",
     "hideSecret": "시크릿 숨기기",
     "enterNewValue": "새 값을 입력하세요",
-    "cancelEditing": "편집 취소"
+    "cancelEditing": "편집 취소",
+    "sendToBring": "Bring!에 보내기"
   },
   "status": {
     "loading": "불러오는 중...",
@@ -213,5 +214,11 @@
     "notification_body": "{label}이(가) 완료되었습니다!",
     "notifications_disabled": "알림이 비활성화되었습니다.",
     "notifications_disabled_hint": "타이머가 백그라운드에서 완료될 때 알림을 받으려면 브라우저 설정에서 알림을 활성화하세요."
+  },
+  "bring": {
+    "syncSuccess": "Bring!에 {count}개 항목을 전송했습니다",
+    "notConfigured": "Bring! 미설정",
+    "notConfiguredHint": "설정에서 Bring! 계정을 구성하세요",
+    "syncError": "Bring! 동기화에 실패했습니다"
   }
 }

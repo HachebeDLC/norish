@@ -26,7 +26,7 @@ import { getQueues } from "@norish/queue/registry";
 import { createLogger } from "@norish/shared-server/logger";
 import { deleteRecipeImagesDir } from "@norish/shared-server/media/storage";
 import { emitByPolicy } from "@norish/trpc/helpers";
-import { recipeEmitter } from "@norish/trpc/routers/recipes/emitter";
+import { recipeEmitter } from "@norish/queue";
 
 import {
   baseWorkerOptions,

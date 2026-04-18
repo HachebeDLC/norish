@@ -3,7 +3,8 @@ import { trpcLogger as log } from "@norish/shared-server/logger";
 import { createSubscriptionIterable, mergeAsyncIterables } from "../../helpers";
 import { authedProcedure } from "../../middleware";
 import { router } from "../../trpc";
-import { permissionsEmitter } from "./emitter";
+
+import { permissionsEmitter } from "@norish/queue";
 
 const onPolicyUpdated = authedProcedure.subscription(async function* ({ ctx, signal }) {
   type PermissionScope = "owner" | "household" | "everyone";

@@ -1,10 +1,10 @@
+import { householdEmitter, type HouseholdSubscriptionEvents } from "@norish/queue";
+
 import { trpcLogger as log } from "@norish/shared-server/logger";
 
-import type { HouseholdSubscriptionEvents } from "./types";
 import { createSubscriptionIterable, waitForAbort } from "../../helpers";
 import { authedProcedure } from "../../middleware";
 import { router } from "../../trpc";
-import { householdEmitter } from "./emitter";
 
 /**
  * Subscription for household creation events.

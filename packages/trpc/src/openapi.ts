@@ -4,13 +4,7 @@ import type { OperationId } from "@norish/shared/contracts/realtime-envelope";
 import { isOperationId } from "@norish/shared/lib/operation-helpers";
 
 import { createHttpContextFromHeaders } from "./context";
-import {
-  createPlannedRecipeProcedure,
-  deletePlannedRecipeProcedure,
-  listMonthPlannedRecipesProcedure,
-  listTodayPlannedRecipesProcedure,
-  listWeekPlannedRecipesProcedure,
-} from "./routers/calendar/planned-items";
+import { plannedItemsProcedures } from "./routers/calendar/planned-items";
 import { health } from "./routers/config/procedures";
 import {
   assignGroceryToStoreProcedure,

@@ -10,6 +10,7 @@ import {
 export type CanonicalRecipeFilters = {
   rawInput: string;
   searchTags: string[];
+  excludedTags: string[];
   searchFields: SearchField[];
   filterMode: FilterMode;
   sortMode: SortOrder;
@@ -34,6 +35,7 @@ const VALID_FILTER_MODES: FilterMode[] = ["AND", "OR"];
 
 export const DEFAULT_PERSISTED_RECIPE_FILTERS: PersistedRecipeFilters = {
   searchTags: [],
+  excludedTags: [],
   searchFields: [...DEFAULT_SEARCH_FIELDS],
   filterMode: "AND",
   sortMode: "dateDesc",
@@ -70,6 +72,9 @@ export function normalizePersistedRecipeFilters(data: unknown): PersistedRecipeF
   const searchTags = Array.isArray(d.searchTags)
     ? d.searchTags.filter((tag): tag is string => typeof tag === "string")
     : null;
+  const excludedTags = Array.isArray(d.excludedTags)
+    ? d.excludedTags.filter((tag): tag is string => typeof tag === "string")
+    : null;
   const searchFields = Array.isArray(d.searchFields)
     ? d.searchFields.filter((field): field is SearchField =>
         SEARCH_FIELDS.includes(field as SearchField)
@@ -96,6 +101,7 @@ export function normalizePersistedRecipeFilters(data: unknown): PersistedRecipeF
     sortMode: sortMode ?? DEFAULT_PERSISTED_RECIPE_FILTERS.sortMode,
     filterMode: filterMode ?? DEFAULT_PERSISTED_RECIPE_FILTERS.filterMode,
     searchTags: searchTags ?? DEFAULT_PERSISTED_RECIPE_FILTERS.searchTags,
+    excludedTags: excludedTags ?? DEFAULT_PERSISTED_RECIPE_FILTERS.excludedTags,
     searchFields: searchFields ?? [...DEFAULT_PERSISTED_RECIPE_FILTERS.searchFields],
     showFavoritesOnly: showFavoritesOnly ?? DEFAULT_PERSISTED_RECIPE_FILTERS.showFavoritesOnly,
     minRating: minRating ?? DEFAULT_PERSISTED_RECIPE_FILTERS.minRating,
@@ -108,6 +114,7 @@ export function hasAppliedRecipeFilters(filters: CanonicalRecipeFilters): boolea
   return (
     filters.rawInput.trim().length > 0 ||
     filters.searchTags.length > 0 ||
+    filters.excludedTags.length > 0 ||
     filters.categories.length > 0 ||
     filters.maxCookingTime !== null
   );
@@ -118,6 +125,7 @@ export function toRecipesQueryFilters(filters: CanonicalRecipeFilters) {
     search: filters.rawInput || undefined,
     searchFields: filters.searchFields,
     tags: filters.searchTags.length > 0 ? filters.searchTags : undefined,
+    excludedTags: filters.excludedTags.length > 0 ? filters.excludedTags : undefined,
     categories: filters.categories.length > 0 ? filters.categories : undefined,
     filterMode: filters.filterMode,
     sortMode: filters.sortMode,

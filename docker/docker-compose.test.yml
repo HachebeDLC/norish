@@ -2,24 +2,28 @@
 # Usage:
 #   1. Build the image first:  docker build -f docker/Dockerfile -t norish:local .
 #   2. Run everything:         docker compose -f docker/docker-compose.test.yml up
-#   3. Open:                   http://localhost:3000
+#   3. Open:                   http://localhost:8453
 #   4. Stop:                   docker compose -f docker/docker-compose.test.yml down
 
 services:
   norish:
     image: norish:local
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
     container_name: norish-app-test
     restart: unless-stopped
     ports:
-      - "3000:3000"
+      - "8453:8453"
     volumes:
       - norish_uploads:/app/uploads
+      - ../../tags.json:/app/tags.json
     environment:
       DATABASE_URL: postgres://postgres:norish@db:5432/norish
       REDIS_URL: redis://redis:6379
-      AUTH_URL: http://localhost:3000
-      # Include host LAN IP for mobile app access
-      TRUSTED_ORIGINS: http://localhost:3000,http://192.168.*.*:3000,exp://,exp://**,exp://192.168.*.*:*/**
+      AUTH_URL: https://norish.artemisa-hb.cloud/
+      PORT: 8453
+      TRUSTED_ORIGINS: https://norish.artemisa-hb.cloud/, http://localhost:8453,http://192.168.*.*:8453,exp://,exp://**,exp://192.168.*.*:*/**
       MASTER_KEY: X4fjLgB8egCPwlOQW8iC3JGXAtUIMUOGmk/y29n+YSw=
       CHROME_WS_ENDPOINT: ws://chrome-headless:3000
       PASSWORD_AUTH_ENABLED: "true"
@@ -31,6 +35,51 @@ services:
         condition: service_healthy
       chrome-headless:
         condition: service_started
+
+  norish-worker:
+    image: norish:local
+    container_name: norish-worker-test
+    restart: unless-stopped
+    command: ["node", "dist-server/worker.mjs"]
+    volumes:
+      - norish_uploads:/app/uploads
+      - ../../tags.json:/app/tags.json
+    environment:
+      DATABASE_URL: postgres://postgres:norish@db:5432/norish
+      REDIS_URL: redis://redis:6379
+      MASTER_KEY: X4fjLgB8egCPwlOQW8iC3JGXAtUIMUOGmk/y29n+YSw=
+      CHROME_WS_ENDPOINT: ws://chrome-headless:3000
+      LOG_LEVEL: debug
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      chrome-headless:
+        condition: service_started
+
+  # Scheduler for HelloFresh sync
+  ofelia:
+    image: mcuadros/ofelia:latest
+    container_name: norish-ofelia-test
+    depends_on:
+      - norish
+    command: daemon --docker
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    labels:
+      ofelia.job-exec.hellofresh-sync.schedule: "@weekly"
+      ofelia.job-exec.hellofresh-sync.container: "norish-worker-test"
+      ofelia.job-exec.hellofresh-sync.command: "node /app/dist-server/cli.mjs hf-sync ES es-ES"
+      ofelia.job-exec.hellofresh-repair-images.schedule: "@weekly"
+      ofelia.job-exec.hellofresh-repair-images.container: "norish-worker-test"
+      ofelia.job-exec.hellofresh-repair-images.command: "node /app/dist-server/cli.mjs hf-repair-images"
+      ofelia.job-exec.hellofresh-sync-tags.schedule: "@weekly"
+      ofelia.job-exec.hellofresh-sync-tags.container: "norish-worker-test"
+      ofelia.job-exec.hellofresh-sync-tags.command: "node /app/dist-server/cli.mjs hf-sync-tags"
+      ofelia.job-exec.hellofresh-categorize-tags.schedule: "@daily"
+      ofelia.job-exec.hellofresh-categorize-tags.container: "norish-worker-test"
+      ofelia.job-exec.hellofresh-categorize-tags.command: "node /app/dist-server/cli.mjs hf-categorize-tags"
 
   # PostgreSQL Database
   db:

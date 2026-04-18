@@ -15,17 +15,18 @@
     "./*": "./src/*.ts"
   },
   "scripts": {
-    "build": "rm -rf dist && pnpm exec tsc -p tsconfig.json --noCheck",
+    "sync-tags": "tsx src/scripts/sync-tags.ts",
+    "build": "rm -rf dist && tsc -p tsconfig.json --noCheck",
     "lint": "eslint --flag unstable_native_nodejs_ts_config",
     "format": "prettier --check . --ignore-path ../../.gitignore",
-    "typecheck": "pnpm exec tsc --noEmit",
+    "typecheck": "tsc --noEmit",
     "clean": "git clean -xdf .cache .turbo node_modules dist"
   },
   "dependencies": {
     "drizzle-orm": "catalog:",
     "fuse.js": "catalog:",
     "pg": "catalog:",
-    "pino": "^10.3.1",
+    "pino": "^10.3.0",
     "superjson": "catalog:",
     "zod": "catalog:"
   },
@@ -33,11 +34,12 @@
     "@norish/eslint-config": "workspace:*",
     "@norish/prettier-config": "workspace:*",
     "@norish/tsconfig": "workspace:*",
+    "eslint": "catalog:",
+    "prettier": "catalog:",
     "@testcontainers/postgresql": "catalog:",
     "@types/pg": "8.16.0",
     "drizzle-kit": "0.31.9",
-    "eslint": "catalog:",
-    "prettier": "catalog:",
+    "tsx": "catalog:",
     "vitest": "catalog:"
   },
   "prettier": "@norish/prettier-config"

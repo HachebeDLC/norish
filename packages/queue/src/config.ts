@@ -20,6 +20,9 @@ export const QUEUE_NAMES = {
   AUTO_TAGGING: "auto-tagging",
   AUTO_CATEGORIZATION: "auto-categorization",
   ALLERGY_DETECTION: "allergy-detection",
+  HELLOFRESH_SYNC: "hellofresh-sync",
+  HELLOFRESH_IMAGE_REPAIR: "hellofresh-image-repair",
+  BRING_SYNC: "bring-sync",
 } as const;
 
 export type QueueName = (typeof QUEUE_NAMES)[keyof typeof QUEUE_NAMES];
@@ -53,6 +56,9 @@ export const STALLED_INTERVAL = {
   [QUEUE_NAMES.AUTO_TAGGING]: 60_000, // 1 min - background enhancement
   [QUEUE_NAMES.AUTO_CATEGORIZATION]: 60_000, // 1 min - background enhancement
   [QUEUE_NAMES.ALLERGY_DETECTION]: 60_000, // 1 min - background enhancement
+  [QUEUE_NAMES.HELLOFRESH_SYNC]: 120_000, // 2 min - background sync
+  [QUEUE_NAMES.HELLOFRESH_IMAGE_REPAIR]: 300_000, // 5 min - long-running repair
+  [QUEUE_NAMES.BRING_SYNC]: 60_000, // 1 min - background sync
 } as const;
 
 /**
@@ -68,6 +74,9 @@ export const WORKER_CONCURRENCY = {
   [QUEUE_NAMES.AUTO_TAGGING]: 2,
   [QUEUE_NAMES.AUTO_CATEGORIZATION]: 2,
   [QUEUE_NAMES.ALLERGY_DETECTION]: 2,
+  [QUEUE_NAMES.HELLOFRESH_SYNC]: 1,
+  [QUEUE_NAMES.HELLOFRESH_IMAGE_REPAIR]: 1,
+  [QUEUE_NAMES.BRING_SYNC]: 1,
 } as const;
 
 export const RECIPE_IMPORT_PROCESSING_TIMEOUT_MS = 30 * 60 * 1000;

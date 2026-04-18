@@ -1,16 +1,13 @@
 import { getRecipePermissionPolicy } from "@norish/config/server-config-loader";
-import {
-  getAverageRating,
-  getUserRatingWithVersion,
-  rateRecipe,
-} from "@norish/db/repositories/ratings";
+import { getAverageRating, getUserRating, rateRecipe } from "@norish/db/repositories/ratings";
 import { trpcLogger as log } from "@norish/shared-server/logger";
 import { RatingGetInputSchema, RatingInputSchema } from "@norish/shared/contracts/zod";
 
 import { emitByPolicy } from "../../helpers";
 import { authedProcedure } from "../../middleware";
 import { router } from "../../trpc";
-import { ratingsEmitter } from "./emitter";
+
+import { ratingsEmitter } from "@norish/queue";
 
 interface UserContext {
   user: { id: string };
@@ -30,18 +27,12 @@ async function emitRatingFailed(ctx: UserContext, recipeId: string, reason: stri
 }
 
 const rate = authedProcedure.input(RatingInputSchema).mutation(({ ctx, input }) => {
-  const { recipeId, rating, version } = input;
+  const { recipeId, rating } = input;
 
   log.debug({ userId: ctx.user.id, recipeId, rating }, "Rating recipe");
 
-  rateRecipe(ctx.user.id, recipeId, rating, version)
+  rateRecipe(ctx.user.id, recipeId, rating)
     .then(async (result) => {
-      if (result.stale) {
-        log.info({ userId: ctx.user.id, recipeId, version }, "Ignoring stale rating mutation");
-
-        return;
-      }
-
       const stats = await getAverageRating(recipeId);
       const policy = await getRecipePermissionPolicy();
 
@@ -68,9 +59,9 @@ const rate = authedProcedure.input(RatingInputSchema).mutation(({ ctx, input }) 
 const getUserRatingProcedure = authedProcedure
   .input(RatingGetInputSchema)
   .query(async ({ ctx, input }) => {
-    const rating = await getUserRatingWithVersion(ctx.user.id, input.recipeId);
+    const rating = await getUserRating(ctx.user.id, input.recipeId);
 
-    return { recipeId: input.recipeId, userRating: rating.rating, version: rating.version };
+    return { recipeId: input.recipeId, userRating: rating };
   });
 
 const getAverage = authedProcedure.input(RatingGetInputSchema).query(async ({ input }) => {

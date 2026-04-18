@@ -11,10 +11,11 @@
     "./*": "./src/*.ts"
   },
   "scripts": {
-    "build": "rm -rf dist && pnpm exec tsc -p tsconfig.json --noCheck",
+    "hellofresh-sync": "tsx src/hellofresh-sync/sync-cli.ts",
+    "build": "rm -rf dist && tsc -p tsconfig.json --noCheck",
     "lint": "eslint --flag unstable_native_nodejs_ts_config",
     "format": "prettier --check . --ignore-path ../../.gitignore",
-    "typecheck": "pnpm exec tsc --noEmit --noCheck",
+    "typecheck": "tsc --noEmit --noCheck",
     "clean": "git clean -xdf .cache .turbo node_modules dist",
     "test": "vitest run --config ./vitest.config.ts"
   },
@@ -27,8 +28,7 @@
     "date-fns": "catalog:",
     "drizzle-orm": "catalog:",
     "ioredis": "catalog:",
-    "superjson": "catalog:",
-    "yaml": "^2.8.3"
+    "superjson": "catalog:"
   },
   "devDependencies": {
     "@norish/eslint-config": "workspace:*",

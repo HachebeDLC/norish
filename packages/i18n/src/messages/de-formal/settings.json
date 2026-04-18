@@ -91,6 +91,20 @@
         "confirmButton": "Token löschen"
       }
     },
+    "bring": {
+      "title": "Bring! Einkaufsliste",
+      "description": "Verknüpfen Sie Ihr Bring!-Konto, um Ihre Norish-Einkaufsliste automatisch zu synchronisieren.",
+      "emailLabel": "E-Mail",
+      "emailPlaceholder": "ihre-bring-email@beispiel.de",
+      "emailLinked": "Konto ist aktuell verknüpft",
+      "passwordLabel": "Passwort",
+      "passwordPlaceholder": "••••••••",
+      "listUuidLabel": "Listen-UUID",
+      "listUuidPlaceholder": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+      "listUuidHint": "Sie finden Ihre Listen-UUID in der Bring! Web-App URL oder in den Freigabe-Einstellungen der mobilen App.",
+      "saveSuccess": "Bring!-Konfiguration gespeichert",
+      "saveError": "Fehler beim Speichern der Bring!-Konfiguration"
+    },
     "dangerZone": {
       "title": "Gefahrenzone",
       "description": "Sobald Sie Ihr Konto löschen, gibt es kein Zurück mehr. Bitte seien Sie sich sicher.",
@@ -345,6 +359,27 @@
       "localesSaved": "Spracheinstellungen gespeichert",
       "localesError": "Spracheinstellungen konnten nicht gespeichert werden",
       "atLeastOneLocale": "Mindestens eine Sprache muss aktiviert sein"
+    },
+    "hellofreshSync": {
+      "title": "HelloFresh-Sync",
+      "description": "Importieren Sie Rezepte von HelloFresh in Ihre Bibliothek.",
+      "countryLabel": "Land",
+      "countryPlaceholder": "z.B. de, us, gb",
+      "localeLabel": "Sprachcode",
+      "localePlaceholder": "z.B. de-DE, en-US",
+      "syncButton": "Sync starten",
+      "cleanupButton": "Lokale Bilder bereinigen",
+      "cleanupConfirm": "Sind Sie sicher, dass Sie alle lokalen HelloFresh-Bilder löschen möchten? Dies spart Platz, aber Rezepte zeigen dann nur noch Remote-Bilder.",
+      "cleanupSuccess": "Bereinigung abgeschlossen",
+      "syncStarted": "Sync im Hintergrund gestartet",
+      "status": {
+        "idle": "Bereit",
+        "fetching": "Rezepte werden abgerufen...",
+        "processing": "Rezept {current} von {total} wird verarbeitet...",
+        "skipped": "Übersprungen (existiert bereits)",
+        "completed": "Sync abgeschlossen! {count} Rezepte importiert.",
+        "failed": "Sync fehlgeschlagen: {error}"
+      }
     },
     "registration": {
       "title": "Registrierung",

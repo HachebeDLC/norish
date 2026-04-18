@@ -11,6 +11,8 @@ import { appMetadata, appViewport } from "./metadata";
 export const metadata = appMetadata;
 export const viewport = appViewport;
 
+export const dynamic = "force-dynamic";
+
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const locale = await getLocale();
   const messages = await getMessages();

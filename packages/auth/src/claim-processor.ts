@@ -1,5 +1,7 @@
 import type { OIDCClaimConfig } from "@norish/config/zod/server-config";
-import type { HouseholdUserInfo } from "@norish/trpc/routers/households/types";
+import type { HouseholdUserInfo } from "@norish/queue";
+
+import { authLogger } from "@norish/shared-server/logger";
 import { invalidateHouseholdCacheForUsers } from "@norish/db/cached-household";
 import {
   addUserToHousehold,
@@ -9,9 +11,8 @@ import {
 } from "@norish/db/repositories/households";
 import { getUserById, setUserAdminStatus } from "@norish/db/repositories/users";
 import { getPublisherClient } from "@norish/queue/redis/client";
-import { authLogger } from "@norish/shared-server/logger";
 import { emitConnectionInvalidation } from "@norish/trpc/connection-manager";
-import { householdEmitter } from "@norish/trpc/routers/households/emitter";
+import { householdEmitter } from "@norish/queue";
 
 // Redis key prefix and TTL for OIDC profiles during auth flow
 const OIDC_PROFILE_PREFIX = "oidc:profile:";
@@ -124,25 +125,15 @@ export async function mergeOIDCTokenClaims(
   try {
     const discoveryRes = await fetch(discoveryUrl);
     const discovery = await discoveryRes.json();
-    const discoveryRecord =
-      discovery && typeof discovery === "object" ? (discovery as Record<string, unknown>) : null;
-    const userInfoUrl =
-      discoveryRecord && "userinfo_endpoint" in discoveryRecord
-        ? discoveryRecord.userinfo_endpoint
-        : undefined;
+    const userInfoUrl = discovery.userinfo_endpoint;
 
-    if (typeof userInfoUrl === "string") {
+    if (userInfoUrl) {
       const userInfoRes = await fetch(userInfoUrl, {
         headers: { Authorization: `Bearer ${tokens.accessToken}` },
       });
 
       if (userInfoRes.ok) {
-        const userInfo = await userInfoRes.json();
-
-        if (userInfo && typeof userInfo === "object") {
-          userInfoClaims = userInfo as Record<string, unknown>;
-        }
-
+        userInfoClaims = await userInfoRes.json();
         authLogger.debug(
           { sub: userInfoClaims.sub, hasGroups: "groups" in userInfoClaims },
           "Fetched userinfo claims"
@@ -294,10 +285,7 @@ export async function processClaimsForUser(
     const existingMemberIds = existingMembers.map((m) => m.userId);
 
     // Add user to household
-    const membership = (await addUserToHousehold({
-      householdId: household.id,
-      userId,
-    })) as Awaited<ReturnType<typeof addUserToHousehold>> & { version: number };
+    await addUserToHousehold({ householdId: household.id, userId });
 
     authLogger.info(
       { userId, householdId: household.id, householdName: claims.householdName },
@@ -306,12 +294,11 @@ export async function processClaimsForUser(
 
     // Emit WebSocket events for real-time sync
     const user = await getUserById(userId);
-    const userInfo = {
+    const userInfo: HouseholdUserInfo = {
       id: userId,
       name: user?.name ?? null,
       isAdmin: false,
-      version: membership.version,
-    } as HouseholdUserInfo;
+    };
 
     // Notify existing household members about the new user
     householdEmitter.emitToHousehold(household.id, "userJoined", { user: userInfo });

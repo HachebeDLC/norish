@@ -1,5 +1,5 @@
 /**
- * Mock for @norish/trpc/routers/recipes/emitter
+ * Mock for @norish/queue recipeEmitter
  */
 import { vi } from "vitest";
 

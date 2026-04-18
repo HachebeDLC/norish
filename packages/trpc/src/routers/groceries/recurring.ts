@@ -1,7 +1,7 @@
+import type { GroceryInsertDto } from "@norish/shared/contracts";
+
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-
-import type { GroceryInsertDto } from "@norish/shared/contracts";
 import { assertHouseholdAccess } from "@norish/auth/permissions";
 import { createGrocery, updateGrocery } from "@norish/db";
 import {
@@ -16,7 +16,8 @@ import { calculateNextOccurrence, getTodayString } from "@norish/shared/lib/recu
 
 import { authedProcedure } from "../../middleware";
 import { router } from "../../trpc";
-import { groceryEmitter } from "./emitter";
+
+import { groceryEmitter } from "@norish/queue";
 
 const createRecurring = authedProcedure
   .input(
@@ -90,9 +91,7 @@ const updateRecurring = authedProcedure
   .input(
     z.object({
       recurringGroceryId: z.string(),
-      recurringVersion: z.number().int().positive(),
       groceryId: z.string(),
-      groceryVersion: z.number().int().positive(),
       data: z.object({
         name: z.string().optional(),
         amount: z.number().nullable().optional(),
@@ -105,7 +104,7 @@ const updateRecurring = authedProcedure
     })
   )
   .mutation(({ ctx, input }) => {
-    const { recurringGroceryId, recurringVersion, groceryId, groceryVersion, data } = input;
+    const { recurringGroceryId, groceryId, data } = input;
 
     log.debug({ userId: ctx.user.id, recurringGroceryId, groceryId }, "Updating recurring grocery");
 
@@ -120,22 +119,10 @@ const updateRecurring = authedProcedure
 
         await assertHouseholdAccess(ctx.user.id, ownerId);
 
-        const updated = await updateRecurringGrocery({
-          id: recurringGroceryId,
-          version: recurringVersion,
-          ...data,
-        });
-
-        if (!updated) {
-          throw new TRPCError({
-            code: "CONFLICT",
-            message: "Recurring grocery was updated elsewhere. Refresh and try again.",
-          });
-        }
+        const updated = await updateRecurringGrocery({ id: recurringGroceryId, ...data });
 
         const grocery = await updateGrocery({
           id: groceryId,
-          version: groceryVersion,
           name: updated.name,
           unit: updated.unit || null,
           amount: updated.amount,
@@ -166,16 +153,11 @@ const updateRecurring = authedProcedure
   });
 
 const deleteRecurring = authedProcedure
-  .input(
-    z.object({
-      recurringGroceryId: z.string(),
-      version: z.number().int().positive(),
-    })
-  )
+  .input(z.object({ recurringGroceryId: z.string() }))
   .mutation(({ ctx, input }) => {
-    const { recurringGroceryId, version } = input;
+    const { recurringGroceryId } = input;
 
-    log.info({ userId: ctx.user.id, recurringGroceryId, version }, "Deleting recurring grocery");
+    log.info({ userId: ctx.user.id, recurringGroceryId }, "Deleting recurring grocery");
 
     getRecurringGroceryOwnerId(recurringGroceryId)
       .then(async (ownerId) => {
@@ -187,16 +169,7 @@ const deleteRecurring = authedProcedure
         }
 
         await assertHouseholdAccess(ctx.user.id, ownerId);
-        const result = await deleteRecurringGroceryById(recurringGroceryId, version);
-
-        if (result.stale) {
-          log.info(
-            { userId: ctx.user.id, recurringGroceryId, version },
-            "Ignoring stale recurring grocery delete mutation"
-          );
-
-          return;
-        }
+        await deleteRecurringGroceryById(recurringGroceryId);
 
         log.info({ userId: ctx.user.id, recurringGroceryId }, "Recurring grocery deleted");
         groceryEmitter.emitToHousehold(ctx.householdKey, "recurringDeleted", {
@@ -220,14 +193,12 @@ const checkRecurring = authedProcedure
   .input(
     z.object({
       recurringGroceryId: z.string(),
-      recurringVersion: z.number().int().positive(),
       groceryId: z.string(),
-      groceryVersion: z.number().int().positive(),
       isDone: z.boolean(),
     })
   )
   .mutation(({ ctx, input }) => {
-    const { recurringGroceryId, recurringVersion, groceryId, groceryVersion, isDone } = input;
+    const { recurringGroceryId, groceryId, isDone } = input;
     const checkedDate = getTodayString();
 
     log.debug(
@@ -255,7 +226,7 @@ const checkRecurring = authedProcedure
           });
         }
 
-        const updated = await updateGrocery({ id: groceryId, version: groceryVersion, isDone });
+        const updated = await updateGrocery({ id: groceryId, isDone });
 
         if (!updated) {
           throw new TRPCError({
@@ -279,17 +250,9 @@ const checkRecurring = authedProcedure
 
           const updatedRecurring = await updateRecurringGrocery({
             id: recurringGroceryId,
-            version: recurringVersion,
             lastCheckedDate: checkedDate,
             nextPlannedFor: nextDate,
           });
-
-          if (!updatedRecurring) {
-            throw new TRPCError({
-              code: "CONFLICT",
-              message: "Recurring grocery was updated elsewhere. Refresh and try again.",
-            });
-          }
 
           log.debug(
             { userId: ctx.user.id, recurringGroceryId, nextDate },

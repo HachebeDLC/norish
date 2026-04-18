@@ -15,6 +15,9 @@ import type {
   AutoCategorizationJobData,
   AutoTaggingJobData,
   CaldavSyncJobData,
+  HelloFreshImageRepairJobData,
+  HelloFreshSyncJobData,
+  BringSyncJobData,
   ImageImportJobData,
   NutritionEstimationJobData,
   PasteImportJobData,
@@ -26,7 +29,10 @@ import type { ScheduledTaskJobData } from "./scheduled-tasks/queue";
 import { createAllergyDetectionQueue } from "./allergy-detection/queue";
 import { createAutoCategorizationQueue } from "./auto-categorization/queue";
 import { createAutoTaggingQueue } from "./auto-tagging/queue";
+import { createBringSyncQueue } from "./bring-sync/queue";
 import { createCaldavSyncQueue } from "./caldav-sync/queue";
+import { createHelloFreshSyncQueue } from "./hellofresh-sync/queue";
+import { createHelloFreshImageRepairQueue } from "./hellofresh-image-repair/queue";
 import { createImageImportQueue } from "./image-import/queue";
 import { createNutritionEstimationQueue } from "./nutrition-estimation/queue";
 import { createPasteImportQueue } from "./paste-import/queue";
@@ -53,6 +59,9 @@ interface QueueRegistry {
   allergyDetection: Queue<AllergyDetectionJobData>;
   caldavSync: Queue<CaldavSyncJobData>;
   scheduledTasks: Queue<ScheduledTaskJobData>;
+  hellofreshSync: Queue<HelloFreshSyncJobData>;
+  hellofreshImageRepair: Queue<HelloFreshImageRepairJobData>;
+  bringSync: Queue<BringSyncJobData>;
 }
 
 let registry: QueueRegistry | null = globalForRegistry.queueRegistry ?? null;
@@ -80,6 +89,9 @@ export function initializeQueues(): QueueRegistry {
     allergyDetection: createAllergyDetectionQueue(),
     caldavSync: createCaldavSyncQueue(),
     scheduledTasks: createScheduledTasksQueue(),
+    hellofreshSync: createHelloFreshSyncQueue(),
+    hellofreshImageRepair: createHelloFreshImageRepairQueue(),
+    bringSync: createBringSyncQueue(),
   };
 
   globalForRegistry.queueRegistry = registry;
@@ -123,6 +135,9 @@ export async function closeAllQueues(): Promise<void> {
     registry.allergyDetection.close(),
     registry.caldavSync.close(),
     registry.scheduledTasks.close(),
+    registry.hellofreshSync.close(),
+    registry.hellofreshImageRepair.close(),
+    registry.bringSync.close(),
   ]);
 
   registry = null;

@@ -222,22 +222,15 @@
     {
       "idx": 31,
       "version": "7",
-      "when": 1773989364378,
-      "tag": "0031_outgoing_killraven",
+      "when": 1775731366971,
+      "tag": "0031_mighty_polaris",
       "breakpoints": true
     },
     {
       "idx": 32,
       "version": "7",
-      "when": 1774014638502,
-      "tag": "0032_rainy_randall",
-      "breakpoints": true
-    },
-    {
-      "idx": 33,
-      "version": "7",
-      "when": 1775030436191,
-      "tag": "0033_graceful_living_tribunal",
+      "when": 1775746726268,
+      "tag": "0032_strong_invisible_woman",
       "breakpoints": true
     }
   ]

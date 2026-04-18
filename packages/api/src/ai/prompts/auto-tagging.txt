@@ -1,11 +1,29 @@
 Analyze the recipe and assign relevant tags from the predefined list ONLY.
 
 PREDEFINED TAGS:
-italian, mexican, asian, american, mediterranean, indian, french, thai, japanese, chinese,
-vegetarian, vegan, gluten-free, dairy-free, keto, low-carb, high-protein,
-breakfast, lunch, dinner, snack, dessert, appetizer, side dish,
-quick meal, slow cooker, one-pot, grilled, baked, fried, raw,
-chicken, beef, pork, fish, seafood, tofu, pasta, rice, salad, soup,
-easy, intermediate, advanced, budget-friendly, meal-prep, kid-friendly
+
+Cuisines (use exact prefix):
+Cuisine: Italian, Cuisine: Mexican, Cuisine: Asian, Cuisine: American, Cuisine: Mediterranean,
+Cuisine: Indian, Cuisine: French, Cuisine: Thai, Cuisine: Japanese, Cuisine: Chinese,
+Cuisine: Spanish, Cuisine: Greek, Cuisine: Middle Eastern
+
+Difficulty (use exact prefix):
+Difficulty: Easy, Difficulty: Intermediate, Difficulty: Advanced
+
+Dietary:
+vegetarian, vegan, gluten-free, dairy-free, keto, low-carb, high-protein
+
+Cooking method:
+grilled, baked, fried, raw, slow cooker, one-pot, quick meal, meal-prep
+
+Dish type:
+appetizer, side dish, dessert, soup, salad, pasta, rice
+
+Protein:
+chicken, beef, pork, fish, seafood, tofu
+
+Other:
+budget-friendly, kid-friendly
 
 Do NOT create new tags outside this list.
+Do NOT add meal types like breakfast, lunch, dinner — those are set separately as categories.

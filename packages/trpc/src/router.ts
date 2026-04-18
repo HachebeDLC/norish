@@ -11,13 +11,16 @@ import { ratingsRouter } from "./routers/ratings";
 import { recipesRouter } from "./routers/recipes";
 import { siteAuthTokensRouter } from "./routers/site-auth-tokens";
 import { storesRouter } from "./routers/stores";
+import { tagsRouter } from "./routers/tags";
 import { userRouter } from "./routers/user";
+import { bringRouter } from "./routers/bring";
 import { router } from "./trpc";
 
 export const appRouter = router({
   groceries: groceriesRouter,
   calendar: calendarRouter,
   recipes: recipesRouter,
+  tags: tagsRouter,
   permissions: permissionsRouter,
   admin: adminRouter,
   households: householdsAppRouter,
@@ -30,6 +33,7 @@ export const appRouter = router({
   ratings: ratingsRouter,
   stores: storesRouter,
   siteAuthTokens: siteAuthTokensRouter,
+  bring: bringRouter,
 });
 
 // Export type definition of API

@@ -1,12 +1,8 @@
 "use client";
 
+import type { FilterMode, RecipeCategory, SortOrder } from "@norish/shared/contracts";
+
 import { useCallback, useEffect, useState } from "react";
-import SearchFieldToggles from "@/components/dashboard/search-field-toggles";
-import Panel from "@/components/Panel/Panel";
-import ChipSkeleton from "@/components/skeleton/chip-skeleton";
-import { useRecipesFiltersContext } from "@/context/recipes-filters-context";
-import { useUserContext } from "@/context/user-context";
-import { useTagsQuery } from "@/hooks/config";
 import {
   ArrowPathIcon,
   ArrowRightIcon,
@@ -17,13 +13,18 @@ import {
 import { Button, Chip, Input } from "@heroui/react";
 import { motion } from "motion/react";
 import { useTranslations } from "next-intl";
-
-import type { FilterMode, RecipeCategory, SortOrder } from "@norish/shared/contracts";
 import {
   getShowFavoritesPreference,
   getShowRatingsPreference,
 } from "@norish/shared/lib/user-preferences";
 import RatingStars from "@norish/ui/rating-stars";
+
+import SearchFieldToggles from "@/components/dashboard/search-field-toggles";
+import Panel from "@/components/Panel/Panel";
+import ChipSkeleton from "@/components/skeleton/chip-skeleton";
+import { useRecipesFiltersContext } from "@/context/recipes-filters-context";
+import { useUserContext } from "@/context/user-context";
+import { useGroupedTagsQuery, useTagsQuery } from "@/hooks/config";
 
 const ALL_CATEGORIES: RecipeCategory[] = ["Breakfast", "Lunch", "Dinner", "Snack"];
 
@@ -64,6 +65,7 @@ function FiltersPanelContent({ onOpenChange }: { onOpenChange: (open: boolean) =
 
   const [tagFilter, setTagFilter] = useState("");
   const [workingTags, setWorkingTags] = useState<string[]>(filters.searchTags);
+  const [workingExcludedTags, setWorkingExcludedTags] = useState<string[]>(filters.excludedTags);
   const [workingCategories, setWorkingCategories] = useState<RecipeCategory[]>(filters.categories);
   const [localFilterMode, setLocalFilterMode] = useState<FilterMode>(filters.filterMode);
   const [localSortMode, setLocalSortMode] = useState<SortOrder>(
@@ -77,9 +79,11 @@ function FiltersPanelContent({ onOpenChange }: { onOpenChange: (open: boolean) =
   );
 
   const { tags: allTags, isLoading } = useTagsQuery();
+  const { groupedTags, isLoading: isGroupedLoading } = useGroupedTagsQuery();
 
   useEffect(() => {
     setWorkingTags(filters.searchTags);
+    setWorkingExcludedTags(filters.excludedTags);
     setWorkingCategories(filters.categories);
     setLocalFilterMode(filters.filterMode);
     setLocalSortMode(normalizeSortMode(filters.sortMode));
@@ -93,11 +97,58 @@ function FiltersPanelContent({ onOpenChange }: { onOpenChange: (open: boolean) =
     setWorkingTags((prev) => (prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]));
   }, []);
 
+  const toggleExcludedTag = useCallback((tag: string) => {
+    setWorkingExcludedTags((prev) =>
+      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
+    );
+  }, []);
+
   const toggleCategory = useCallback((category: RecipeCategory) => {
     setWorkingCategories((prev) =>
       prev.includes(category) ? prev.filter((c) => c !== category) : [...prev, category]
     );
   }, []);
+
+  const renderTagSection = (category: string, title: string, isExclusion: boolean = false) => {
+    const categoryTags = (groupedTags as any)[category] || [];
+    if (categoryTags.length === 0) return null;
+
+    const filteredTags = categoryTags.filter((t: any) =>
+      t.name.toLowerCase().includes(tagFilter.toLowerCase())
+    );
+    if (filteredTags.length === 0 && tagFilter !== "") return null;
+
+    return (
+      <section key={category}>
+        <h3 className="text-default-500 mb-2 text-[11px] font-medium tracking-wide uppercase">
+          {title}
+        </h3>
+        <div className="flex max-h-[180px] flex-wrap gap-1 overflow-y-auto pr-1">
+          {filteredTags.map((tag: any) => {
+            const active = isExclusion
+              ? workingExcludedTags.includes(tag.name)
+              : workingTags.includes(tag.name);
+
+            return (
+              <Chip
+                key={tag.id}
+                className="h-7 cursor-pointer px-2 text-[11px]"
+                color={active ? (isExclusion ? "danger" : "primary") : "default"}
+                radius="full"
+                variant={active ? "solid" : "flat"}
+                onClick={() => (isExclusion ? toggleExcludedTag(tag.name) : toggleTag(tag.name))}
+              >
+                {tag.name.replace(
+                  `${category.charAt(0).toUpperCase() + category.slice(1)}: `,
+                  ""
+                )}
+              </Chip>
+            );
+          })}
+        </div>
+      </section>
+    );
+  };
 
   const toggleCookingTime = useCallback((value: number) => {
     setLocalMaxCookingTime((prev) => (prev === value ? null : value));
@@ -126,6 +177,7 @@ function FiltersPanelContent({ onOpenChange }: { onOpenChange: (open: boolean) =
   const handleReset = useCallback(() => {
     clearFilters();
     setWorkingTags([]);
+    setWorkingExcludedTags([]);
     setWorkingCategories([]);
     setLocalFilterMode("AND");
     setLocalSortMode("dateDesc");
@@ -139,6 +191,7 @@ function FiltersPanelContent({ onOpenChange }: { onOpenChange: (open: boolean) =
   const apply = useCallback(() => {
     setFilters({
       searchTags: [...workingTags],
+      excludedTags: [...workingExcludedTags],
       categories: [...workingCategories],
       filterMode: localFilterMode,
       sortMode: localSortMode,
@@ -152,6 +205,7 @@ function FiltersPanelContent({ onOpenChange }: { onOpenChange: (open: boolean) =
   }, [
     setFilters,
     workingTags,
+    workingExcludedTags,
     workingCategories,
     localFilterMode,
     localSortMode,
@@ -328,7 +382,7 @@ function FiltersPanelContent({ onOpenChange }: { onOpenChange: (open: boolean) =
         </div>
       </section>
 
-      {/* Tags */}
+      {/* Tags Search */}
       <section>
         <h3 className="text-default-500 mb-3 text-xs font-medium tracking-wide uppercase">
           {t("tags")}
@@ -350,28 +404,15 @@ function FiltersPanelContent({ onOpenChange }: { onOpenChange: (open: boolean) =
           />
         </div>
 
-        {isLoading ? (
+        {isGroupedLoading ? (
           <ChipSkeleton />
         ) : (
-          <div className="flex max-h-[220px] flex-wrap gap-1 overflow-y-auto pr-1">
-            {allTags
-              .filter((tag) => tag.toLowerCase().includes(tagFilter.toLowerCase()))
-              .map((tag) => {
-                const active = workingTags.includes(tag);
-
-                return (
-                  <Chip
-                    key={tag}
-                    className="h-7 cursor-pointer px-2 text-[11px]"
-                    color={active ? "primary" : "default"}
-                    radius="full"
-                    variant={active ? "solid" : "flat"}
-                    onClick={() => toggleTag(tag)}
-                  >
-                    {tag}
-                  </Chip>
-                );
-              })}
+          <div className="flex flex-col gap-4 pr-1">
+            {renderTagSection("allergen", "Allergens (Exclude)", true)}
+            {renderTagSection("cuisine", "Cuisines")}
+            {renderTagSection("difficulty", "Difficulty")}
+            {renderTagSection("utensil", "Utensils")}
+            {renderTagSection("dietary", "Dietary Preferences")}
           </div>
         )}
       </section>

@@ -6,6 +6,7 @@ CRITICAL RULES:
 - Extract clean ingredient strings without serving prefixes (NO "Single portion:", etc.)
 - If multiple serving sizes listed, choose one and reflect in recipeYield
 - If the title doesn't represent the recipe, create an appropriate one
+- ALWAYS output ALL text fields (name, description, ingredients, steps) in ENGLISH, regardless of the source language
 
 CATEGORIES:
 - Use ONLY: "Breakfast", "Lunch", "Dinner", "Snack"

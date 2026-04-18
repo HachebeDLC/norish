@@ -1,4 +1,5 @@
 export { useTagsQuery } from "./use-tags-query";
+export { useGroupedTagsQuery } from "./use-grouped-tags-query";
 export { useUnitsQuery } from "./use-units-query";
 export { useTimersEnabledQuery } from "./use-timers-enabled-query";
 export { useTimerKeywordsQuery } from "./use-timer-keywords-query";

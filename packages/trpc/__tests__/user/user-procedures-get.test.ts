@@ -27,7 +27,7 @@ vi.mock("@norish/db", () => ({
   updateUserLocale: vi.fn(),
 }));
 
-vi.mock("@norish/trpc/routers/households/emitter", () => ({
+vi.mock("@norish/queue", () => ({
   householdEmitter: { emitToHousehold: vi.fn() },
 }));
 

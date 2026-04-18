@@ -17,7 +17,15 @@ import {
 // Setup mocks
 vi.mock("@norish/db/repositories/recipes", () => import("../mocks/recipes-repository"));
 vi.mock("@norish/auth/permissions", () => import("../mocks/permissions"));
-vi.mock("@norish/trpc/routers/recipes/emitter", () => import("../mocks/recipe-emitter"));
+vi.mock("@norish/queue", async (importOriginal) => {
+  const actual = await importOriginal<any>();
+  return {
+    ...actual,
+    recipeEmitter: {
+      broadcast: vi.fn(),
+    },
+  };
+});
 
 // Create test tRPC instance
 const t = initTRPC.context<ReturnType<typeof createMockAuthedContext>>().create({

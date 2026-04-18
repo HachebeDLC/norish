@@ -15,7 +15,7 @@ import { trpcLogger as log } from "@norish/shared-server/logger";
 
 import { authedProcedure } from "../../middleware";
 import { router } from "../../trpc";
-import { recipeEmitter } from "../recipes/emitter";
+import { recipeEmitter } from "@norish/queue";
 
 /**
  * Import recipes from an archive (Mela .melarecipes or Mealie/Tandoor .zip export).

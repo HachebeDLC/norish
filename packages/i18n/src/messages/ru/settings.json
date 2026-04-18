@@ -29,7 +29,6 @@
     "apiKeys": {
       "title": "API-ключи",
       "description": "API-ключи позволяют программно обращаться к Norish API. Используйте их для интеграций, быстрых команд и автоматизации.",
-      "docsLink": "Открыть документацию API",
       "keyNameLabel": "Название ключа (необязательно)",
       "keyNamePlaceholder": "например, iOS Shortcut",
       "createKey": "Создать ключ",
@@ -129,32 +128,19 @@
       },
       "applyError": "Не удалось применить настройку"
     },
-    "shareLinks": {
-      "title": "Ссылки для совместного доступа к рецептам",
-      "description": "Просматривайте все созданные вами публичные ссылки на рецепты и управляйте ими.",
-      "empty": "Ссылки для совместного доступа не найдены.",
-      "table": {
-        "recipe": "РЕЦЕПТ",
-        "status": "СТАТУС",
-        "created": "СОЗДАНО",
-        "expires": "ИСТЕКАЕТ",
-        "actions": "ДЕЙСТВИЯ"
-      },
-      "revokeModal": {
-        "title": "Отозвать ссылку",
-        "message": "Эта ссылка на {recipeName} перестанет работать, пока вы не активируете её снова.",
-        "confirm": "Отозвать"
-      },
-      "reactivateModal": {
-        "title": "Активировать ссылку",
-        "message": "Эта ссылка на {recipeName} снова станет активной.",
-        "confirm": "Активировать"
-      },
-      "deleteModal": {
-        "title": "Удалить ссылку",
-        "message": "Удалить эту ссылку для совместного доступа к {recipeName}? Это действие нельзя отменить.",
-        "confirm": "Удалить ссылку"
-      }
+    "bring": {
+      "title": "Список покупок Bring!",
+      "description": "Привяжите аккаунт Bring!, чтобы автоматически синхронизировать ваши покупки Norish.",
+      "emailLabel": "Электронная почта",
+      "emailPlaceholder": "ваш-bring-email@example.com",
+      "emailLinked": "Аккаунт привязан",
+      "passwordLabel": "Пароль",
+      "passwordPlaceholder": "••••••••",
+      "listUuidLabel": "UUID списка",
+      "listUuidPlaceholder": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+      "listUuidHint": "UUID списка можно найти в URL веб-приложения Bring! или в настройках общего доступа мобильного приложения.",
+      "saveSuccess": "Настройки Bring! сохранены",
+      "saveError": "Не удалось сохранить настройки Bring!"
     }
   },
   "household": {
@@ -207,9 +193,7 @@
       "regenerateButton": "Сгенерировать заново",
       "expired": "Истёк",
       "noCodeDescription": "Нет активного кода приглашения. Сгенерируйте его, чтобы приглашать новых участников.",
-      "generateButton": "Сгенерировать код приглашения",
-      "copySuccess": "Код приглашения скопирован",
-      "copyFailed": "Не удалось скопировать код приглашения"
+      "generateButton": "Сгенерировать код приглашения"
     },
     "create": {
       "title": "Создать семейную группу",
@@ -305,34 +289,6 @@
     }
   },
   "admin": {
-    "shareLinks": {
-      "title": "Модерация совместного доступа к рецептам",
-      "description": "Просматривайте публичные ссылки на рецепты по всему экземпляру и управляйте их жизненным циклом.",
-      "empty": "Ссылки для совместного доступа не найдены.",
-      "table": {
-        "recipe": "РЕЦЕПТ",
-        "owner": "ВЛАДЕЛЕЦ",
-        "status": "СТАТУС",
-        "created": "СОЗДАНО",
-        "expires": "ИСТЕКАЕТ",
-        "actions": "ДЕЙСТВИЯ"
-      },
-      "revokeModal": {
-        "title": "Отозвать ссылку",
-        "message": "Эта ссылка на {recipeName} перестанет работать, пока не будет активирована снова.",
-        "confirm": "Отозвать"
-      },
-      "reactivateModal": {
-        "title": "Активировать ссылку",
-        "message": "Эта ссылка на {recipeName} снова станет активной.",
-        "confirm": "Активировать"
-      },
-      "deleteModal": {
-        "title": "Удалить ссылку",
-        "message": "Удалить эту ссылку для совместного доступа к {recipeName}? Это действие нельзя отменить.",
-        "confirm": "Удалить ссылку"
-      }
-    },
     "general": {
       "title": "Общие",
       "allowRegistration": "Разрешить регистрацию новых пользователей",
@@ -550,7 +506,6 @@
       "temperature": "Температура: {value}",
       "temperatureHint": "Ниже = более точные ответы, выше = более творческие",
       "maxTokens": "Макс. токенов",
-      "requestTimeout": "Время ожидания запроса (мс)",
       "autoTagAllergies": "Автоматически добавлять теги аллергии",
       "autoTagAllergiesDescription": "Автоматически добавлять теги, связанные с аллергией, при импорте рецептов",
       "alwaysUseAI": "Всегда использовать импорт с ИИ",
@@ -578,8 +533,6 @@
       "maxFileSizeDescription": "Максимальный размер загружаемых видеофайлов",
       "ytDlpVersion": "Версия yt-dlp",
       "ytDlpVersionDescription": "Версия yt-dlp для загрузки видео",
-      "ytDlpProxy": "yt-dlp Proxy",
-      "ytDlpProxyDescription": "HTTP/SOCKS5-прокси для yt-dlp",
       "transcription": "Транскрибация",
       "transcriptionDescription": "Преобразование аудио в текст для извлечения рецептов",
       "transcriptionProvider": "Провайдер транскрибации",
@@ -624,6 +577,27 @@
       "invalidJson": "Некорректный формат JSON",
       "failedToSave": "Не удалось сохранить",
       "failedToRestore": "Не удалось восстановить значения по умолчанию"
+    },
+    "hellofreshSync": {
+      "title": "Синхронизация HelloFresh",
+      "description": "Массовый импорт рецептов из каталогов HelloFresh по стране.",
+      "countryLabel": "Код страны",
+      "countryPlaceholder": "напр. ES, DE, US",
+      "localeLabel": "Локаль",
+      "localePlaceholder": "напр. es-ES, de-DE",
+      "syncButton": "Начать полную синхронизацию",
+      "cleanupButton": "Удалить все рецепты HF",
+      "cleanupConfirm": "Вы уверены, что хотите удалить все рецепты HelloFresh из базы данных? Это действие нельзя отменить.",
+      "cleanupSuccess": "Успешно удалено {count} рецептов",
+      "syncStarted": "Задание синхронизации добавлено в очередь",
+      "status": {
+        "idle": "Готово",
+        "fetching": "Загрузка страницы {page}...",
+        "processing": "Обработка: {current} из {total} рецептов",
+        "skipped": "Актуально ({total} рецептов)",
+        "completed": "Синхронизация завершена: импортировано {count} рецептов",
+        "failed": "Сбой синхронизации: {reason}"
+      }
     }
   }
 }

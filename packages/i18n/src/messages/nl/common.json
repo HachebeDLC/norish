@@ -32,7 +32,8 @@
     "revealSecret": "Geheim tonen",
     "hideSecret": "Geheim verbergen",
     "enterNewValue": "Nieuwe waarde invoeren",
-    "cancelEditing": "Bewerking annuleren"
+    "cancelEditing": "Bewerking annuleren",
+    "sendToBring": "Verstuur naar Bring!"
   },
   "status": {
     "loading": "Laden...",
@@ -213,5 +214,11 @@
     "notification_body": "{label} is klaar!",
     "notifications_disabled": "Meldingen zijn uitgeschakeld",
     "notifications_disabled_hint": "Schakel meldingen in via je browserinstellingen om waarschuwingen te ontvangen wanneer timers op de achtergrond aflopen."
+  },
+  "bring": {
+    "syncSuccess": "{count, plural, one {# artikel} other {# artikelen}} verstuurd naar Bring!",
+    "notConfigured": "Bring! niet geconfigureerd",
+    "notConfiguredHint": "Ga naar Instellingen om je Bring!-account te configureren",
+    "syncError": "Synchronisatie met Bring! mislukt"
   }
 }

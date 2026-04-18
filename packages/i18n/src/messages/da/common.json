@@ -32,7 +32,8 @@
     "revealSecret": "Vis hemmelighed",
     "hideSecret": "Skjul hemmelighed",
     "enterNewValue": "Indtast ny værdi",
-    "cancelEditing": "Annuller redigering"
+    "cancelEditing": "Annuller redigering",
+    "sendToBring": "Send til Bring!"
   },
   "status": {
     "loading": "Indlæser...",
@@ -213,5 +214,11 @@
     "notification_body": "{label} er færdig!",
     "notifications_disabled": "Notifikationer er deaktiveret",
     "notifications_disabled_hint": "Aktiver notifikationer i dine browserindstillinger for at modtage alarmer, når timere afsluttes i baggrunden."
+  },
+  "bring": {
+    "syncSuccess": "{count, plural, one {# vare} other {# varer}} sendt til Bring!",
+    "notConfigured": "Bring! er ikke konfigureret",
+    "notConfiguredHint": "Gå til Indstillinger for at konfigurere din Bring!-konto",
+    "syncError": "Synkronisering med Bring! mislykkedes"
   }
 }

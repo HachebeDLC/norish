@@ -1,10 +1,10 @@
 "use client";
 
-import { GroceryList, GroceryListByRecipe, StoreManagerPanel } from "@/components/groceries";
-import { AddGroceryPanel } from "@/components/Panel/consumers";
-import EditGroceryPanel from "@/components/Panel/consumers/edit-grocery-panel";
-import GrocerySkeleton from "@/components/skeleton/grocery-skeleton";
+import type { GroceryDto } from "@norish/shared/contracts";
+import type { RecurrencePattern } from "@norish/shared/contracts/recurrence";
+
 import {
+  ArrowPathIcon,
   BookOpenIcon,
   BuildingStorefrontIcon,
   CheckIcon,
@@ -19,15 +19,23 @@ import {
   DropdownSection,
   DropdownTrigger,
   Switch,
+  addToast,
 } from "@heroui/react";
+import { BRING_BRAND_COLOR } from "@norish/shared";
+import { useMutation } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
-
-import type { GroceryDto } from "@norish/shared/contracts";
-import type { RecurrencePattern } from "@norish/shared/contracts/recurrence";
 
 import { useGroceriesContext, useGroceriesUIContext } from "../context";
 import { useStoresContext } from "../stores-context";
+
 import AddGroceryButton from "./add-grocery-button";
+
+import GrocerySkeleton from "@/components/skeleton/grocery-skeleton";
+import EditGroceryPanel from "@/components/Panel/consumers/edit-grocery-panel";
+import { AddGroceryPanel } from "@/components/Panel/consumers";
+import { GroceryList, GroceryListByRecipe, StoreManagerPanel } from "@/components/groceries";
+import { showSafeErrorToast } from "@/lib/ui/safe-error-toast";
+import { useTRPC } from "@/app/providers/trpc-provider";
 
 export function GroceriesPage() {
   const {
@@ -64,6 +72,45 @@ export function GroceriesPage() {
   } = useGroceriesUIContext();
 
   const t = useTranslations("groceries.page");
+  const tActions = useTranslations("common.actions");
+  const tBring = useTranslations("common.bring");
+
+  const trpc = useTRPC();
+  const syncMutation = useMutation(trpc.bring.syncRecipe.mutationOptions());
+
+  const handleSendToBring = async () => {
+    const items = groceries
+      .filter((g) => !g.isDone)
+      .map((g) => ({
+        name: g.name,
+        amount: g.amount ? String(g.amount) : undefined,
+        unit: g.unit || undefined,
+      }));
+
+    if (items.length === 0) return;
+
+    try {
+      const result = await syncMutation.mutateAsync({ items });
+      addToast({
+        title: tBring("syncSuccess", { count: result.count }),
+        color: "success",
+      });
+    } catch (error: any) {
+      if (error?.data?.code === "PRECONDITION_FAILED") {
+        addToast({
+          title: tBring("notConfigured"),
+          description: tBring("notConfiguredHint"),
+          color: "warning",
+        });
+      } else {
+        showSafeErrorToast({
+          title: tBring("syncError"),
+          error,
+          context: "groceries-page:bring-sync",
+        });
+      }
+    }
+  };
 
   const handleToggle = (id: string, isDone: boolean) => {
     toggleGroceries([id], isDone);
@@ -81,7 +128,6 @@ export function GroceriesPage() {
     deleteGroceries([id]);
   };
 
-  // Edit panel handlers
   const editingRecurringGrocery = editingGrocery
     ? getRecurringGroceryForGrocery(editingGrocery.id)
     : null;
@@ -90,15 +136,12 @@ export function GroceriesPage() {
     if (!editingGrocery) return;
 
     if (editingRecurringGrocery) {
-      // Already recurring - update the recurring grocery
       updateRecurringGrocery(editingRecurringGrocery.id, editingGrocery.id, itemName, pattern);
     } else if (pattern) {
-      // Convert regular grocery to recurring
       updateGrocery(editingGrocery.id, itemName);
       createRecurringGrocery(itemName, pattern, editingGrocery.storeId);
       deleteGroceries([editingGrocery.id]);
     } else {
-      // Simple update
       updateGrocery(editingGrocery.id, itemName);
     }
   };
@@ -130,7 +173,7 @@ export function GroceriesPage() {
         <div className="mb-6 flex min-h-10 shrink-0 items-center justify-between">
           <h1 className="text-2xl font-bold">{t("title")}</h1>
           <div className="flex items-center gap-2">
-            {/* Desktop add button: Full text with icon */}
+            {/* Desktop add button */}
             <Button
               className="hidden font-medium md:flex"
               color="primary"
@@ -141,7 +184,17 @@ export function GroceriesPage() {
             >
               {t("addItem")}
             </Button>
-            {/* Settings dropdown with view mode and store management */}
+            <Button
+              className="hidden font-medium md:flex text-white"
+              style={{ backgroundColor: BRING_BRAND_COLOR }}
+              radius="full"
+              size="md"
+              isLoading={syncMutation.isPending}
+              onPress={handleSendToBring}
+            >
+              {tActions("sendToBring")}
+            </Button>
+            {/* Settings dropdown */}
             <Dropdown>
               <DropdownTrigger>
                 <Button isIconOnly aria-label={t("viewMode")} size="sm" variant="light">
@@ -201,6 +254,16 @@ export function GroceriesPage() {
                     {t("manageStores")}
                   </DropdownItem>
                 </DropdownSection>
+                <DropdownSection title="Bring!">
+                  <DropdownItem
+                    key="send-to-bring"
+                    className="md:hidden"
+                    startContent={<ArrowPathIcon className="h-4 w-4" />}
+                    onPress={handleSendToBring}
+                  >
+                    {tActions("sendToBring")}
+                  </DropdownItem>
+                </DropdownSection>
               </DropdownMenu>
             </Dropdown>
           </div>
@@ -237,7 +300,7 @@ export function GroceriesPage() {
           )}
         </div>
 
-        {/* Mobile: Floating add button that syncs with nav auto-hide */}
+        {/* Mobile: Floating add button */}
         <AddGroceryButton />
       </div>
 

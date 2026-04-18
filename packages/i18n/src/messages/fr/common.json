@@ -32,7 +32,8 @@
     "revealSecret": "Révéler le secret",
     "hideSecret": "Masquer le secret",
     "enterNewValue": "Saisir une nouvelle valeur",
-    "cancelEditing": "Annuler la modification"
+    "cancelEditing": "Annuler la modification",
+    "sendToBring": "Envoyer vers Bring!"
   },
   "status": {
     "loading": "Chargement...",
@@ -213,5 +214,11 @@
     "notification_body": "{label} est prêt !",
     "notifications_disabled": "Les notifications sont désactivées",
     "notifications_disabled_hint": "Activez les notifications dans les paramètres de votre navigateur pour recevoir des alertes lorsque les minuteurs se terminent en arrière-plan."
+  },
+  "bring": {
+    "syncSuccess": "{count, plural, one {# article} other {# articles}} envoyé{count, plural, one {} other {s}} dans Bring!",
+    "notConfigured": "Bring! non configuré",
+    "notConfiguredHint": "Accédez aux Paramètres pour configurer votre compte Bring!",
+    "syncError": "Échec de la synchronisation avec Bring!"
   }
 }
