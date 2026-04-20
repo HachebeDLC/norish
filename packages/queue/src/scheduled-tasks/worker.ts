@@ -31,10 +31,6 @@ const globalForWorker = globalThis as unknown as {
 let worker: Worker<ScheduledTaskJobData> | null = globalForWorker.scheduledTasksWorker ?? null;
 
 async function processScheduledTask(job: Job<ScheduledTaskJobData>): Promise<void> {
-  const cleanupOrphanedImages = requireQueueApiHandler("cleanupOrphanedImages");
-  const cleanupOrphanedAvatars = requireQueueApiHandler("cleanupOrphanedAvatars");
-  const cleanupOrphanedStepImages = requireQueueApiHandler("cleanupOrphanedStepImages");
-  const cleanupOldTempFiles = requireQueueApiHandler("cleanupOldTempFiles");
   const { taskType } = job.data;
 
   log.info({ jobId: job.id, taskType }, "Processing scheduled task");
@@ -48,6 +44,10 @@ async function processScheduledTask(job: Job<ScheduledTaskJobData>): Promise<voi
     }
 
     case "media-cleanup": {
+      const cleanupOrphanedImages = requireQueueApiHandler("cleanupOrphanedImages");
+      const cleanupOrphanedAvatars = requireQueueApiHandler("cleanupOrphanedAvatars");
+      const cleanupOrphanedStepImages = requireQueueApiHandler("cleanupOrphanedStepImages");
+
       const recipeResult = await cleanupOrphanedImages();
       const avatarResult = await cleanupOrphanedAvatars();
       const stepResult = await cleanupOrphanedStepImages();
@@ -84,6 +84,7 @@ async function processScheduledTask(job: Job<ScheduledTaskJobData>): Promise<voi
     }
 
     case "video-temp-cleanup": {
+      const cleanupOldTempFiles = requireQueueApiHandler("cleanupOldTempFiles");
       await cleanupOldTempFiles();
       log.info("Video temp cleanup completed");
       break;

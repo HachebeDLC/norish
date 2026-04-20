@@ -1,5 +1,6 @@
 import { redactUrl, serverLogger as log } from "@norish/shared-server/logger";
 import { initializeServerConfig } from "@norish/config/env-config-server";
+import { registerApiHandlersForQueue } from "@norish/api/startup/register-queue-api-handlers";
 import { startWorkers, stopWorkers } from "@norish/queue/start-workers";
 
 async function main() {
@@ -10,6 +11,9 @@ async function main() {
   log.info(`  Environment: ${config.NODE_ENV}`);
   log.info(`  Database: ${redactUrl(config.DATABASE_URL)}`);
   log.info("-".repeat(50));
+
+  log.info("Registering API handlers for workers...");
+  registerApiHandlersForQueue();
 
   log.info("Starting background workers...");
   await startWorkers();
