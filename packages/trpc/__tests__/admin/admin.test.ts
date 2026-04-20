@@ -182,6 +182,7 @@ describe("admin procedures", () => {
         autoTagAllergies: true,
         alwaysUseAI: false,
         autoTaggingMode: "disabled" as const,
+        timeoutMs: 300000,
       };
 
       // Current config has enabled: false
@@ -232,6 +233,7 @@ describe("admin procedures", () => {
         autoTagAllergies: true,
         alwaysUseAI: false,
         autoTaggingMode: "disabled" as const,
+        timeoutMs: 300000,
       };
 
       // Current config also has enabled: false

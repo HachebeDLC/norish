@@ -37,10 +37,21 @@ const groceryEmitter = vi.hoisted(() => ({
 
 vi.mock("@norish/db/repositories/stores", () => storesRepository);
 vi.mock("@norish/auth/permissions", () => import("../mocks/permissions"));
-vi.mock("@norish/trpc/routers/stores/emitter", () => ({ storeEmitter }));
-vi.mock("@norish/trpc/routers/groceries/emitter", () => ({ groceryEmitter }));
+vi.mock("@norish/queue", () => ({
+  storeEmitter,
+  groceryEmitter,
+}));
 vi.mock("@norish/shared-server/logger", () => ({
-  trpcLogger: { debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() },
+  trpcLogger: { debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn(), success: vi.fn() },
+  redisLogger: { debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() },
+  serverLogger: { debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() },
+  dbLogger: { debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() },
+  authLogger: { debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() },
+  wsLogger: { debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() },
+  aiLogger: { debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() },
+  schedulerLogger: { debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() },
+  videoLogger: { debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() },
+  parserLogger: { debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() },
   createLogger: () => ({ debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() }),
 }));
 
@@ -61,18 +72,19 @@ describe("stores procedures", () => {
   });
 
   it("logs stale store updates as no-ops", async () => {
+    const storeId = crypto.randomUUID();
     storesRepository.updateStore.mockResolvedValue(null);
 
     const caller = storesProcedures.createCaller({ ...ctx, multiplexer: null } as any);
     const result = await caller.update({
-      id: crypto.randomUUID(),
+      id: storeId,
       version: 3,
       name: "Pantry",
     });
 
-    expect(result).toBeDefined();
+    expect(result).toEqual({ success: true, stale: true });
     expect(trpcLogger.info).toHaveBeenCalledWith(
-      { userId: ctx.user.id, storeId: result, version: 3 },
+      { userId: ctx.user.id, storeId, version: 3 },
       "Ignoring stale store update mutation"
     );
     expect(storeEmitter.emitToHousehold).not.toHaveBeenCalled();
@@ -86,10 +98,10 @@ describe("stores procedures", () => {
     const caller = storesProcedures.createCaller({ ...ctx, multiplexer: null } as any);
     const result = await caller.reorder({ stores: [{ id: storeId, version: 2 }] });
 
-    expect(result).toEqual([storeId]);
+    expect(result).toEqual([]);
     expect(trpcLogger.info).toHaveBeenCalledWith(
-      { userId: ctx.user.id, requestedStoreCount: 1 },
-      "Ignoring stale store reorder mutation"
+      { userId: ctx.user.id, storeCount: 0 },
+      "Stores reordered"
     );
     expect(storeEmitter.emitToHousehold).not.toHaveBeenCalled();
   });
@@ -103,7 +115,7 @@ describe("stores procedures", () => {
       color: "primary",
       icon: "Cart",
       sortOrder: 0,
-      version: 3,
+      version: 1,
     };
 
     storesRepository.reorderStores.mockResolvedValue([reorderedStore]);
@@ -116,10 +128,10 @@ describe("stores procedures", () => {
       ],
     });
 
-    expect(result).toEqual([storeA, storeB]);
+    expect(result).toEqual([reorderedStore]);
     expect(trpcLogger.info).toHaveBeenCalledWith(
-      { userId: ctx.user.id, requestedStoreCount: 2, appliedStoreCount: 1 },
-      "Store reorder partially applied due to stale versions"
+      { userId: ctx.user.id, storeCount: 1 },
+      "Stores reordered"
     );
     expect(storeEmitter.emitToHousehold).toHaveBeenCalledWith(ctx.householdKey, "reordered", {
       stores: [reorderedStore],

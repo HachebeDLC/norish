@@ -13,10 +13,36 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { AutoTaggingJobData } from "@norish/queue/contracts/job-types";
 import { getAutoTaggingMode } from "@norish/config/server-config-loader";
 
-// Mock BullMQ
-const mockAdd = vi.fn();
-const mockGetJob = vi.fn();
-const mockClose = vi.fn();
+// Mock variables that need to be hoisted
+const {
+  mockAdd,
+  mockGetJob,
+  mockClose,
+  loggerMock,
+} = vi.hoisted(() => ({
+  mockAdd: vi.fn(),
+  mockGetJob: vi.fn(),
+  mockClose: vi.fn(),
+  loggerMock: {
+    info: vi.fn(),
+    debug: vi.fn(),
+    warn: vi.fn(),
+    error: vi.fn(),
+    trace: vi.fn(),
+    fatal: vi.fn(),
+    child: vi.fn(() => ({
+      info: vi.fn(),
+      debug: vi.fn(),
+      warn: vi.fn(),
+      error: vi.fn(),
+      trace: vi.fn(),
+      fatal: vi.fn(),
+    })),
+  },
+}));
+
+// Set child to return itself for convenience if needed, but vi.hoisted must be self-contained
+loggerMock.child = vi.fn(() => loggerMock) as any;
 
 vi.mock("bullmq", () => {
   return {
@@ -72,14 +98,20 @@ vi.mock("@norish/queue/redis/bullmq", () => ({
   })),
 }));
 
-// Mock logger
 vi.mock("@norish/shared-server/logger", () => ({
-  createLogger: vi.fn(() => ({
-    info: vi.fn(),
-    debug: vi.fn(),
-    warn: vi.fn(),
-    error: vi.fn(),
-  })),
+  createLogger: vi.fn(() => loggerMock),
+  serverLogger: loggerMock,
+  dbLogger: loggerMock,
+  authLogger: loggerMock,
+  wsLogger: loggerMock,
+  aiLogger: loggerMock,
+  trpcLogger: loggerMock,
+  schedulerLogger: loggerMock,
+  videoLogger: loggerMock,
+  parserLogger: loggerMock,
+  redisLogger: loggerMock,
+  redactUrl: vi.fn((url) => url),
+  default: loggerMock,
 }));
 
 // Mock helpers

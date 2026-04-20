@@ -13,6 +13,7 @@ const userPreferencesState = {
 
 vi.mock("next-intl", () => ({
   useTranslations: () => (key: string) => key,
+  useLocale: () => "en",
 }));
 
 vi.mock("next/link", () => ({
@@ -22,6 +23,13 @@ vi.mock("next/link", () => ({
 vi.mock("@/context/user-context", () => ({
   useUserContext: () => ({
     user: { preferences: userPreferencesState },
+  }),
+}));
+
+vi.mock("@/hooks/config", () => ({
+  useUnitsQuery: () => ({
+    units: { weight: "metric", volume: "metric" },
+    isLoading: false,
   }),
 }));
 
@@ -114,6 +122,9 @@ vi.mock("@/app/(app)/recipes/[id]/components/wake-lock-toggle", () => ({
 }));
 vi.mock("@/app/(app)/recipes/[id]/components/author-chip", () => ({
   default: () => <div>author-chip</div>,
+}));
+vi.mock("@/app/(app)/recipes/[id]/components/bring-button", () => ({
+  default: () => <div>bring-button</div>,
 }));
 
 describe("recipe pages favorite visibility", () => {

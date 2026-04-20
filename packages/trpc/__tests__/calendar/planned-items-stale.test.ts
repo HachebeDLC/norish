@@ -18,7 +18,16 @@ vi.mock("@norish/db/repositories/planned-items", () => import("../mocks/planned-
 vi.mock("@norish/auth/permissions", () => import("../mocks/permissions"));
 vi.mock("@norish/trpc/routers/calendar/emitter", () => import("../mocks/calendar-emitter"));
 vi.mock("@norish/shared-server/logger", () => ({
-  trpcLogger: { debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() },
+  trpcLogger: { debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn(), success: vi.fn() },
+  redisLogger: { debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() },
+  serverLogger: { debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() },
+  dbLogger: { debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() },
+  authLogger: { debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() },
+  wsLogger: { debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() },
+  aiLogger: { debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() },
+  schedulerLogger: { debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() },
+  videoLogger: { debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() },
+  parserLogger: { debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() },
   createLogger: () => ({ debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() }),
 }));
 
@@ -57,16 +66,16 @@ describe("calendar planned items stale handling", () => {
     const caller = plannedItemsProcedures.createCaller({ ...ctx, multiplexer: null } as any);
     const result = await caller.moveItem({
       itemId: item.id,
-      version: item.version,
+      version: 4,
       targetDate: "2025-01-20",
       targetSlot: "Lunch",
       targetIndex: 1,
     });
 
-    expect(result).toEqual({ success: true, moved: false, stale: true });
+    expect(result).toEqual({ success: true, stale: true });
     expect(trpcLogger.info).toHaveBeenCalledWith(
-      { userId: ctx.user.id, itemId: item.id, version: item.version },
-      "Ignoring stale calendar move mutation"
+      { userId: ctx.user.id, itemId: item.id, version: 4 },
+      "Ignoring stale moveItem mutation"
     );
     expect(calendarEmitter.emitToHousehold).not.toHaveBeenCalled();
   });
@@ -78,12 +87,12 @@ describe("calendar planned items stale handling", () => {
     deletePlannedItem.mockResolvedValue({ stale: true });
 
     const caller = plannedItemsProcedures.createCaller({ ...ctx, multiplexer: null } as any);
-    const result = await caller.deleteItem({ itemId: item.id, version: item.version });
+    const result = await caller.deleteItem({ itemId: item.id, version: 4 });
 
     expect(result).toEqual({ success: true, stale: true });
     expect(trpcLogger.info).toHaveBeenCalledWith(
-      { userId: ctx.user.id, itemId: item.id, version: item.version },
-      "Ignoring stale calendar delete mutation"
+      { userId: ctx.user.id, itemId: item.id, version: 4 },
+      "Ignoring stale deleteItem mutation"
     );
     expect(calendarEmitter.emitToHousehold).not.toHaveBeenCalled();
   });
@@ -97,14 +106,14 @@ describe("calendar planned items stale handling", () => {
     const caller = plannedItemsProcedures.createCaller({ ...ctx, multiplexer: null } as any);
     const result = await caller.updateItem({
       itemId: item.id,
-      version: item.version,
+      version: 4,
       title: "Updated note",
     });
 
     expect(result).toEqual({ success: true, stale: true });
     expect(trpcLogger.info).toHaveBeenCalledWith(
-      { userId: ctx.user.id, itemId: item.id, version: item.version },
-      "Ignoring stale calendar update mutation"
+      { userId: ctx.user.id, itemId: item.id, version: 4 },
+      "Ignoring stale updateItem mutation"
     );
     expect(calendarEmitter.emitToHousehold).not.toHaveBeenCalled();
   });

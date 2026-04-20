@@ -17,18 +17,19 @@ const mockArchiveParser = vi.hoisted(() => ({
 
 vi.mock("@norish/shared-server/archive/parser", () => mockArchiveParser);
 
-vi.mock("@norish/shared-server/logger", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("@norish/shared-server/logger")>();
-
-  return {
-    ...actual,
-    trpcLogger: {
-      debug: vi.fn(),
-      info: vi.fn(),
-      error: vi.fn(),
-    },
-  };
-});
+vi.mock("@norish/shared-server/logger", () => ({
+  trpcLogger: { debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn(), success: vi.fn() },
+  redisLogger: { debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() },
+  serverLogger: { debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() },
+  dbLogger: { debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() },
+  authLogger: { debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() },
+  wsLogger: { debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() },
+  aiLogger: { debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() },
+  schedulerLogger: { debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() },
+  videoLogger: { debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() },
+  parserLogger: { debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() },
+  createLogger: () => ({ debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() }),
+}));
 
 vi.mock("@norish/db/cached-household", () => ({
   getCachedHouseholdForUser: vi.fn().mockResolvedValue(null),

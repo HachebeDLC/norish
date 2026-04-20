@@ -66,6 +66,12 @@ vi.mock("@/hooks/config", () => ({
     tags: ["Dinner", "Quick", "Vegetarian", "Soup", "Pasta", "Spicy"],
     isLoading: false,
   }),
+  useGroupedTagsQuery: () => ({
+    groupedTags: {
+      cuisine: [{ id: "1", name: "Italian" }],
+    },
+    isLoading: false,
+  }),
 }));
 
 vi.mock("@heroui/react", () => ({
@@ -110,7 +116,7 @@ describe("FiltersPanel", () => {
     const tagContainer = container.querySelector(".overflow-y-auto");
 
     expect(tagContainer).toBeInTheDocument();
-    expect(tagContainer).toHaveClass("max-h-[220px]");
+    expect(tagContainer).toHaveClass("max-h-[180px]");
   });
 
   it("hides favorites and rating section when both preferences are disabled", () => {

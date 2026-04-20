@@ -27,7 +27,7 @@ export const RecipeVideoSchema = z.object({
   thumbnail: z.string().nullish(),
   duration: z.coerce.number().nullish(),
   order: z.coerce.number().default(0),
-  version: z.number().int().positive().optional(),
+  version: z.number().int().positive(),
 });
 
 export const RecipeVideoInputSchema = z.object({

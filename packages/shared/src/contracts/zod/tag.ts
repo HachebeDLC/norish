@@ -15,6 +15,7 @@ export const TagSummarySchema = z.object({
   version: z.number(),
 });
 export const TagNameSchema = TagSelectBaseSchema.pick({ name: true });
+export const TagWithVersionSchema = TagSelectBaseSchema.pick({ name: true, version: true });
 
 export const TagListInputSchema = z.object({
   categories: z.array(z.string()).optional(),

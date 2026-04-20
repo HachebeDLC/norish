@@ -9,8 +9,8 @@ import {
   RecipeIngredientsWithIdSchema,
 } from "./recipe-ingredients";
 import { RecipeVideosArraySchema, RecipeVideoSchema } from "./recipe-videos";
-import { StepStepSchema } from "./steps";
-import { TagNameSchema } from "./tag";
+import { StepOutputSchema, StepStepSchema } from "./steps";
+import { TagNameSchema, TagWithVersionSchema } from "./tag";
 
 export const recipeCategorySchema = z.enum(["Breakfast", "Lunch", "Dinner", "Snack"]);
 
@@ -30,6 +30,7 @@ export const AuthorSchema = z
     id: z.string(),
     name: z.string().nullable().optional(),
     image: z.string().nullable().optional(),
+    version: z.number(),
   })
   .optional();
 
@@ -39,7 +40,7 @@ export const RecipeDashboardSchema = RecipeSelectBaseSchema.omit({
   carbs: true,
   protein: true,
 }).extend({
-  tags: z.array(TagNameSchema).default([]),
+  tags: z.array(TagWithVersionSchema).default([]),
   categories: z.array(recipeCategorySchema).default([]),
   author: AuthorSchema,
   averageRating: z.number().nullable().optional(),
@@ -48,8 +49,8 @@ export const RecipeDashboardSchema = RecipeSelectBaseSchema.omit({
 
 export const FullRecipeSchema = RecipeSelectBaseSchema.extend({
   recipeIngredients: z.array(RecipeIngredientsWithIdSchema),
-  steps: z.array(StepStepSchema).default([]),
-  tags: z.array(TagNameSchema).default([]),
+  steps: z.array(StepOutputSchema).default([]),
+  tags: z.array(TagWithVersionSchema).default([]),
   categories: z.array(recipeCategorySchema).default([]),
   author: AuthorSchema,
   images: RecipeImagesArraySchema.default([]),
@@ -61,9 +62,9 @@ export const FullRecipeInsertSchema = RecipeInsertBaseSchema.extend({
   recipeIngredients: z.array(RecipeIngredientInputSchema).default([]),
   tags: z.array(TagNameSchema).default([]),
   categories: z.array(recipeCategorySchema).default([]),
-  steps: z.array(StepStepSchema).default([]),
-  images: z.array(RecipeImageSchema).max(10).default([]),
-  videos: z.array(RecipeVideoSchema).default([]),
+  steps: z.array(StepStepSchema.omit({ version: true })).default([]),
+  images: z.array(RecipeImageSchema.omit({ id: true, version: true })).max(10).default([]),
+  videos: z.array(RecipeVideoSchema.omit({ id: true, version: true })).default([]),
 });
 
 export const FullRecipeUpdateSchema = RecipeUpdateBaseSchema.extend({

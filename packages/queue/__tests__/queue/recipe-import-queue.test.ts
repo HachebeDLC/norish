@@ -14,10 +14,24 @@ import type { RecipePermissionPolicy } from "@norish/config/zod/server-config";
 import type { RecipeImportJobData } from "@norish/queue/contracts/job-types";
 import { getRecipePermissionPolicy } from "@norish/config/server-config-loader";
 
-// Mock BullMQ
-const mockAdd = vi.fn();
-const mockGetJob = vi.fn();
-const mockClose = vi.fn();
+// Hoist mock variables
+const mocked = vi.hoisted(() => ({
+  mockAdd: vi.fn(),
+  mockGetJob: vi.fn(),
+  mockClose: vi.fn(),
+  loggerMock: {
+    info: vi.fn(),
+    debug: vi.fn(),
+    warn: vi.fn(),
+    error: vi.fn(),
+    trace: vi.fn(),
+    fatal: vi.fn(),
+    child: vi.fn(function (this: any) { return this; }),
+  },
+  mockRecipeExistsByUrlForPolicy: vi.fn(),
+}));
+
+const { mockAdd, mockGetJob, mockClose, loggerMock, mockRecipeExistsByUrlForPolicy } = mocked;
 
 // Create a mock queue instance for tests - typed to match Queue interface
 const mockQueue: Pick<Queue<RecipeImportJobData>, "add" | "getJob" | "close"> = {
@@ -124,22 +138,23 @@ vi.mock("@norish/queue/config", () => ({
 }));
 
 // Mock logger
-const mockLogger = {
-  info: vi.fn(),
-  debug: vi.fn(),
-  warn: vi.fn(),
-  error: vi.fn(),
-  child: vi.fn(() => mockLogger),
-};
-
 vi.mock("@norish/shared-server/logger", () => ({
-  createLogger: vi.fn(() => mockLogger),
-  parserLogger: mockLogger,
+  createLogger: vi.fn(() => loggerMock),
+  serverLogger: loggerMock,
+  dbLogger: loggerMock,
+  authLogger: loggerMock,
+  wsLogger: loggerMock,
+  aiLogger: loggerMock,
+  trpcLogger: loggerMock,
+  schedulerLogger: loggerMock,
+  videoLogger: loggerMock,
+  parserLogger: loggerMock,
+  redisLogger: loggerMock,
+  redactUrl: vi.fn((url) => url),
+  default: loggerMock,
 }));
 
 // Mock DB functions
-const mockRecipeExistsByUrlForPolicy = vi.fn();
-
 vi.mock("@norish/db", () => ({
   recipeExistsByUrlForPolicy: mockRecipeExistsByUrlForPolicy,
 }));

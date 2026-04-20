@@ -74,7 +74,13 @@ export const listProcedure = authedProcedure
     },
   })
   .input(RecipeListInputSchema)
-  .output(RecipeListResultSchema)
+  .output(
+    z.object({
+      recipes: z.array(FullRecipeSchema),
+      total: z.number(),
+      nextCursor: z.number().nullable(),
+    })
+  )
   .query(async ({ ctx, input }) => {
     const {
       cursor,
@@ -152,7 +158,23 @@ export const getProcedure = authedProcedure
     return recipe;
   });
 
-export const createProcedure = authedProcedure.input(FullRecipeInsertSchema).mutation(({ ctx, input }) => {
+export const createProcedure = authedProcedure
+  .meta({
+    openapi: {
+      method: "POST",
+      path: "/recipes",
+      protect: true,
+      tags: ["Recipes"],
+      summary: "Create a new recipe",
+      errorResponses: {
+        401: "Missing or invalid API credentials",
+        400: "Invalid recipe data",
+      },
+    },
+  })
+  .input(FullRecipeInsertSchema)
+  .output(z.string().uuid())
+  .mutation(({ ctx, input }) => {
   const recipeId = input.id ?? randomUUID();
 
     log.info(
@@ -322,7 +344,7 @@ export const importFromUrlProcedure = authedProcedure
     },
   })
   .input(RecipeImportInputSchema.extend({ forceAI: z.boolean().optional() }))
-  .output(z.uuid())
+  .output(z.string().uuid())
   .mutation(async ({ ctx, input }) => {
     const { url, forceAI } = input;
     const recipeId = randomUUID();
@@ -613,7 +635,7 @@ export const importFromPasteProcedure = authedProcedure
     },
   })
   .input(recipeImportPasteInputSchema)
-  .output(recipeImportPasteOutputSchema)
+  .output(z.object({ recipeIds: z.array(z.string().uuid()) }))
   .mutation(async ({ ctx, input }) => {
     const preparedImport = await preparePasteImport(input.text, input.forceAI);
 

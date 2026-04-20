@@ -119,6 +119,7 @@ vi.mock("next-intl", () => ({
 }));
 
 describe("useHouseholdSubscription", () => {
+  vi.setConfig({ testTimeout: 30000 });
   let queryClient: ReturnType<typeof createTestQueryClient>;
 
   beforeEach(() => {

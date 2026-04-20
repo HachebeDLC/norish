@@ -26,34 +26,46 @@ async function emitRatingFailed(ctx: UserContext, recipeId: string, reason: stri
   );
 }
 
-const rate = authedProcedure.input(RatingInputSchema).mutation(({ ctx, input }) => {
-  const { recipeId, rating } = input;
+const rate = authedProcedure.input(RatingInputSchema).mutation(async ({ ctx, input }) => {
+  const { recipeId, rating, version } = input;
 
-  log.debug({ userId: ctx.user.id, recipeId, rating }, "Rating recipe");
+  log.debug({ userId: ctx.user.id, recipeId, rating, version }, "Rating recipe");
 
-  rateRecipe(ctx.user.id, recipeId, rating)
-    .then(async (result) => {
-      const stats = await getAverageRating(recipeId);
-      const policy = await getRecipePermissionPolicy();
+  try {
+    const result = await rateRecipe(ctx.user.id, recipeId, rating, version);
 
-      log.info({ userId: ctx.user.id, recipeId, rating, isNew: result.isNew }, "Recipe rated");
+    if (result.stale) {
+      log.info({ userId: ctx.user.id, recipeId, version }, "Ignoring stale rating mutation");
 
-      emitByPolicy(
-        ratingsEmitter,
-        policy.view,
-        { userId: ctx.user.id, householdKey: ctx.householdKey },
-        "ratingUpdated",
-        { recipeId, averageRating: stats.averageRating, ratingCount: stats.ratingCount }
-      );
-    })
-    .catch((err) => {
-      const error = err as Error;
+      return { success: true, stale: true };
+    }
 
-      log.error({ err: error, userId: ctx.user.id, recipeId }, "Failed to rate recipe");
-      emitRatingFailed(ctx, recipeId, error.message || "Failed to rate recipe");
+    const stats = await getAverageRating(recipeId);
+    const policy = await getRecipePermissionPolicy();
+
+    log.info({ userId: ctx.user.id, recipeId, rating, isNew: result.isNew }, "Recipe rated");
+
+    emitByPolicy(
+      ratingsEmitter,
+      policy.view,
+      { userId: ctx.user.id, householdKey: ctx.householdKey },
+      "ratingUpdated",
+      { recipeId, averageRating: stats.averageRating, ratingCount: stats.ratingCount }
+    );
+
+    return { success: true, isNew: result.isNew };
+  } catch (err) {
+    const error = err as Error;
+
+    log.error({ err: error, userId: ctx.user.id, recipeId }, "Failed to rate recipe");
+    await emitRatingFailed(ctx, recipeId, error.message || "Failed to rate recipe");
+
+    throw new TRPCError({
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Failed to rate recipe",
+      cause: err,
     });
-
-  return { success: true };
+  }
 });
 
 const getUserRatingProcedure = authedProcedure

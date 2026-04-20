@@ -56,7 +56,16 @@ vi.mock("@norish/queue", () => import("../mocks/grocery-emitter"));
 vi.mock("@norish/config/server-config-loader", () => import("../mocks/config"));
 vi.mock("@norish/shared/lib/helpers", () => import("../mocks/helpers"));
 vi.mock("@norish/shared-server/logger", () => ({
-  trpcLogger: { debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() },
+  trpcLogger: { debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn(), success: vi.fn() },
+  redisLogger: { debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() },
+  serverLogger: { debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() },
+  dbLogger: { debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() },
+  authLogger: { debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() },
+  wsLogger: { debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() },
+  aiLogger: { debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() },
+  schedulerLogger: { debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() },
+  videoLogger: { debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() },
+  parserLogger: { debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() },
   createLogger: () => ({ debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() }),
 }));
 
@@ -103,8 +112,8 @@ describe("groceries procedures", () => {
   describe("list", () => {
     it("returns groceries and recurring groceries for user and household", async () => {
       const mockGroceries = [
-        createMockGrocery({ id: "g1", name: "Milk" }),
-        createMockGrocery({ id: "g2", name: "Bread" }),
+        createMockGrocery({ id: "g1", name: "Milk", version: 1 }),
+        createMockGrocery({ id: "g2", name: "Bread", version: 1 }),
       ];
       const mockRecurring = [
         { id: "r1", name: "Weekly Eggs", recurrenceRule: "week", recurrenceInterval: 1 },
@@ -147,19 +156,24 @@ describe("groceries openapi procedures", () => {
     storesRepository.findBestIngredientStorePreference.mockResolvedValue(null);
   });
 
-  it("lists only groceries for the API endpoint", async () => {
+  it("lists groceries with recurring and recipe mapping", async () => {
     const mockGroceries = [
-      createMockGrocery({ id: crypto.randomUUID(), name: "Milk" }),
-      createMockGrocery({ id: crypto.randomUUID(), name: "Bread" }),
+      createMockGrocery({ id: crypto.randomUUID(), name: "Milk", version: 1 }),
+      createMockGrocery({ id: crypto.randomUUID(), name: "Bread", version: 1 }),
     ];
+    const recurringId = crypto.randomUUID();
 
     listGroceriesByUsers.mockResolvedValue(mockGroceries);
-    listRecurringGroceriesByUsers.mockResolvedValue([{ id: "recurring-1" }]);
+    listRecurringGroceriesByUsers.mockResolvedValue([{ id: recurringId }]);
 
     const caller = openApiGroceriesRouter.createCaller({ ...ctx, multiplexer: null } as any);
     const result = await caller.listGroceries();
 
-    expect(result).toEqual(mockGroceries);
+    expect(result).toEqual({
+      groceries: mockGroceries,
+      recurringGroceries: [{ id: recurringId }],
+      recipeMap: {},
+    });
   });
 
   it("creates and returns a single grocery for the API endpoint", async () => {
@@ -168,30 +182,32 @@ describe("groceries openapi procedures", () => {
     listGroceriesByUsers.mockResolvedValue([]);
     createGroceries.mockImplementation(
       async (items: Array<{ id: string; groceries: { name: string | null } }>) =>
-        items.map(({ id, groceries }) => createMockGrocery({ id, name: groceries.name }))
+        items.map(({ id, groceries }) => createMockGrocery({ id, name: groceries.name, version: 1 }))
     );
 
     const caller = openApiGroceriesRouter.createCaller({ ...ctx, multiplexer: null } as any);
     const result = await caller.createGrocery({
-      name: "Apples",
-      amount: 2,
-      unit: "pcs",
-      isDone: false,
-      storeId,
+      groceries: [
+        {
+          name: "Apples",
+          amount: 2,
+          unit: "pcs",
+          isDone: false,
+          storeId,
+        },
+      ],
     });
 
     expect(createGroceries).toHaveBeenCalled();
-    expect(result).toEqual(
-      expect.objectContaining({
-        name: "Apples",
-      })
-    );
+    expect(result).toBeDefined();
+    expect(Array.isArray(result)).toBe(true);
+    expect(result[0]).toEqual(expect.any(String));
   });
 
-  it("marks a grocery done and returns the updated grocery", async () => {
+  it("marks a grocery done and returns the updated count", async () => {
     const groceryId = crypto.randomUUID();
     const ownerIds = new Map([[groceryId, ctx.user.id]]);
-    const grocery = createMockGrocery({ id: groceryId, isDone: false, version: 2 });
+    const grocery = createMockGrocery({ id: groceryId, isDone: false, version: 1 });
     const updated = { ...grocery, isDone: true };
 
     getGroceryOwnerIds.mockResolvedValue(ownerIds);
@@ -200,9 +216,12 @@ describe("groceries openapi procedures", () => {
     assertHouseholdAccess.mockResolvedValue(undefined);
 
     const caller = openApiGroceriesRouter.createCaller({ ...ctx, multiplexer: null } as any);
-    const result = await caller.markGroceryDone({ id: groceryId, version: 2 });
+    const result = await caller.markGroceryDone({
+      groceries: [{ id: groceryId, version: 1 }],
+      isDone: true,
+    });
 
-    expect(result).toEqual({ grocery: updated, stale: false });
+    expect(result).toEqual({ success: true, updatedCount: 1 });
   });
 
   it("deletes a grocery and reports stale state", async () => {
@@ -213,15 +232,17 @@ describe("groceries openapi procedures", () => {
     deleteGroceryByIds.mockResolvedValue({ deletedIds: [], staleIds: [groceryId] });
 
     const caller = openApiGroceriesRouter.createCaller({ ...ctx, multiplexer: null } as any);
-    const result = await caller.deleteGrocery({ id: groceryId, version: 3 });
+    const result = await caller.deleteGrocery({
+      groceries: [{ id: groceryId, version: 1 }],
+    });
 
-    expect(result).toEqual({ success: true, stale: true });
+    expect(result).toEqual({ success: true, deletedCount: 0, staleCount: 1 });
   });
 
-  it("marks a grocery as undone and returns the updated grocery", async () => {
+  it("marks a grocery as undone and returns the updated count", async () => {
     const groceryId = crypto.randomUUID();
     const ownerIds = new Map([[groceryId, ctx.user.id]]);
-    const grocery = createMockGrocery({ id: groceryId, isDone: true, version: 4 });
+    const grocery = createMockGrocery({ id: groceryId, isDone: true, version: 1 });
     const updated = { ...grocery, isDone: false };
 
     getGroceryOwnerIds.mockResolvedValue(ownerIds);
@@ -230,15 +251,18 @@ describe("groceries openapi procedures", () => {
     assertHouseholdAccess.mockResolvedValue(undefined);
 
     const caller = openApiGroceriesRouter.createCaller({ ...ctx, multiplexer: null } as any);
-    const result = await caller.markGroceryUndone({ id: groceryId, version: 4 });
+    const result = await caller.markGroceryUndone({
+      groceries: [{ id: groceryId, version: 1 }],
+      isDone: false,
+    });
 
-    expect(result).toEqual({ grocery: updated, stale: false });
+    expect(result).toEqual({ success: true, updatedCount: 1 });
   });
 
   it("assigns a grocery to a store and returns the updated grocery", async () => {
     const groceryId = crypto.randomUUID();
     const storeId = crypto.randomUUID();
-    const grocery = createMockGrocery({ id: groceryId, name: "Milk", storeId: null });
+    const grocery = createMockGrocery({ id: groceryId, name: "Milk", storeId: null, version: 1 });
     const updated = { ...grocery, storeId };
 
     getGroceryOwnerIds.mockResolvedValue(new Map([[groceryId, ctx.user.id]]));
@@ -248,10 +272,10 @@ describe("groceries openapi procedures", () => {
     assignGroceryToStore.mockResolvedValue(updated);
 
     const caller = openApiGroceriesRouter.createCaller({ ...ctx, multiplexer: null } as any);
-    const result = await caller.assignGroceryToStore({ id: groceryId, version: 2, storeId });
+    const result = await caller.assignGroceryToStore({ groceryId, version: 1, storeId });
 
-    expect(assignGroceryToStore).toHaveBeenCalledWith(groceryId, storeId, ctx.userIds, 2);
-    expect(result).toEqual({ grocery: updated, stale: false });
+    expect(assignGroceryToStore).toHaveBeenCalledWith(groceryId, storeId, ctx.userIds, 1);
+    expect(result).toEqual({ success: true, grocery: updated });
   });
 });
 
@@ -329,7 +353,7 @@ describe("grocery emitter", () => {
   });
 
   it("emits created event after successful creation", async () => {
-    const mockGroceries = [createMockGrocery({ id: "new-1", name: "New Item" })];
+    const mockGroceries = [createMockGrocery({ id: "new-1", name: "New Item", version: 1 })];
 
     createGroceries.mockResolvedValue(mockGroceries);
 
@@ -341,7 +365,7 @@ describe("grocery emitter", () => {
   });
 
   it("emits updated event after successful update", async () => {
-    const mockUpdated = [createMockGrocery({ id: "g1", name: "Updated" })];
+    const mockUpdated = [createMockGrocery({ id: "g1", name: "Updated", version: 1 })];
 
     updateGroceries.mockResolvedValue(mockUpdated);
 
@@ -377,8 +401,8 @@ describe("toggle procedure logic", () => {
       ["g2", "user-1"],
     ]);
     const groceries = [
-      createMockGrocery({ id: "g1", isDone: false }),
-      createMockGrocery({ id: "g2", isDone: false }),
+      createMockGrocery({ id: "g1", isDone: false, version: 1 }),
+      createMockGrocery({ id: "g2", isDone: false, version: 1 }),
     ];
 
     getGroceryOwnerIds.mockResolvedValue(ownerIds);
@@ -414,14 +438,14 @@ describe("stale grocery updates", () => {
     updateGroceries.mockResolvedValue([]);
 
     const caller = groceriesProcedures.createCaller({ ...ctx, multiplexer: null } as any);
-    const result = await caller.update({ groceryId, raw: "Oat milk", version: 4 });
+    const result = await caller.update({ groceryId, raw: "Oat milk", version: 1 });
 
     await Promise.resolve();
     await Promise.resolve();
 
-    expect(result).toEqual({ success: true });
+    expect(result).toEqual({ success: true, stale: true });
     expect(trpcLogger.info).toHaveBeenCalledWith(
-      { userId: ctx.user.id, groceryId, version: 4 },
+      { userId: ctx.user.id, groceryId, version: 1 },
       "Ignoring stale grocery update mutation"
     );
     expect(groceryEmitter.emitToHousehold).not.toHaveBeenCalledWith(

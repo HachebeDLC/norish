@@ -23,7 +23,7 @@ export const StepStepSchema = StepSelectBaseSchema.pick({
   systemUsed: true,
 }).extend({
   order: z.coerce.number(),
-  version: z.number().int().positive().optional(),
+  version: z.number().int().positive(),
   images: z.array(StepImageSchema).optional().default([]),
 });
 

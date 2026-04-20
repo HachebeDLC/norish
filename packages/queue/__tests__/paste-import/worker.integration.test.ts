@@ -14,6 +14,14 @@ const mocked = vi.hoisted(() => ({
   addAutoTaggingJob: vi.fn(),
   addAllergyDetectionJob: vi.fn(),
   emitByPolicy: vi.fn(),
+  loggerMock: {
+    info: vi.fn(),
+    debug: vi.fn(),
+    warn: vi.fn(),
+    error: vi.fn(),
+    trace: vi.fn(),
+    fatal: vi.fn(),
+  },
 }));
 
 vi.mock("@norish/config/server-config-loader", () => ({
@@ -43,7 +51,19 @@ vi.mock("@norish/trpc/routers/recipes/emitter", () => ({
 }));
 
 vi.mock("@norish/shared-server/logger", () => ({
-  createLogger: () => ({ info: vi.fn(), debug: vi.fn(), error: vi.fn() }),
+  createLogger: vi.fn(() => mocked.loggerMock),
+  serverLogger: mocked.loggerMock,
+  dbLogger: mocked.loggerMock,
+  authLogger: mocked.loggerMock,
+  wsLogger: mocked.loggerMock,
+  aiLogger: mocked.loggerMock,
+  trpcLogger: mocked.loggerMock,
+  schedulerLogger: mocked.loggerMock,
+  videoLogger: mocked.loggerMock,
+  parserLogger: mocked.loggerMock,
+  redisLogger: mocked.loggerMock,
+  redactUrl: vi.fn((url) => url),
+  default: mocked.loggerMock,
 }));
 
 vi.mock("@norish/shared-server/media/storage", () => ({

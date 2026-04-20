@@ -20,7 +20,7 @@ export const RecipeImageSchema = z.object({
   id: z.uuid().optional(),
   image: z.string(),
   order: z.coerce.number().default(0),
-  version: z.number().int().positive().optional(),
+  version: z.number().int().positive(),
 });
 
 export const RecipeImageInputSchema = z.object({

@@ -2,19 +2,29 @@
 
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const createRecipeWithRefs = vi.fn();
-const dashboardRecipe = vi.fn();
-const getAllergiesForUsers = vi.fn();
-const addRecipeImages = vi.fn();
-const emitByPolicy = vi.fn();
-const extractRecipeFromImages = vi.fn();
-const saveImageBytes = vi.fn();
+const mocked = vi.hoisted(() => ({
+  createRecipeWithRefs: vi.fn(),
+  dashboardRecipe: vi.fn(),
+  getAllergiesForUsers: vi.fn(),
+  addRecipeImages: vi.fn(),
+  emitByPolicy: vi.fn(),
+  extractRecipeFromImages: vi.fn(),
+  saveImageBytes: vi.fn(),
+  loggerMock: {
+    info: vi.fn(),
+    debug: vi.fn(),
+    warn: vi.fn(),
+    error: vi.fn(),
+    trace: vi.fn(),
+    fatal: vi.fn(),
+  },
+}));
 
 vi.mock("@norish/db", () => ({
-  addRecipeImages,
-  createRecipeWithRefs,
-  dashboardRecipe,
-  getAllergiesForUsers,
+  addRecipeImages: mocked.addRecipeImages,
+  createRecipeWithRefs: mocked.createRecipeWithRefs,
+  dashboardRecipe: mocked.dashboardRecipe,
+  getAllergiesForUsers: mocked.getAllergiesForUsers,
 }));
 
 vi.mock("@norish/config/server-config-loader", () => ({
@@ -23,11 +33,11 @@ vi.mock("@norish/config/server-config-loader", () => ({
 }));
 
 vi.mock("@norish/queue/api-handlers", () => ({
-  requireQueueApiHandler: vi.fn(() => extractRecipeFromImages),
+  requireQueueApiHandler: vi.fn(() => mocked.extractRecipeFromImages),
 }));
 
 vi.mock("@norish/trpc/helpers", () => ({
-  emitByPolicy,
+  emitByPolicy: mocked.emitByPolicy,
 }));
 
 vi.mock("@norish/trpc/routers/recipes/emitter", () => ({
@@ -35,19 +45,33 @@ vi.mock("@norish/trpc/routers/recipes/emitter", () => ({
 }));
 
 vi.mock("@norish/shared-server/logger", () => ({
-  createLogger: () => ({ info: vi.fn(), debug: vi.fn(), warn: vi.fn(), error: vi.fn() }),
+  createLogger: vi.fn(() => mocked.loggerMock),
+  serverLogger: mocked.loggerMock,
+  dbLogger: mocked.loggerMock,
+  authLogger: mocked.loggerMock,
+  wsLogger: mocked.loggerMock,
+  aiLogger: mocked.loggerMock,
+  trpcLogger: mocked.loggerMock,
+  schedulerLogger: mocked.loggerMock,
+  videoLogger: mocked.loggerMock,
+  parserLogger: mocked.loggerMock,
+  redisLogger: mocked.loggerMock,
+  redactUrl: vi.fn((url) => url),
+  default: mocked.loggerMock,
 }));
 
 vi.mock("@norish/shared-server/media/storage", () => ({
   deleteRecipeImagesDir: vi.fn(),
-  saveImageBytes,
+  saveImageBytes: mocked.saveImageBytes,
 }));
+
+import { processImageImportJob } from "../../src/image-import/worker";
 
 describe("processImageImportJob", () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
-    extractRecipeFromImages.mockResolvedValue({
+    mocked.extractRecipeFromImages.mockResolvedValue({
       success: true,
       data: {
         id: "recipe-123",
@@ -82,46 +106,48 @@ describe("processImageImportJob", () => {
         videos: [],
       },
     });
-    createRecipeWithRefs.mockResolvedValue("recipe-123");
-    dashboardRecipe.mockResolvedValue({ id: "recipe-123", name: "Extracted Recipe" });
-    saveImageBytes.mockResolvedValue("/recipes/recipe-123/uploaded.jpg");
+    mocked.createRecipeWithRefs.mockResolvedValue("recipe-123");
+    mocked.dashboardRecipe.mockResolvedValue({ id: "recipe-123", name: "Extracted Recipe" });
+    mocked.saveImageBytes.mockResolvedValue("/recipes/recipe-123/uploaded.jpg");
   });
 
-  it("passes the job recipeId through extraction and image persistence", async () => {
-    const { processImageImportJob } = await import("../../src/image-import/worker");
+  it(
+    "passes the job recipeId through extraction and image persistence",
+    async () => {
+      await processImageImportJob({
+        id: "job-1",
+        attemptsMade: 0,
+        opts: {},
+        data: {
+          recipeId: "recipe-123",
+          userId: "user-1",
+          householdKey: "household-1",
+          householdUserIds: null,
+          files: [
+            {
+              data: Buffer.from("img").toString("base64"),
+              mimeType: "image/jpeg",
+              filename: "recipe.jpg",
+            },
+          ],
+        },
+      } as any);
 
-    await processImageImportJob({
-      id: "job-1",
-      attemptsMade: 0,
-      opts: {},
-      data: {
-        recipeId: "recipe-123",
-        userId: "user-1",
-        householdKey: "household-1",
-        householdUserIds: null,
-        files: [
-          {
-            data: Buffer.from("img").toString("base64"),
-            mimeType: "image/jpeg",
-            filename: "recipe.jpg",
-          },
-        ],
-      },
-    } as any);
-
-    expect(extractRecipeFromImages).toHaveBeenCalledWith(
-      "recipe-123",
-      expect.any(Array),
-      undefined
-    );
-    expect(createRecipeWithRefs).toHaveBeenCalledWith(
-      "recipe-123",
-      "user-1",
-      expect.objectContaining({ id: "recipe-123", name: "Extracted Recipe" })
-    );
-    expect(saveImageBytes).toHaveBeenCalledWith(expect.any(Buffer), "recipe-123");
-    expect(addRecipeImages).toHaveBeenCalledWith("recipe-123", [
-      { image: "/recipes/recipe-123/uploaded.jpg", order: 0 },
-    ]);
-  });
+      expect(mocked.extractRecipeFromImages).toHaveBeenCalledWith(
+        "recipe-123",
+        expect.any(Array),
+        undefined
+      );
+      expect(mocked.createRecipeWithRefs).toHaveBeenCalledWith(
+        "recipe-123",
+        "user-1",
+        expect.objectContaining({ id: "recipe-123", name: "Extracted Recipe" })
+      );
+      expect(mocked.saveImageBytes).toHaveBeenCalledWith(expect.any(Buffer), "recipe-123");
+      expect(mocked.addRecipeImages).toHaveBeenCalledWith("recipe-123", [
+        { image: "/recipes/recipe-123/uploaded.jpg", order: 0 },
+      ]);
+    },
+    15000
+  );
 });

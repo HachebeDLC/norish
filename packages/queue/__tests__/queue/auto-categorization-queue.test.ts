@@ -5,12 +5,40 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import type { AutoCategorizationJobData } from "@norish/queue/contracts/job-types";
 
-const mockAdd = vi.fn();
-const mockGetJob = vi.fn();
-const mockClose = vi.fn();
-const mockCreateLazyWorker = vi.fn();
-const mockStopLazyWorker = vi.fn();
-const mockCategorizeRecipe = vi.fn();
+const {
+  mockAdd,
+  mockGetJob,
+  mockClose,
+  mockCreateLazyWorker,
+  mockStopLazyWorker,
+  mockCategorizeRecipe,
+  loggerMock,
+} = vi.hoisted(() => ({
+  mockAdd: vi.fn(),
+  mockGetJob: vi.fn(),
+  mockClose: vi.fn(),
+  mockCreateLazyWorker: vi.fn(),
+  mockStopLazyWorker: vi.fn(),
+  mockCategorizeRecipe: vi.fn(),
+  loggerMock: {
+    info: vi.fn(),
+    debug: vi.fn(),
+    warn: vi.fn(),
+    error: vi.fn(),
+    trace: vi.fn(),
+    fatal: vi.fn(),
+    child: vi.fn(() => ({
+      info: vi.fn(),
+      debug: vi.fn(),
+      warn: vi.fn(),
+      error: vi.fn(),
+      trace: vi.fn(),
+      fatal: vi.fn(),
+    })),
+  },
+}));
+
+loggerMock.child = vi.fn(() => loggerMock) as any;
 
 vi.mock("bullmq", () => {
   return {
@@ -67,12 +95,19 @@ vi.mock("@norish/queue/redis/bullmq", () => ({
 }));
 
 vi.mock("@norish/shared-server/logger", () => ({
-  createLogger: vi.fn(() => ({
-    info: vi.fn(),
-    debug: vi.fn(),
-    warn: vi.fn(),
-    error: vi.fn(),
-  })),
+  createLogger: vi.fn(() => loggerMock),
+  serverLogger: loggerMock,
+  dbLogger: loggerMock,
+  authLogger: loggerMock,
+  wsLogger: loggerMock,
+  aiLogger: loggerMock,
+  trpcLogger: loggerMock,
+  schedulerLogger: loggerMock,
+  videoLogger: loggerMock,
+  parserLogger: loggerMock,
+  redisLogger: loggerMock,
+  redactUrl: vi.fn((url) => url),
+  default: loggerMock,
 }));
 
 vi.mock("@norish/queue/helpers", () => ({
