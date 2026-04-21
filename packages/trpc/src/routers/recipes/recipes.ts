@@ -74,13 +74,7 @@ export const listProcedure = authedProcedure
     },
   })
   .input(RecipeListInputSchema)
-  .output(
-    z.object({
-      recipes: z.array(FullRecipeSchema),
-      total: z.number(),
-      nextCursor: z.number().nullable(),
-    })
-  )
+  .output(RecipeListResultSchema)
   .query(async ({ ctx, input }) => {
     const {
       cursor,
