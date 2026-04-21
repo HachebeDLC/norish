@@ -18,6 +18,8 @@ services:
     volumes:
       - norish_uploads:/app/uploads
       - ../../tags.json:/app/tags.json
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     environment:
       DATABASE_URL: postgres://postgres:norish@db:5432/norish
       REDIS_URL: redis://redis:6379
@@ -44,6 +46,8 @@ services:
     volumes:
       - norish_uploads:/app/uploads
       - ../../tags.json:/app/tags.json
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     environment:
       DATABASE_URL: postgres://postgres:norish@db:5432/norish
       REDIS_URL: redis://redis:6379
