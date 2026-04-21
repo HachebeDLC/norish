@@ -200,7 +200,8 @@ async function transcribeWithGenericOpenAI(
 
   if (baseURL) {
     baseURL = baseURL.replace(/\/+$/, "");
-    if (!baseURL.endsWith("/v1")) {
+    // Only append /v1 if it's not already part of the path
+    if (!baseURL.toLowerCase().includes("/v1")) {
       baseURL = `${baseURL}/v1`;
     }
   }
